@@ -1,0 +1,6 @@
+# Files ignored by git
+*.o
+*~
+*.bak
+backend/dmcr
+
