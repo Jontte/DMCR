@@ -22,6 +22,7 @@ int main(int argc, char * argv[])
 
         try {
             s.connect();
+            s.run();
         } catch (const dmcr::SocketException& e) {
             cout << "SocketException: " << e.message << endl;
         }

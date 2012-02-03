@@ -47,6 +47,8 @@ public:
     void setListener(IBackendSocketListener *listener);
     void connect();
 
+    void run();
+
 private:
     std::string m_hostname;
     in_port_t m_port;

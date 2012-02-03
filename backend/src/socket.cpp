@@ -138,7 +138,15 @@ void dmcr::Socket::readPacket()
     }
 }
 
+#include <iostream>
 void dmcr::Socket::handleConnectionResult(const dmcr::Packet::ConnectionResult
                                           &msg)
 {
+    std::cout << "ConnectionResult: " << msg.result() << std::endl;
+}
+
+void dmcr::Socket::run()
+{
+    for (;;)
+        readPacket();
 }
