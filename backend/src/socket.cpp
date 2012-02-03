@@ -80,7 +80,7 @@ void dmcr::Socket::sendPacket(PacketId id,
                               const ::google::protobuf::Message &msg)
 {
 #ifdef DMCR_THREADED
-    pthread_spin_lock(m_spinlock);
+    pthread_spin_lock(&m_spinlock);
 #endif
     DmcrPacketHeader header;
     header.set_length(msg.ByteSize());
@@ -90,6 +90,6 @@ void dmcr::Socket::sendPacket(PacketId id,
     header.SerializeToFileDescriptor(m_fd);
     msg.SerializeToFileDescriptor(m_fd);
 #ifdef DMCR_THREADED
-    pthread_spin_unlock(m_spinlock);
+    pthread_spin_unlock(&m_spinlock);
 #endif
 }

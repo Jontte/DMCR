@@ -39,7 +39,6 @@ public:
 
 /* dmcr::Socket
    Abstracted TCP-based communication method between the backend and controller.
-   Writing packets is NOT thread-safe at the moment!
 */
 class Socket {
 public:
