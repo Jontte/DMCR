@@ -1,0 +1,11 @@
+message DmcrPacketHeader {
+  required uint32 length = 1;
+  required uint32 id = 2;
+  required uint32 seq = 3;
+}
+
+message HandshakeA {
+  required uint32 protocol_version = 1;
+  optional string key = 2;
+  required string description = 3;
+}
