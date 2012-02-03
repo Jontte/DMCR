@@ -4,6 +4,7 @@
 #include <netdb.h>
 #include "dmcr_protocol.pb.h"
 #include <cstdio>
+#include <memory>
 
 dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
     : m_hostname(hostname), m_port(port), m_listener(NULL),
@@ -67,7 +68,7 @@ void dmcr::Socket::connect()
 
 void dmcr::Socket::sendHandshakePacket()
 {
-    DmcrBackendHandshake packet;
+    dmcr::Packet::BackendHandshake packet;
     packet.set_protocol_version(0);
     packet.set_description("DMCR/1.0");
     sendPacket(Packet_BackendHandshake, packet);
@@ -77,11 +78,51 @@ void dmcr::Socket::sendPacket(PacketId id,
                               const ::google::protobuf::Message &msg)
 {
     std::lock_guard<std::mutex> G(m_mutex);
-    DmcrPacketHeader header;
+    dmcr::Packet::PacketHeader header;
     header.set_length(msg.ByteSize());
     header.set_id((uint8_t)id);
     header.set_seq(m_seq++);
 
     header.SerializeToFileDescriptor(m_fd);
     msg.SerializeToFileDescriptor(m_fd);
+}
+
+void dmcr::Socket::readPacket()
+{
+    uint32_t header_len =
+            dmcr::Packet::PacketHeader::default_instance().ByteSize();
+
+    char buffer[header_len];
+    uint32_t read_len = 0;
+    while (read_len < header_len)
+        read_len += recv(m_fd, buffer+read_len, header_len-read_len,
+                         MSG_WAITALL);
+
+    dmcr::Packet::PacketHeader header;
+    header.ParseFromArray(buffer, header_len);
+
+    std::unique_ptr<char[]> buffer2(new char[header.length()]);
+
+    read_len = 0;
+    while (read_len < header.length())
+        read_len += recv(m_fd, buffer2.get()+read_len,
+                         header.length()-read_len, 0);
+
+    PacketId pid = (PacketId)header.id();
+
+#define PACKET_CASE(name) case Packet_##name: { dmcr::Packet::name msg;\
+    msg.ParseFromArray(buffer2.get(), header.length()); handle##name(msg);\
+    break; };
+
+    switch (pid) {
+    PACKET_CASE(ConnectionResult);
+    case Packet_BackendHandshake:
+    default:
+        throw SocketException("Received unexpected packet");
+    }
+}
+
+void dmcr::Socket::handleConnectionResult(const dmcr::Packet::ConnectionResult
+                                          &msg)
+{
 }

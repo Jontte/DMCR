@@ -5,6 +5,7 @@
 #include <string>
 #include <netinet/in.h>
 #include <google/protobuf/message.h>
+#include "dmcr_protocol.pb.h"
 #include <mutex>
 
 namespace dmcr {
@@ -21,7 +22,7 @@ public:
 enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
                         ConnectionResult_ConnectionFailed };
 
-enum PacketId { Packet_BackendHandshake = 1 };
+enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2 };
 
 class Socket;
 
@@ -57,6 +58,9 @@ private:
 
     void sendHandshakePacket();
     void sendPacket(PacketId, const ::google::protobuf::Message &);
+    void readPacket();
+
+    void handleConnectionResult(const dmcr::Packet::ConnectionResult&);
 };
 
 }
