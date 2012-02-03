@@ -9,9 +9,6 @@ dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
     : m_hostname(hostname), m_port(port), m_listener(NULL),
       m_fd(0), m_seq(0)
 {
-#ifdef DMCR_THREADED
-    pthread_spin_init(&m_spinlock, 0);
-#endif
 }
 
 dmcr::Socket::~Socket()
@@ -79,9 +76,7 @@ void dmcr::Socket::sendHandshakePacket()
 void dmcr::Socket::sendPacket(PacketId id,
                               const ::google::protobuf::Message &msg)
 {
-#ifdef DMCR_THREADED
-    pthread_spin_lock(&m_spinlock);
-#endif
+    std::lock_guard<std::mutex> G(m_mutex);
     DmcrPacketHeader header;
     header.set_length(msg.ByteSize());
     header.set_id((uint8_t)id);
@@ -89,7 +84,4 @@ void dmcr::Socket::sendPacket(PacketId id,
 
     header.SerializeToFileDescriptor(m_fd);
     msg.SerializeToFileDescriptor(m_fd);
-#ifdef DMCR_THREADED
-    pthread_spin_unlock(&m_spinlock);
-#endif
 }

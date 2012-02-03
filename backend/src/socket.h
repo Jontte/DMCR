@@ -5,9 +5,7 @@
 #include <string>
 #include <netinet/in.h>
 #include <google/protobuf/message.h>
-#ifdef DMCR_THREADED
-#include <pthread.h>
-#endif
+#include <mutex>
 
 namespace dmcr {
 
@@ -52,9 +50,7 @@ private:
     std::string m_hostname;
     in_port_t m_port;
     IBackendSocketListener *m_listener;
-#ifdef DMCR_THREADED
-    pthread_spinlock_t m_spinlock;
-#endif
+    std::mutex m_mutex;
 
     int m_fd;
     uint32_t m_seq;
