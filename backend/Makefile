@@ -5,7 +5,7 @@ CC = gcc
 PROTOC = protoc
 
 # C/C++ source files
-CPP_SOURCES = src/main.cpp src/vector.cpp src/dmcr_protocol.pb.cpp
+CPP_SOURCES = src/main.cpp src/vector.cpp src/dmcr_protocol.pb.cpp src/socket.cpp
 CC_SOURCES = 
 
 # 3rd party library flags
@@ -22,7 +22,7 @@ LDFLAGS = $(PROTOBUF_LDFLAGS)
 EXECUTABLE = dmcr
 
 # C/C++-specific flags:
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS = $(CFLAGS) -std=gnu++0x
 CCFLAGS = $(CFLAGS)
 
 # Where object files will be stored
@@ -68,3 +68,5 @@ $(OBJDIR)/%:
 
 src/main.o: src/vector.h
 src/vector.o: src/vector.h
+src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
+src/socket.o: src/socket.h src/dmcr_protocol.pb.h
