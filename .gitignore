@@ -2,5 +2,5 @@
 *.o
 *~
 *.bak
+*.pb.*
 backend/dmcr
-
