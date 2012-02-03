@@ -84,7 +84,7 @@ void dmcr::Socket::sendPacket(PacketId id,
     header.set_seq(m_seq++);
 
     // First send the header length
-    uint32_t header_len = header.ByteSize();
+    uint32_t header_len = htonl(header.ByteSize());
     send(m_fd, &header_len, sizeof(uint32_t), MSG_MORE);
     // Then the header
     header.SerializeToFileDescriptor(m_fd);
@@ -106,7 +106,7 @@ void dmcr::Socket::readPacket()
     while (read_len < 4)
         read_len += recv(m_fd, len_buffer+read_len, 4-read_len, MSG_WAITALL);
 
-    uint32_t header_len = *((uint32_t*)len_buffer);
+    uint32_t header_len = ntohl(*((uint32_t*)len_buffer));
 
     char buffer[header_len];
     read_len = 0;
