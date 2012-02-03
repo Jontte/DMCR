@@ -13,7 +13,7 @@ class DmcrServer
     cli = @s.accept
     
     loop do
-      hdr_len = cli.read_uint32
+      hdr_len = cli.read_uint32_be
       break if not hdr_len
       hdr = Dmcr::Packet::PacketHeader.new
       hdr.parse_from_string(cli.read(hdr_len))
@@ -47,7 +47,7 @@ class DmcrServer
     
     hdr_data = hdr.serialize_to_string
     
-    cli.write_uint32 hdr_data.length
+    cli.write_uint32_be hdr_data.length
     cli << hdr_data
     cli << pkt_data
   end
