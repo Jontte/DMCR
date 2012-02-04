@@ -61,6 +61,7 @@ private:
     int m_fd;
 
     void sendHandshakePacket();
+    void sendPacketUnsafe(PacketId, const ::google::protobuf::Message &);
     void sendPacket(PacketId, const ::google::protobuf::Message &);
     void readPacket();
 

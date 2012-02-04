@@ -74,10 +74,9 @@ void dmcr::Socket::sendHandshakePacket()
     sendPacket(Packet_BackendHandshake, packet);
 }
 
-void dmcr::Socket::sendPacket(PacketId id,
+void dmcr::Socket::sendPacketUnsafe(PacketId id,
                               const ::google::protobuf::Message &msg)
 {
-    std::lock_guard<std::mutex> G(m_mutex);
     dmcr::Packet::PacketHeader header;
     header.set_length(msg.ByteSize());
     header.set_id((uint8_t)id);
@@ -89,6 +88,13 @@ void dmcr::Socket::sendPacket(PacketId id,
     header.SerializeToFileDescriptor(m_fd);
     // And the message
     msg.SerializeToFileDescriptor(m_fd);
+}
+
+void dmcr::Socket::sendPacket(PacketId id,
+                              const::google::protobuf::Message &msg)
+{
+    std::lock_guard<std::mutex> G(m_mutex);
+    sendPacketUnsafe(id, msg);
 }
 
 void dmcr::Socket::readPacket()
@@ -170,7 +176,11 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     packet.set_height(height);
     packet.set_id(task);
     packet.set_iterations_done(iterations_done);
-    memcpy(packet.mutable_data(), data, data_len);
+    packet.set_data_length(data_len);
 
-    sendPacket(Packet_RenderedData, packet);
+    std::lock_guard<std::mutex> G(m_mutex);
+
+    sendPacketUnsafe(Packet_RenderedData, packet);
+
+    send(m_fd, data, data_len, 0);
 }
