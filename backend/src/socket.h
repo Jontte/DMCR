@@ -56,7 +56,6 @@ private:
     std::mutex m_mutex;
 
     int m_fd;
-    uint32_t m_seq;
 
     void sendHandshakePacket();
     void sendPacket(PacketId, const ::google::protobuf::Message &);

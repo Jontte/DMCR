@@ -8,7 +8,7 @@
 
 dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
     : m_hostname(hostname), m_port(port), m_listener(NULL),
-      m_fd(0), m_seq(0)
+      m_fd(0)
 {
 }
 
@@ -81,7 +81,6 @@ void dmcr::Socket::sendPacket(PacketId id,
     dmcr::Packet::PacketHeader header;
     header.set_length(msg.ByteSize());
     header.set_id((uint8_t)id);
-    header.set_seq(m_seq++);
 
     // First send the header length
     uint32_t header_len = htonl(header.ByteSize());
