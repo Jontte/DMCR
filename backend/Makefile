@@ -33,7 +33,7 @@ ASSETDIR = assets
 SOURCES = $(CPP_SOURCES) $(CC_SOURCES)
 OBJECTS = $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
 
-DEPEND = makedepend -Y
+DEPEND = makedepend -Y -pobj/
 
 all: builddirs $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
@@ -45,7 +45,7 @@ $(OBJDIR)/%.o: %.cpp
 $(OBJDIR)/%.o: %.c
 		$(CPP) -c $(CPPFLAGS) $< -o $@
 
-$(SRCDIR)/dmcr_protocol.pb.h: dmcr_protocol.pb.cpp
+$(SRCDIR)/dmcr_protocol.pb.h: $(SRCDIR)/dmcr_protocol.pb.cpp
 
 $(SRCDIR)/dmcr_protocol.pb.cpp: $(ASSETDIR)/dmcr_protocol.proto
 		$(PROTOC) $< --cpp_out $(SRCDIR) --proto_path $(ASSETDIR)
