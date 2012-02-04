@@ -158,3 +158,19 @@ void dmcr::Socket::handleNewTask(const dmcr::Packet::NewTask &msg)
         m_listener->onNewTask(this, msg.width(), msg.height(),
                               msg.iterations(), msg.scene());
 }
+
+void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
+                                     uint32_t height, uint32_t iterations_done,
+                                     float *data)
+{
+    int data_len = width*height*3*sizeof(float);
+
+    dmcr::Packet::RenderedData packet;
+    packet.set_width(width);
+    packet.set_height(height);
+    packet.set_id(task);
+    packet.set_iterations_done(iterations_done);
+    memcpy(packet.mutable_data(), data, data_len);
+
+    sendPacket(Packet_RenderedData, packet);
+}

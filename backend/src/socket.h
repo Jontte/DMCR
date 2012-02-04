@@ -23,7 +23,7 @@ enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
                         ConnectionResult_ConnectionFailed };
 
 enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2,
-                Packet_NewTask = 3 };
+                Packet_NewTask = 3, Packet_RenderedData = 4 };
 
 class Socket;
 
@@ -48,6 +48,9 @@ public:
     void connect();
 
     void run();
+
+    void sendRenderedImage(uint32_t task, uint32_t width, uint32_t height,
+                           uint32_t iterations_done, float *data);
 
 private:
     std::string m_hostname;
