@@ -131,6 +131,7 @@ void dmcr::Socket::readPacket()
 
     switch (pid) {
     PACKET_CASE(ConnectionResult);
+    PACKET_CASE(NewTask);
     case Packet_BackendHandshake:
     default:
         throw SocketException("Received unexpected packet");
@@ -148,4 +149,11 @@ void dmcr::Socket::run()
 {
     for (;;)
         readPacket();
+}
+
+void dmcr::Socket::handleNewTask(const dmcr::Packet::NewTask &msg)
+{
+    if (m_listener)
+        m_listener->onNewTask(this, msg.width(), msg.height(),
+                              msg.iterations(), msg.scene());
 }

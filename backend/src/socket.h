@@ -62,6 +62,7 @@ private:
     void readPacket();
 
     void handleConnectionResult(const dmcr::Packet::ConnectionResult&);
+    void handleNewTask(const dmcr::Packet::NewTask&);
 };
 
 }

@@ -15,3 +15,10 @@ message ConnectionResult {
   required uint32 result = 1;
 }
 
+message NewTask {
+  required uint32 id = 1;
+  required uint32 width = 2;
+  required uint32 height = 3;
+  required uint32 iterations = 4;
+  required string scene = 5;
+}
