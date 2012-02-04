@@ -22,15 +22,15 @@ public:
 enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
                         ConnectionResult_ConnectionFailed };
 
-enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2 };
+enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2,
+                Packet_NewTask = 3 };
 
 class Socket;
 
 class IBackendSocketListener {
 public:
     virtual void onConnectionResult(Socket *socket,
-                                    ConnectionResult result,
-                                    const std::string& message) = 0;
+                                    ConnectionResult result) = 0;
     virtual void onNewTask(Socket *socket, uint16_t width, uint16_t height,
                            uint32_t iterations, const std::string& scene) = 0;
 

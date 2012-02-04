@@ -142,7 +142,8 @@ void dmcr::Socket::readPacket()
 void dmcr::Socket::handleConnectionResult(const dmcr::Packet::ConnectionResult
                                           &msg)
 {
-    std::cout << "ConnectionResult: " << msg.result() << std::endl;
+    if (m_listener)
+        m_listener->onConnectionResult(this, (ConnectionResult)msg.result());
 }
 
 void dmcr::Socket::run()
