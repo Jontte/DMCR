@@ -66,7 +66,7 @@ $(OBJDIR)/%:
 
 # DO NOT DELETE
 
-src/main.o: src/vector.h
-src/vector.o: src/vector.h
-src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
-src/socket.o: src/socket.h src/dmcr_protocol.pb.h
+obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
+obj/src/vector.o: src/vector.h
+obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
+obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
