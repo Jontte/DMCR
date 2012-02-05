@@ -23,12 +23,32 @@ Working with Aptana Studio 3
 2. File -> Import -> Git
 	Address is git@github:Jontte/DMCR.git
 
-3. You should now have 3 new projects:
+3. You should now have one new project:
 	- DMCR
-	- frontend
-	- backend
 	The DMCR-project includes the other two, but to make use of Eclipse, C++ and Python
 	must be own projects also.
+	So we must import them as projects.
+	
+4. File -> Import -> General - Import existing project into workspace
+	Choose DMCR/frontend or backend
+	Don't allow Eclipse to copy project contents
+	
+	NOTE: As you import backend, Eclipse builds it automatically. (At least if you have 
+	the dependencies.)
+	
+5.	Repeat for the other one
+	Now you should have three projects:
+	- backend
+	- DMCR
+	- frontend
+	
+6.	If you have problem with files and folders showing twice in Project Explorer:
+	- Click on the drop-down arrow in Project Explorer
+	- Select "Customize View"
+	- Switch to "Content"
+	- Disable "Local Filesystem"
+	That should work.
+	
 
 Building the backend
 --------------------
