@@ -56,6 +56,7 @@ Building the backend
 1. Make sure you have the dependencies
    - GCC + C++11 -compliant compiler
    - Google protobuf (libprotobuf-dev in Ubuntu)
+   - JsonCpp (http://sourceforge.net/projects/jsoncpp/)
 
 2. `$ make depend`
 
