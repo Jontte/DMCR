@@ -11,6 +11,10 @@ Authenticate with Github
 	- copy everything from id_rsa.pub (or where ever you stored the key) to Github-> 
 	your profile -> SSH Public Keys
 
+3. Configure your local git:
+	- git config --global user.name "Your name"
+	- git config --global user.email "your@email.com"
+	
 
 
 Working with Aptana Studio 3
