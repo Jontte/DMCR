@@ -3,12 +3,13 @@
 #include <string>
 #include "vector.h"
 #include "socket.h"
+#include "dummyscene.h"
 
 // Bring some common standard library classes to scope cos we're lazy and want to type less
 using std::string;
 using std::vector;
 using std::cout;
-using std::endl; 
+using std::endl;
 
 int main(int argc, char * argv[])
 {
@@ -16,6 +17,10 @@ int main(int argc, char * argv[])
     vector<string> args(argv, argv+argc);
 
     cout << "Hello, World!" << endl;
+
+    dmcr::DummyScene scene;
+    scene.loadFromFile("scene.json");
+    scene.debugPrint();
 
     if (args.size() > 1) {
         dmcr::Socket s(args[1], 9393);
