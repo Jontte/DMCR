@@ -5,18 +5,21 @@ CC = gcc
 PROTOC = protoc
 
 # C/C++ source files
-CPP_SOURCES = src/main.cpp src/vector.cpp src/dmcr_protocol.pb.cpp src/socket.cpp
+CPP_SOURCES = src/main.cpp src/vector.cpp src/dmcr_protocol.pb.cpp \
+src/socket.cpp src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp
 CC_SOURCES = 
 
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
+JSONCPP_CFLAGS =
+JSONCPP_LDFLAGS = -ljsoncpp
 
 # Compiler options
 CFLAGS= -Wall -Wextra -g $(PROTOBUF_CFLAGS)
 
 # Linker options
-LDFLAGS = $(PROTOBUF_LDFLAGS)
+LDFLAGS = $(PROTOBUF_LDFLAGS) $(JSONCPP_LDFLAGS)
 
 # Target file
 EXECUTABLE = dmcr
@@ -67,6 +70,11 @@ $(OBJDIR)/%:
 # DO NOT DELETE
 
 obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
+obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/vector.o: src/vector.h
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
 obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
+obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
+obj/src/sceneobject.o: src/sceneobject.h src/vector.h
+obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
+obj/src/dummyscene.o: src/vector.h
