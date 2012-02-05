@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
     cout << "Hello, World!" << endl;
 
     dmcr::DummyScene scene;
-    scene.loadFromFile("scene.json");
+    scene.loadFromFile("assets/scene.json");
     scene.debugPrint();
 
     if (args.size() > 1) {
