@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <jsoncpp/json.h>
+#include <json/json.h>
 #include "vector.h"
 #include "sceneobject.h"
 

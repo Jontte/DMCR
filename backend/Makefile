@@ -6,20 +6,19 @@ PROTOC = protoc
 
 # C/C++ source files
 CPP_SOURCES = src/main.cpp src/vector.cpp src/dmcr_protocol.pb.cpp \
-src/socket.cpp src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp
+src/socket.cpp src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
+3rdparty/json/jsoncpp.cpp
 CC_SOURCES = 
 
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
-JSONCPP_CFLAGS =
-JSONCPP_LDFLAGS = -ljsoncpp
 
 # Compiler options
-CFLAGS= -Wall -Wextra -g $(PROTOBUF_CFLAGS)
+CFLAGS= -Wall -Wextra -g $(PROTOBUF_CFLAGS) -I3rdparty
 
 # Linker options
-LDFLAGS = $(PROTOBUF_LDFLAGS) $(JSONCPP_LDFLAGS)
+LDFLAGS = $(PROTOBUF_LDFLAGS)
 
 # Target file
 EXECUTABLE = dmcr
@@ -60,7 +59,7 @@ depend: $(SOURCES)
 clean:
 	-rm $(EXECUTABLE) $(OBJECTS)
 
-builddirs: $(OBJDIR)/src
+builddirs: $(OBJDIR)/src $(OBJDIR)/3rdparty/json
 
 $(OBJDIR)/%:
 	@mkdir -p $@
