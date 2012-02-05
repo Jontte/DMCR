@@ -169,18 +169,20 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
                                      uint32_t height, uint32_t iterations_done,
                                      float *data)
 {
-    int data_len = width*height*3*sizeof(float);
-
     dmcr::Packet::RenderedData packet;
     packet.set_width(width);
     packet.set_height(height);
     packet.set_id(task);
     packet.set_iterations_done(iterations_done);
-    packet.set_data_length(data_len);
+    packet.set_data_length(width*height*3*sizeof(uint32_t));
+
+    std::unique_ptr<uint32_t[]> data_buf(new uint32_t[width*height*3]);
+    for (uint32_t i = 0; i < width*height*3; ++i)
+        data_buf[i] = htonl((uint32_t)(data[i] * 0xffffffff));
 
     std::lock_guard<std::mutex> G(m_mutex);
 
     sendPacketUnsafe(Packet_RenderedData, packet);
 
-    send(m_fd, data, data_len, 0);
+    send(m_fd, data_buf.get(), width*height*3*sizeof(uint32_t), 0);
 }
