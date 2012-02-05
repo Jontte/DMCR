@@ -1,0 +1,47 @@
+{	
+	"camera":
+	{
+   	"position": [1,0,1],
+    "look_at": [0,0,0],
+    "fov": 90,
+
+    "antialias": 2,
+		"screen": [800, 600]
+  },
+
+	"textures":
+	[
+    {
+      "name": "punainen peili",
+			"color": [1,0,0],
+			"emit": 0,
+			"reflection": 0.2,
+			"blur": 0.1
+		}
+	],
+
+	"scene": 
+	[
+    {
+     	"type": "sphere",
+			"position": [0,0,0],
+			"radius": 2,
+			"texture":
+			{
+				"color": [0,1,0],
+				"blur": 0.9
+			}
+		},
+		{
+			"type": "box",
+			"position": [0,0,0],
+			"extents": [0.5, 0.5, 0.5]
+		},
+		{
+			"type": "sphere",
+			"position": [0,0,3],
+			"radius": 0.2,
+			"texture": "punainen peili"
+		}
+	]
+}
