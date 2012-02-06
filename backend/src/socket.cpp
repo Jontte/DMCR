@@ -5,6 +5,7 @@
 #include "dmcr_protocol.pb.h"
 #include <cstdio>
 #include <memory>
+#include <unistd.h>
 
 dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
     : m_hostname(hostname), m_port(port), m_listener(NULL),
@@ -83,7 +84,7 @@ void dmcr::Socket::sendPacketUnsafe(PacketId id,
 
     // First send the header length
     uint32_t header_len = htonl(header.ByteSize());
-    send(m_fd, &header_len, sizeof(uint32_t), MSG_MORE);
+    send(m_fd, &header_len, sizeof(uint32_t), 0);
     // Then the header
     header.SerializeToFileDescriptor(m_fd);
     // And the message
