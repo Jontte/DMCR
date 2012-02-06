@@ -10,7 +10,7 @@ CC = gcc
 PROTOC = protoc
 
 # C/C++ source files
-CPP_SOURCES = src/main.cpp src/vector.cpp src/dmcr_protocol.pb.cpp \
+CPP_SOURCES = src/main.cpp src/dmcr_protocol.pb.cpp \
 src/socket.cpp src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
 3rdparty/json/jsoncpp.cpp
 CC_SOURCES = 
@@ -75,7 +75,6 @@ $(OBJDIR)/%:
 
 obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
 obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h
-obj/src/vector.o: src/vector.h
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
 obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
 obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
