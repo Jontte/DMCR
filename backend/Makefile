@@ -1,6 +1,11 @@
+UNAME = $(shell uname -s)
 
 # Compilers to use
-CPP = g++
+ifeq ($(UNAME), Darwin)
+  CPP = x86_64-apple-darwin10-g++-mp-4.7
+else
+  CPP = g++
+endif
 CC = gcc
 PROTOC = protoc
 
