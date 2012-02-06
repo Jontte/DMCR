@@ -11,13 +11,13 @@ class SceneObject
 public:
     SceneObject();
 
-    void setPosition(Vector3 position) { m_position = position; }
-    Vector3 position() const { return m_position; }
+    void setPosition(Vector3f position) { m_position = position; }
+    Vector3f position() const { return m_position; }
 
     virtual std::string type() const = 0;
 
 protected:
-    Vector3 m_position;
+    Vector3f m_position;
 };
 
 class Sphere : public dmcr::SceneObject
@@ -39,7 +39,13 @@ class Box : public dmcr::SceneObject
 public:
     Box();
 
+    void setExtents(Vector3f extents) { m_extents = extents; }
+    Vector3f extents() const { return m_extents; }
+
     virtual std::string type() const { return "box"; }
+
+protected:
+    Vector3f m_extents;
 };
 
 typedef std::shared_ptr<SceneObject> SceneObjectPtr;
