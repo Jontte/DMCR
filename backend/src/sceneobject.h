@@ -2,6 +2,7 @@
 #define SCENEOBJECT_H
 
 #include <memory>
+#include <string>
 #include "vector.h"
 
 namespace dmcr {
