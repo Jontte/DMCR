@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "socket.h"
 #include "dummyscene.h"
+#include "sharedstream.h"
 #include <csignal>
 
 // Bring some common standard library classes to scope cos we're lazy and want to type less
@@ -16,6 +17,10 @@ int main(int argc, char * argv[])
 {
     // Parse command line parameters to a vector of strings
     vector<string> args(argv, argv+argc);
+
+    dmcr::SharedStream<int> queue;
+    queue.push(10);
+    assert(queue.pull() == 10);
     
     signal(SIGPIPE, SIG_IGN);
 

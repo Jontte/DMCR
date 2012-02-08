@@ -75,6 +75,7 @@ $(OBJDIR)/%:
 
 obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
 obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h
+obj/src/main.o: src/sharedstream.h
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
 obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
 obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
