@@ -44,14 +44,14 @@ int dmcr::Scene::loadFromString(const std::string &string)
     const Json::Value objects = root["scene"];
     for (unsigned int i = 0; i < objects.size(); ++i) {
         const Json::Value position = objects[i]["position"];
-        Vector3f position_value;
+        dmcr::Vector3f position_value;
 
         if (!position || !position.isArray() || position.size() != 3) {
             std::cout << "No position specified for object, assuming (0, 0, 0)"
                       << std::endl;
-            position_value = Vector3f(0, 0, 0);
+            position_value = dmcr::Vector3f(0, 0, 0);
         } else {
-            position_value = Vector3f(position[0u].asDouble(),
+            position_value = dmcr::Vector3f(position[0u].asDouble(),
                                      position[1].asDouble(),
                                      position[2].asDouble());
         }
