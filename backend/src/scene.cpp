@@ -1,4 +1,5 @@
 #include "scene.h"
+#include <memory>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -56,14 +57,11 @@ int dmcr::Scene::loadFromString(const std::string &string)
                                      position[2].asDouble());
         }
 
-        /*
-           The next section of code leaks memory if an exception is thrown
-           before the derived object pointer is assigned to the SceneObjectPtr
-           (which is quite unlikely)
-        */
+        dmcr::SceneObjectPtr object;
+
         std::string type = objects[i]["type"].asString();
         if (type == "sphere") {
-            Sphere *sphere = new Sphere;
+            std::shared_ptr<dmcr::Sphere> sphere(new dmcr::Sphere);
 
             const Json::Value radius = objects[i]["radius"];
             float radius_value = 1.0f;
@@ -74,19 +72,19 @@ int dmcr::Scene::loadFromString(const std::string &string)
             else
                 radius_value = radius.asDouble();
 
-            sphere->setPosition(position_value);
             sphere->setRadius(radius_value);
-            dmcr::SceneObjectPtr object(sphere);
-            addObject(object);
+            object = sphere;
         } else if (type == "box") {
-            Box *box = new Box;
-            box->setPosition(position_value);
-            dmcr::SceneObjectPtr object(box);
-            addObject(object);
+            std::shared_ptr<dmcr::Box> box(new dmcr::Box);
+
+            object = box;
         } else {
             std::cout << "Unknown object type: " << type << std::endl;
             continue;
         }
+
+        object->setPosition(position_value);
+        addObject(object);
     }
 
     return 0;
