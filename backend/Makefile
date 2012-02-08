@@ -10,9 +10,9 @@ CC = gcc
 PROTOC = protoc
 
 # C/C++ source files
-CPP_SOURCES = src/main.cpp src/dmcr_protocol.pb.cpp \
-src/socket.cpp src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
-3rdparty/json/jsoncpp.cpp
+CPP_SOURCES =		src/main.cpp src/dmcr_protocol.pb.cpp src/socket.cpp \
+								src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
+                3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp
 CC_SOURCES = 
 
 # 3rd party library flags
@@ -82,3 +82,4 @@ obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
 obj/src/sceneobject.o: src/sceneobject.h src/vector.h
 obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/dummyscene.o: src/vector.h
+obj/src/loadbalancer.o: src/loadbalancer.h
