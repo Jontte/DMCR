@@ -62,6 +62,7 @@ public:
 class Socket {
 public:
     /*! \brief Constructs a socket
+
       Constructs a new communication socket.
       \param hostname Hostname to connect to
       \param port TCP port to connect to
