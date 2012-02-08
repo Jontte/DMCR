@@ -105,6 +105,7 @@ void dmcr::Socket::sendPacket(PacketId id,
     sendPacketUnsafe(id, msg);
 }
 
+#define MAX_STACK_LENGTH 64
 void dmcr::Socket::readPacket()
 {
     // Protobuf messages are always variable length, so we need to send the
@@ -120,6 +121,10 @@ void dmcr::Socket::readPacket()
         checkError(recv(m_fd, len_buffer+read_len, 4-read_len, MSG_WAITALL));
 
     uint32_t header_len = ntohl(*((uint32_t*)len_buffer));
+    if (header_len > MAX_STACK_LENGTH)
+        throw SocketException("Too long packet header");
+    if (header_len == 0)
+        throw SocketException("Zero length header");
 
     char buffer[header_len];
     read_len = 0;
