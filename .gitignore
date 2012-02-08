@@ -3,4 +3,5 @@
 *~
 *.bak
 *.pb.*
+*.pyc
 backend/dmcr
