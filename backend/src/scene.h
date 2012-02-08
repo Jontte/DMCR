@@ -7,8 +7,6 @@
 
 namespace dmcr {
 
-class SceneObject;
-
 /*!
   \brief Parses and contains the scene to be rendered
 
