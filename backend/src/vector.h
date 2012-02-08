@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+namespace dmcr {
+
 template<typename T>
 class Vector3
 {
@@ -141,5 +143,7 @@ private:
 };
 
 typedef Vector3<float> Vector3f;
+
+}
 
 #endif // VECTOR_H
