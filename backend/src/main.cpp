@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "socket.h"
 #include "dummyscene.h"
+#include <csignal>
 
 // Bring some common standard library classes to scope cos we're lazy and want to type less
 using std::string;
@@ -15,6 +16,8 @@ int main(int argc, char * argv[])
 {
     // Parse command line parameters to a vector of strings
     vector<string> args(argv, argv+argc);
+    
+    signal(SIGPIPE, SIG_IGN);
 
     cout << "Hello, World!" << endl;
 

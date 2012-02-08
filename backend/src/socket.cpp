@@ -6,6 +6,13 @@
 #include <cstdio>
 #include <memory>
 #include <unistd.h>
+#include <cerrno>
+
+static int checkError(int r) {
+    if (r == -1)
+        throw dmcr::SocketException(strerror(errno));
+    return r;
+}
 
 dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
     : m_hostname(hostname), m_port(port), m_listener(NULL),
@@ -84,7 +91,7 @@ void dmcr::Socket::sendPacketUnsafe(PacketId id,
 
     // First send the header length
     uint32_t header_len = htonl(header.ByteSize());
-    send(m_fd, &header_len, sizeof(uint32_t), 0);
+    checkError(send(m_fd, &header_len, sizeof(uint32_t), 0));
     // Then the header
     header.SerializeToFileDescriptor(m_fd);
     // And the message
@@ -110,15 +117,15 @@ void dmcr::Socket::readPacket()
     char len_buffer[4];
     uint32_t read_len = 0;
     while (read_len < 4)
-        read_len += recv(m_fd, len_buffer+read_len, 4-read_len, MSG_WAITALL);
+        checkError(recv(m_fd, len_buffer+read_len, 4-read_len, MSG_WAITALL));
 
     uint32_t header_len = ntohl(*((uint32_t*)len_buffer));
 
     char buffer[header_len];
     read_len = 0;
     while (read_len < header_len)
-        read_len += recv(m_fd, buffer+read_len, header_len-read_len,
-                         MSG_WAITALL);
+        read_len += checkError(recv(m_fd, buffer+read_len, header_len-read_len,
+                                    MSG_WAITALL));
 
     dmcr::Packet::PacketHeader header;
     header.ParseFromArray(buffer, header_len);
@@ -127,8 +134,8 @@ void dmcr::Socket::readPacket()
 
     read_len = 0;
     while (read_len < header.length())
-        read_len += recv(m_fd, buffer2.get()+read_len,
-                         header.length()-read_len, 0);
+        read_len += checkError(recv(m_fd, buffer2.get()+read_len,
+                                    header.length()-read_len, 0));
 
     PacketId pid = (PacketId)header.id();
 
@@ -185,5 +192,5 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
 
     sendPacketUnsafe(Packet_RenderedData, packet);
 
-    send(m_fd, data_buf.get(), width*height*3*sizeof(uint32_t), 0);
+    checkError(send(m_fd, data_buf.get(), width*height*3*sizeof(uint32_t), 0));
 }
