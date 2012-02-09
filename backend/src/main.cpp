@@ -12,9 +12,18 @@ int main(int argc, char * argv[])
     // Parse command line parameters to a vector of strings
     std::vector<std::string> args(argv, argv+argc);
 
-    dmcr::SharedStream<int> queue;
-    queue.push(10);
-    assert(queue.pull() == 10);
+    try {
+        // SharedStream tests
+        dmcr::SharedStream<int> queue;
+        queue.push(10);
+        assert(queue.pull() == 10);
+
+        queue.pull(std::chrono::seconds(1));
+    }
+    catch(dmcr::StreamTimeoutException&)
+    {
+        // don't care
+    }
     
     signal(SIGPIPE, SIG_IGN);
 
