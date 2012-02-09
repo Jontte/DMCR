@@ -7,6 +7,15 @@
 
 namespace dmcr {
 
+class SceneException
+{
+public:
+    SceneException(const std::string& msg) :
+        message(msg) {}
+
+    std::string message;
+};
+
 /*!
   \brief Parses and contains the scene to be rendered
 
@@ -23,18 +32,18 @@ public:
 
       Primarily for testing purposes.
       \param file_name Name of file to load
-      \return 0 on success, -1 on failure
+      \throws SceneException
       */
-    int loadFromFile(const std::string &file_name);
+    void loadFromFile(const std::string &file_name);
 
     /*!
       \brief Load scene from given string
 
       Parses given string and adds found objects to scene
       \param string String to parse
-      \return 0 on success and -1 on failure
+      \throws SceneException
       */
-    int loadFromString(const std::string &string);
+    void loadFromString(const std::string &string);
 
     /*!
       \brief Add object to scene
