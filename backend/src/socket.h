@@ -3,25 +3,24 @@
 
 #include <cstdint>
 #include <string>
+#include <mutex>
+#include <stdexcept>
+
 #include <netinet/in.h>
 #include <google/protobuf/message.h>
 #include "dmcr_protocol.pb.h"
-#include <mutex>
 
 namespace dmcr {
 
 /*! \brief Exception thrown when socket problems happen
   */
-class SocketException {
+class SocketException : public std::runtime_error {
 public:
     /*! \skip
       */
     SocketException(const std::string& m) :
-        message(m)
+        std::runtime_error(m)
     {}
-
-    /*! Message describing what happened */
-    const std::string message;
 };
 
 enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,

@@ -34,7 +34,7 @@ int main(int argc, char * argv[])
         scene.loadFromFile("assets/scene.json");
         scene.debugPrint();
     } catch (const dmcr::SceneException& e) {
-        std::cout << "SceneException: " << e.message << std::endl;
+        std::cout << "SceneException: " << e.what() << std::endl;
     }
 
     if (args.size() > 1) {
@@ -44,7 +44,7 @@ int main(int argc, char * argv[])
             s.connect();
             s.run();
         } catch (const dmcr::SocketException& e) {
-            std::cout << "SocketException: " << e.message << std::endl;
+            std::cout << "SocketException: " << e.what() << std::endl;
         }
     }
 

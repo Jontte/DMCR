@@ -3,17 +3,16 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include "sceneobject.h"
 
 namespace dmcr {
 
-class SceneException
+class SceneException : public std::runtime_error
 {
 public:
-    SceneException(const std::string& msg) :
-        message(msg) {}
-
-    std::string message;
+    SceneException(const std::string& msg)
+        : std::runtime_error(msg) {}
 };
 
 /*!
