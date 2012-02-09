@@ -20,7 +20,7 @@ PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
 
 # Compiler options
-CFLAGS= -Wall -Wextra -g $(PROTOBUF_CFLAGS) -I3rdparty
+CFLAGS += -Wall -Wextra -g $(PROTOBUF_CFLAGS) -I3rdparty
 
 # Linker options
 LDFLAGS = $(PROTOBUF_LDFLAGS)
