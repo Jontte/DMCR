@@ -7,16 +7,10 @@
 #include "sharedstream.h"
 #include <csignal>
 
-// Bring some common standard library classes to scope cos we're lazy and want to type less
-using std::string;
-using std::vector;
-using std::cout;
-using std::endl;
-
 int main(int argc, char * argv[])
 {
     // Parse command line parameters to a vector of strings
-    vector<string> args(argv, argv+argc);
+    std::vector<std::string> args(argv, argv+argc);
 
     dmcr::SharedStream<int> queue;
     queue.push(10);
@@ -24,11 +18,15 @@ int main(int argc, char * argv[])
     
     signal(SIGPIPE, SIG_IGN);
 
-    cout << "Hello, World!" << endl;
+    std::cout << "Hello, World!" << std::endl;
 
     dmcr::DummyScene scene;
-    scene.loadFromFile("assets/scene.json");
-    scene.debugPrint();
+    try {
+        scene.loadFromFile("assets/scene.json");
+        scene.debugPrint();
+    } catch (const dmcr::SceneException& e) {
+        std::cout << "SceneException: " << e.message << std::endl;
+    }
 
     if (args.size() > 1) {
         dmcr::Socket s(args[1], 9393);
@@ -37,7 +35,7 @@ int main(int argc, char * argv[])
             s.connect();
             s.run();
         } catch (const dmcr::SocketException& e) {
-            cout << "SocketException: " << e.message << endl;
+            std::cout << "SocketException: " << e.message << std::endl;
         }
     }
 
