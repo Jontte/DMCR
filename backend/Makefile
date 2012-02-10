@@ -10,10 +10,10 @@ CC = gcc
 PROTOC = protoc
 
 # Common C/C++ source files
-CPP_SOURCES =		src/dmcr_protocol.pb.cpp src/socket.cpp \
-								src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
-                3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp\
-								src/task.cpp src/taskmanager.cpp
+CPP_SOURCES = src/dmcr_protocol.pb.cpp src/socket.cpp \
+src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
+3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp\
+src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)
@@ -89,17 +89,23 @@ $(OBJDIR)/%:
 
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
 obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
-obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
+obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h src/ray.h
+obj/src/scene.o: src/camera.h
 obj/src/sceneobject.o: src/sceneobject.h src/vector.h
 obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
-obj/src/dummyscene.o: src/vector.h
+obj/src/dummyscene.o: src/vector.h src/ray.h src/camera.h
 obj/src/loadbalancer.o: src/loadbalancer.h
 obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
+obj/src/task.o: src/ray.h src/camera.h
 obj/src/taskmanager.o: src/taskmanager.h src/socket.h src/dmcr_protocol.pb.h
-obj/src/taskmanager.o: src/scene.h src/sceneobject.h src/vector.h src/task.h
-obj/src/taskmanager.o: src/loadbalancer.h
+obj/src/taskmanager.o: src/scene.h src/sceneobject.h src/vector.h src/ray.h
+obj/src/taskmanager.o: src/camera.h src/task.h src/loadbalancer.h
+obj/src/ray.o: src/ray.h src/vector.h
+obj/src/renderer.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
+obj/src/renderer.o: src/ray.h src/camera.h
+obj/src/camera.o: src/camera.h src/vector.h src/ray.h
 obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
-obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h
-obj/src/main.o: src/sharedstream.h
+obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h src/ray.h
+obj/src/main.o: src/camera.h src/sharedstream.h src/renderer.h
 obj/tests/test_sharedstream.o: src/sharedstream.h
-obj/tests/test_loadbalancer.o: src/sharedstream.h
+obj/tests/test_loadbalancer.o: src/loadbalancer.h
