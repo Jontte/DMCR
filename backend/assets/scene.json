@@ -4,9 +4,10 @@
    	"position": [1,0,1],
     "look_at": [0,0,0],
     "fov": 90,
+		"aspect": 1.333333
 
-    "antialias": 2,
-		"screen": [800, 600]
+    //"antialias": 2,
+		//"screen": [800, 600]
   },
 
 	"textures":
