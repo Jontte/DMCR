@@ -85,7 +85,7 @@ public:
     }
 
     // Check whether the stream is empty / whether a call to pull() would block
-    bool empty()
+    bool empty() const
     {
         std::unique_lock<std::mutex> lock(m_mutex);
         return m_queue.empty();
