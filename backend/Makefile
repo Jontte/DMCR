@@ -10,9 +10,10 @@ CC = gcc
 PROTOC = protoc
 
 # C/C++ source files
-CPP_SOURCES =		src/main.cpp src/dmcr_protocol.pb.cpp src/socket.cpp \
-								src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
-                3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp
+CPP_SOURCES = src/main.cpp src/dmcr_protocol.pb.cpp src/socket.cpp \
+  src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
+  3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp src/task.cpp \
+  src/taskmanager.cpp
 CC_SOURCES = 
 
 # 3rd party library flags
@@ -83,3 +84,7 @@ obj/src/sceneobject.o: src/sceneobject.h src/vector.h
 obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/dummyscene.o: src/vector.h
 obj/src/loadbalancer.o: src/loadbalancer.h
+obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
+obj/src/taskmanager.o: src/taskmanager.h src/socket.h src/dmcr_protocol.pb.h
+obj/src/taskmanager.o: src/scene.h src/sceneobject.h src/vector.h src/task.h
+obj/src/taskmanager.o: src/loadbalancer.h
