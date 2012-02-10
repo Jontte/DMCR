@@ -12,6 +12,7 @@ class DummyScene : public dmcr::Scene
 public:
     DummyScene();
     void addObject(dmcr::SceneObjectPtr &object);
+    dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const;
     void debugPrint() const;
 
 private:

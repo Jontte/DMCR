@@ -5,6 +5,7 @@
 #include "socket.h"
 #include "dummyscene.h"
 #include "sharedstream.h"
+#include "renderer.h"
 #include <csignal>
 
 int main(int argc, char * argv[])
@@ -34,13 +35,17 @@ int main(int argc, char * argv[])
 
     std::cout << "Hello, World!" << std::endl;
 
-    dmcr::DummyScene scene;
+    dmcr::ScenePtr scene(new dmcr::DummyScene);
     try {
-        scene.loadFromFile("assets/scene.json");
-        scene.debugPrint();
+        scene->loadFromFile("assets/scene.json");
     } catch (const dmcr::SceneException& e) {
         std::cout << "SceneException: " << e.what() << std::endl;
     }
+    
+    dmcr::Renderer renderer(scene);
+    dmcr::RenderResult result(640, 480);
+    renderer.render(&result, 640, 480);
+    result.saveImage("test.ppm");
 
     if (args.size() > 1) {
         dmcr::Socket s(args[1], 9393);

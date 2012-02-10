@@ -20,6 +20,7 @@ void dmcr::Scene::loadFromFile(const std::string &file_name)
         throw dmcr::SceneException(std::string("Failed to open file ") +
                                    file_name);
 
+    // Load contents of file to string data using iterators
     std::string data((std::istreambuf_iterator<char>(input_file)),
                      std::istreambuf_iterator<char>());
 
@@ -37,7 +38,35 @@ void dmcr::Scene::loadFromString(const std::string &string)
         throw dmcr::SceneException(std::string("Failed to parse scene") +
                                    reader.getFormattedErrorMessages());
 
+    const Json::Value camera = root["camera"];
+    if (!camera)
+        throw SceneException("No camera specified in scene");
+    const Json::Value camera_pos = camera["position"];
+    if (!camera_pos || !camera_pos.isArray() || camera_pos.size() != 3)
+        throw SceneException("No position specified for camera");
+    const Json::Value camera_look_at = camera["look_at"];
+    if (!camera_look_at || !camera_look_at.isArray() || 
+        camera_look_at.size() != 3)
+        throw SceneException("No look_at specified for camera");
+    const Json::Value camera_fov = camera["fov"];
+    if (!camera_fov || !camera_fov.isNumeric())
+        throw SceneException("No fov specified for camera");
+    const Json::Value camera_aspect = camera["aspect"];
+    if (!camera_aspect || !camera_aspect.isNumeric())
+        throw SceneException("No aspect specified for camera");
+    
+    
+    m_camera.setPosition(dmcr::Vector3f(camera_pos[0u].asDouble(),
+                                        camera_pos[1].asDouble(),
+                                        camera_pos[2].asDouble()));
+    m_camera.setLookAt(dmcr::Vector3f(camera_look_at[0u].asDouble(),
+                                      camera_look_at[1].asDouble(),
+                                      camera_look_at[2].asDouble()));
+    m_camera.setFov(camera_fov.asDouble());
+    m_camera.setAspect(camera_aspect.asDouble());
+        
     const Json::Value objects = root["scene"];
+    
     for (unsigned int i = 0; i < objects.size(); ++i) {
         const Json::Value position = objects[i]["position"];
         dmcr::Vector3f position_value;
@@ -56,12 +85,11 @@ void dmcr::Scene::loadFromString(const std::string &string)
             std::shared_ptr<dmcr::Sphere> sphere(new dmcr::Sphere);
             
             const Json::Value radius = objects[i]["radius"];
-            float radius_value = 1.0f;
             
-            if (!radius)
+            if (!radius || !radius.isNumeric())
                 throw SceneException("No radius specified for sphere");
             
-            radius_value = radius.asDouble();
+            float radius_value = radius.asDouble();
 
             sphere->setRadius(radius_value);
             object = sphere;

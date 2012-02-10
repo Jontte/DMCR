@@ -10,6 +10,14 @@ void dmcr::DummyScene::addObject(dmcr::SceneObjectPtr &object)
     m_objects.push_back(object);
 }
 
+dmcr::RaycastResult dmcr::DummyScene::shootRay(const dmcr::Ray& ray) const
+{
+    RaycastResult result;
+    result.setIntersectionPoint(ray.origin());
+    result.setObject(m_objects.front());
+    return result;
+}
+
 void dmcr::DummyScene::debugPrint() const
 {
     for (dmcr::SceneObjectPtr object : m_objects) {
