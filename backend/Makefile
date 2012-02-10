@@ -9,12 +9,20 @@ endif
 CC = gcc
 PROTOC = protoc
 
-# C/C++ source files
-CPP_SOURCES = src/main.cpp src/dmcr_protocol.pb.cpp src/socket.cpp \
-  src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
-  3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp src/task.cpp \
-  src/taskmanager.cpp
+# Common C/C++ source files
+CPP_SOURCES =		src/dmcr_protocol.pb.cpp src/socket.cpp \
+								src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
+                3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp\
+								src/task.cpp src/taskmanager.cpp
 CC_SOURCES = 
+
+# Source files that belong explicitly to normal operation (disregard from testing)
+MAIN_SOURCES = src/main.cpp
+
+# Source files that belong to unit testing framework:
+TEST_SOURCES = tests/main.cpp\
+							 tests/test_sharedstream.cpp\
+							 tests/test_loadbalancer.cpp
 
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
@@ -28,6 +36,7 @@ LDFLAGS = $(PROTOBUF_LDFLAGS)
 
 # Target file
 EXECUTABLE = dmcr
+EXECUTABLE_UNITTEST = unittest
 
 # C/C++-specific flags:
 CPPFLAGS = $(CFLAGS) -std=gnu++0x
@@ -38,14 +47,18 @@ OBJDIR = obj
 SRCDIR = src
 ASSETDIR = assets
 
-SOURCES = $(CPP_SOURCES) $(CC_SOURCES)
-OBJECTS = $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
+SOURCES = $(CPP_SOURCES) $(CC_SOURCES) $(MAIN_SOURCES) $(TEST_SOURCES)
+MAIN_OBJECTS = $(MAIN_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
+TEST_OBJECTS = $(TEST_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
 
 DEPEND = makedepend -Y -pobj/
 
-all: builddirs $(SOURCES) $(EXECUTABLE)
-$(EXECUTABLE): $(OBJECTS)
-	$(CPP) $(OBJECTS) -o $@ $(CFLAGS) $(LDFLAGS)
+all: builddirs $(SOURCES) $(EXECUTABLE) $(EXECUTABLE_UNITTEST)
+$(EXECUTABLE): $(MAIN_OBJECTS)
+	$(CPP) $(MAIN_OBJECTS) -o $@ $(CFLAGS) $(LDFLAGS)
+
+$(EXECUTABLE_UNITTEST): $(TEST_OBJECTS)
+	$(CPP) $(TEST_OBJECTS) -o $@ $(CFLAGS) $(LDFLAGS)
 
 $(OBJDIR)/%.o: %.cpp
 		$(CPP) -c $(CPPFLAGS) $< -o $@
@@ -63,9 +76,9 @@ depend: $(SOURCES)
 	$(DEPEND) $(SOURCES)
 
 clean:
-	-rm $(EXECUTABLE) $(OBJECTS)
+	-@rm $(EXECUTABLE) $(EXECUTABLE_UNITTEST) $(MAIN_OBJECTS) $(TEST_OBJECTS) 2>/dev/null || true
 
-builddirs: $(OBJDIR)/src $(OBJDIR)/3rdparty/json
+builddirs: $(OBJDIR)/src $(OBJDIR)/tests $(OBJDIR)/3rdparty/json
 
 $(OBJDIR)/%:
 	@mkdir -p $@
@@ -74,9 +87,6 @@ $(OBJDIR)/%:
 
 # DO NOT DELETE
 
-obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
-obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h
-obj/src/main.o: src/sharedstream.h
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
 obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
 obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
@@ -88,3 +98,8 @@ obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/taskmanager.o: src/taskmanager.h src/socket.h src/dmcr_protocol.pb.h
 obj/src/taskmanager.o: src/scene.h src/sceneobject.h src/vector.h src/task.h
 obj/src/taskmanager.o: src/loadbalancer.h
+obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
+obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h
+obj/src/main.o: src/sharedstream.h
+obj/tests/test_sharedstream.o: src/sharedstream.h
+obj/tests/test_loadbalancer.o: src/sharedstream.h
