@@ -36,12 +36,13 @@ class SharedStream
 public:
 
     // Push an instance of T to the back of the stream
-    void push(const T& value)
+    template <class A>
+    void push(A && value)
     {
         {
             // Limit method re-entry
             std::unique_lock<std::mutex> lock(m_mutex);
-            m_queue.push_back(value);
+            m_queue.push_back(std::forward<A>(value));
         }
         // Wake up one waiting listener
         m_cond.notify_one();
@@ -51,7 +52,7 @@ public:
     // Optional parameter: maximum time duration to wait for
     // Default value is to wait forever
     template <class Rep=int, class Period=std::ratio<1> >
-    T pull(
+    T && pull(
         const std::chrono::duration<Rep, Period>& duration
         = std::chrono::seconds(0))
     {
@@ -79,17 +80,17 @@ public:
         // Pop content like a boss
         T ret = std::move(m_queue.front()); 
         m_queue.pop_front();
-        return ret;
+        return std::move(ret);
     }
 
-    // Enable normal construction, move construction and move assignment
+    // Enable normal construction
     SharedStream() = default;
-    SharedStream(SharedStream&& other) = default;
-    SharedStream& operator=(SharedStream&& other) = default;
 
-    // Prohibit copying and assignment
-    SharedStream(const SharedStream&) = delete; 
-    SharedStream & operator=(const SharedStream&) = delete;
+    // Prohibit moving, copying and assignment
+    SharedStream(SharedStream<T>&& other) = delete;
+    SharedStream(const SharedStream<T>&) = delete; 
+    SharedStream<T>& operator=(SharedStream<T>&& other) = delete;
+    SharedStream<T>& operator=(const SharedStream<T>&) = delete;
 
 private:
     

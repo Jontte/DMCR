@@ -16,7 +16,12 @@ int main(int argc, char * argv[])
         // SharedStream tests
         dmcr::SharedStream<int> queue;
         queue.push(10);
-        assert(queue.pull() == 10);
+        int kissa = 20;
+        queue.push(kissa);
+
+        kissa = queue.pull();
+        assert(kissa == 10);
+        assert(queue.pull() == 20);
 
         queue.pull(std::chrono::seconds(1));
     }
