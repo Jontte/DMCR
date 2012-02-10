@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 #include "loadbalancer.h"
 
 
@@ -17,18 +18,18 @@ size_t LoadBalancer::get()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    // The job that we should deal out is the one with least completions and 
-    // least tasks working on it, ie. find the minimum sum 
+    // Find job with worst ratios
 
     size_t min_index = 0;
-    int min_sum = -1;
+    int min_sum = 0;
     
     for(size_t i = 0; i < m_pending.size(); ++i)
     {
-        int sum = m_pending[i] + m_finished[i];
-        if (sum < min_sum || min_sum == -1)
+        int sum = m_finished[i] + m_pending[i];
+        sum = m_finished[i]*100 / (sum+1) + sum; 
+        if (sum < min_sum || i == 0)
         {
-            sum = min_sum;
+            min_sum = sum;
             min_index = i;
         }
     }
