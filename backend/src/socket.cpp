@@ -118,7 +118,8 @@ void dmcr::Socket::readPacket()
     char len_buffer[4];
     uint32_t read_len = 0;
     while (read_len < 4)
-        checkError(recv(m_fd, len_buffer+read_len, 4-read_len, MSG_WAITALL));
+        read_len += checkError(recv(m_fd, len_buffer+read_len, 4-read_len, 
+                                    MSG_WAITALL));
 
     uint32_t header_len = ntohl(*((uint32_t*)len_buffer));
     if (header_len > MAX_STACK_LENGTH)
