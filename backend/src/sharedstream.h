@@ -1,8 +1,9 @@
-#ifndef SHARED_STREAM_H_
-#define SHARED_STREAM_H_
+#ifndef SHAREDSTREAM_H
+#define SHAREDSTREAM_H
 
 #include <list>
 #include <condition_variable>
+#include <mutex>
 #include <chrono>
 #include <exception>
 
@@ -15,10 +16,10 @@ namespace dmcr {
 
 class StreamTimeoutException : public std::exception
 {
-    public:
+public:
     const char* what() const throw() {
-        return "Stream timeout occurred";
-    };
+        return "SharedStream timeout occurred";
+    }
 };
 
 /*  
@@ -83,6 +84,13 @@ public:
         return std::move(ret);
     }
 
+    // Check whether the stream is empty / whether a call to pull() would block
+    bool empty()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        return m_queue.empty();
+    }
+
     // Enable normal construction
     SharedStream() = default;
 
@@ -100,7 +108,7 @@ private:
 };
 
 
-};
+}
 
 #endif
 
