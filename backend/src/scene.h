@@ -5,6 +5,7 @@
 #include <vector>
 #include <stdexcept>
 #include "sceneobject.h"
+#include <memory>
 
 namespace dmcr {
 
@@ -53,6 +54,8 @@ public:
       */
     virtual void addObject(dmcr::SceneObjectPtr &object) = 0;
 };
+
+typedef std::shared_ptr<Scene> ScenePtr;
 
 }
 
