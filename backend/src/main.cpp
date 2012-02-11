@@ -41,11 +41,10 @@ int main(int argc, char * argv[])
     } catch (const dmcr::SceneException& e) {
         std::cout << "SceneException: " << e.what() << std::endl;
     }
-    
+        
     dmcr::Renderer renderer(scene);
-    dmcr::RenderResult result(640, 480);
-    renderer.render(&result, 640, 480);
-    result.saveImage("test.ppm");
+    dmcr::RenderResultPtr result = renderer.render(640, 480);
+    result->saveImage("test.ppm");
 
     if (args.size() > 1) {
         dmcr::Socket s(args[1], 9393);

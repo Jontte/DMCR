@@ -1,21 +1,22 @@
 #include "renderer.h"
 #include <fstream>
+#include <iostream>
 
-dmcr::RenderResult::RenderResult(uint16_t width, uint16_t height) :
-    m_width(width),
-    m_height(height)
+dmcr::RenderResult::RenderResult(uint16_t left, uint16_t right,
+                                 uint16_t top, uint16_t bottom) :
+    m_left(left),
+    m_right(right),
+    m_top(top),
+    m_bottom(bottom)
 {
-    m_data = new Color[width * height];
+    m_width = right - left + 1;
+    m_height = bottom - top + 1;
+    m_data = new Color[m_width * m_height];
 }
 
 dmcr::RenderResult::~RenderResult()
 {
     delete [] m_data;
-}
-
-void dmcr::RenderResult::setPixel(uint16_t x, uint16_t y, Color c)
-{
-    m_data[y * m_width + x] = c;
 }
 
 void dmcr::RenderResult::saveImage(const std::string& file_name) const
@@ -43,36 +44,43 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
     file.close();
 }
 
-void dmcr::Renderer::render(dmcr::RenderResult *result, 
-                            uint16_t h_res, uint16_t v_res,
-                            float left, float right,
-                            float top, float bottom) const
+dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res, 
+                                             uint16_t left, uint16_t right, 
+                                             uint16_t top, uint16_t bottom) const
 {
-    // Convert given coordinates to pixel coordinates
-    uint16_t pixel_left = left * h_res;
-    uint16_t pixel_right = right * h_res;
-    uint16_t pixel_top = top * v_res;
-    uint16_t pixel_bottom = bottom * v_res;
+    // By default render the whole image
+    if (right == 0)
+        right = h_res - 1;
+    if (bottom == 0)
+        bottom = v_res - 1;
+    
+    dmcr::RenderResultPtr result(new dmcr::RenderResult(left, right, 
+                                                        top, bottom));
     
     // Scan the given portion of the scene
-    for (uint16_t y = pixel_top; y <= pixel_bottom; ++y) {
-        for (uint16_t x = pixel_left; x <= pixel_right; ++x) {
+    for (uint16_t y = top; y <= bottom; ++y) {
+        for (uint16_t x = left; x <= right; ++x) {
+            
+            RaycastResult raycast_result = 
+                m_scene->shootRay(
+                    m_scene->camera().ray((float)x / (float)h_res,
+                                          (float)y / (float)v_res));
+            
             /*
              * TODO
              * Implement me properly!
              */
-            RaycastResult raycast_result = 
-                m_scene->shootRay(m_scene->camera().ray(x, y));
-                
             Color c;
-            
+                        
             if (raycast_result.object()->type() == "sphere")
                 c = { 1.0f, 0.0f, 0.0f };
             else
                 c = { 0.0f, 0.0f, 0.0f };
-            result->setPixel(x, y, c);
+            result->setPixel(x - left, y - top, c);
         }
     }
+    
+    return result;
 }
                                          
                                      
