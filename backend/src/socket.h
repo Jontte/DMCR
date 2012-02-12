@@ -45,15 +45,25 @@ public:
       */
     Socket(const std::string& hostname, in_port_t port);
     ~Socket();
-
-    /*! \brief Set event listener
-
-      Set the event listener the methods of which will be called when certain
-      events happen. The event listener must be an instance of a class that
-      inherits IBackendSocketListener.
-      \param listener Event listener
-      */
+    
+    /*! \brief Set task event listener
+     * 
+     * Set the task listener, a class that implements ITaskListener.
+     * Methods are called on the task listener whenever the backend receives
+     * a task-related event, such as a new task, cancelling a task, querying
+     * a task's progress, etc.
+     * \param listener Task listener
+     */
     void setTaskListener(ITaskListener *listener);
+    
+    /*! \brief Set socket event listener
+     * 
+     * Set the socket listener, a class that implements ISocketListener.
+     * Methods are called on the socket listener whenever the state of the
+     * socket connection to the controller changes, such as when the
+     * connection is established (or couldn't be established).
+     * \param listener Socket listener
+     */
     void setSocketListener(ISocketListener *listener);
 
     /*! \brief Connect to host

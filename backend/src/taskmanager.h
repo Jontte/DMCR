@@ -22,17 +22,35 @@ public:
     {}
 };
 
+/*! Lambda that will be called with the scene string when a scene object
+ * needs to be constructed. */
 typedef std::function<dmcr::ScenePtr(const std::string&)> SceneFactory;
 
+/*! \brief Manages tasks. Can receive tasks from multiple task providers. */
 class TaskManager : public dmcr::ITaskListener
 {
 public:
+    /*! \brief Construct a new task manager.
+     * 
+     * You should only ever need one task manager running simultaneously.
+     * \param factory Scene factory lambda
+     */
     TaskManager(SceneFactory factory);
     
+    /*! \brief Called by a task provider when a new task is waiting
+     * 
+     * \param provider Pointer to task provider
+     * \param id ID number of new task
+     * \param width Width of render result
+     * \param height Height of render result
+     * \param iterations Number of iterations to calculate
+     * \param scene_str Scene description string
+     */
     virtual void onNewTask(ITaskProvider *provider, uint32_t id,
                            uint16_t width, uint16_t height, 
                            uint32_t iterations, const std::string& scene_str);
     
+    /*! \skip */
     virtual void onTaskCompleted(Task *task);
     
 private:

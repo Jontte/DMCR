@@ -8,6 +8,7 @@
 
 namespace dmcr {
 
+/*! \brief Holds the color of one pixel in RGB as three floats */
 struct Color {
     float r, g, b;
 };
@@ -25,6 +26,13 @@ public:
 class RenderResult
 {
 public:
+    /*! \brief Construct a render result
+     * 
+     * \param left X coordinate of left border of rendered area in pixels
+     * \param right X coordinate of right border of rendered area in pixels
+     * \param top Y coordinate of top border of rendered area in pixels
+     * \param bottom Y coordinate of bottom border of rendered area in pixels
+     */
     RenderResult(uint16_t left, uint16_t right, uint16_t top, uint16_t bottom);
     ~RenderResult();
    
@@ -51,6 +59,7 @@ public:
     uint16_t width() const { return m_width; }
     uint16_t height() const { return m_height; }
     
+    /*! \brief Get rendered image as array of Color structs */
     Color *data() const { return m_data; }
     
 private:
@@ -69,6 +78,10 @@ typedef std::shared_ptr<dmcr::RenderResult> RenderResultPtr;
 class Renderer
 {
 public:
+    /*! \brief Construct a renderer
+     * 
+     * \param scene Scene object to render
+     */
     Renderer(dmcr::ScenePtr scene) { m_scene = scene; }
     
     void setScene(dmcr::ScenePtr scene) { m_scene = scene; }

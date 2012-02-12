@@ -11,6 +11,8 @@ public:
 
     /*! Called when a task provider has a new rendering task for the listener.
       \param provider Task provider object
+      \param task_id ID number of the new task. Must be retained and passed in
+                     the onTaskCompleted event
       \param width Desired rendering width
       \param height Desired rendering height
       \param iterations Number of iterations the backend should render per pixel
