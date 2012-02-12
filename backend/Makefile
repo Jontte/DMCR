@@ -88,7 +88,9 @@ $(OBJDIR)/%:
 # DO NOT DELETE
 
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
-obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h
+obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h src/itaskprovider.h
+obj/src/socket.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
+obj/src/socket.o: src/ray.h src/camera.h src/itasklistener.h
 obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h src/ray.h
 obj/src/scene.o: src/camera.h
 obj/src/sceneobject.o: src/sceneobject.h src/vector.h
@@ -96,16 +98,23 @@ obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/dummyscene.o: src/vector.h src/ray.h src/camera.h
 obj/src/loadbalancer.o: src/loadbalancer.h
 obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
-obj/src/task.o: src/ray.h src/camera.h
-obj/src/taskmanager.o: src/taskmanager.h src/socket.h src/dmcr_protocol.pb.h
-obj/src/taskmanager.o: src/scene.h src/sceneobject.h src/vector.h src/ray.h
-obj/src/taskmanager.o: src/camera.h src/task.h src/loadbalancer.h
+obj/src/task.o: src/ray.h src/camera.h src/renderer.h src/taskmanager.h
+obj/src/task.o: src/itasklistener.h
+obj/src/taskmanager.o: src/taskmanager.h src/scene.h src/sceneobject.h
+obj/src/taskmanager.o: src/vector.h src/ray.h src/camera.h src/task.h
+obj/src/taskmanager.o: src/renderer.h src/itasklistener.h src/loadbalancer.h
+obj/src/taskmanager.o: src/itaskprovider.h
 obj/src/ray.o: src/ray.h src/vector.h
 obj/src/renderer.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/renderer.o: src/ray.h src/camera.h
 obj/src/camera.o: src/camera.h src/vector.h src/ray.h
 obj/src/main.o: src/vector.h src/socket.h src/dmcr_protocol.pb.h
-obj/src/main.o: src/dummyscene.h src/scene.h src/sceneobject.h src/ray.h
-obj/src/main.o: src/camera.h src/sharedstream.h src/renderer.h
+obj/src/main.o: src/itaskprovider.h src/renderer.h src/scene.h
+obj/src/main.o: src/sceneobject.h src/ray.h src/camera.h src/itasklistener.h
+obj/src/main.o: src/dummyscene.h src/sharedstream.h
 obj/tests/test_sharedstream.o: src/sharedstream.h
 obj/tests/test_loadbalancer.o: src/loadbalancer.h
+obj/tests/test_tasks.o: src/taskmanager.h src/scene.h src/sceneobject.h
+obj/tests/test_tasks.o: src/vector.h src/ray.h src/camera.h src/task.h
+obj/tests/test_tasks.o: src/renderer.h src/itasklistener.h src/task.h
+obj/tests/test_tasks.o: src/scene.h src/dummyscene.h src/itaskprovider.h
