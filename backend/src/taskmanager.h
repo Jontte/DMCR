@@ -1,12 +1,15 @@
 #ifndef DMCR_TASKMANAGER_H
 #define DMCR_TASKMANAGER_H
 
-#include "socket.h"
 #include <string>
 #include <functional>
 #include "scene.h"
 #include <list>
 #include "task.h"
+#include <mutex>
+#include "renderer.h"
+#include <list>
+#include "itasklistener.h"
 
 namespace dmcr {
     
@@ -21,20 +24,27 @@ public:
 
 typedef std::function<dmcr::ScenePtr(const std::string&)> SceneFactory;
 
-class TaskManager : public dmcr::IBackendSocketListener
+class TaskManager : public dmcr::ITaskListener
 {
 public:
     TaskManager(SceneFactory factory);
     
-    virtual void onConnectionResult(Socket* socket, ConnectionResult result);
-    virtual void onNewTask(Socket* socket, uint16_t width, uint16_t height, 
+    virtual void onNewTask(ITaskProvider *provider, uint32_t id,
+                           uint16_t width, uint16_t height, 
                            uint32_t iterations, const std::string& scene_str);
     
     virtual void onTaskCompleted(Task *task);
     
 private:
+    struct TaskData {
+        TaskPtr task;
+        ITaskProvider *provider;
+        uint32_t id;
+    };
+    
     SceneFactory m_scene_factory;
-    std::list<TaskPtr> m_tasks;
+    std::list<TaskData> m_tasks;
+    std::mutex m_mutex;
 };
 
 }

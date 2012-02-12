@@ -15,8 +15,8 @@ static int checkError(int r) {
 }
 
 dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
-    : m_hostname(hostname), m_port(port), m_listener(NULL),
-      m_fd(0)
+    : m_hostname(hostname), m_port(port), m_task_listener(NULL),
+      m_socket_listener(NULL), m_fd(0)
 {
 }
 
@@ -25,10 +25,16 @@ dmcr::Socket::~Socket()
     close(m_fd);
 }
 
-void dmcr::Socket::setListener(IBackendSocketListener *listener)
+void dmcr::Socket::setTaskListener(dmcr::ITaskListener *listener)
 {
-    m_listener = listener;
+    m_task_listener = listener;
 }
+
+void dmcr::Socket::setSocketListener(dmcr::ISocketListener* listener)
+{
+    m_socket_listener = listener;
+}
+
 
 void dmcr::Socket::connect()
 {
@@ -162,8 +168,9 @@ void dmcr::Socket::readPacket()
 void dmcr::Socket::handleConnectionResult(const dmcr::Packet::ConnectionResult
                                           &msg)
 {
-    if (m_listener)
-        m_listener->onConnectionResult(this, (ConnectionResult)msg.result());
+    if (m_socket_listener)
+        m_socket_listener->onConnectionResult(
+            this, (ConnectionResult)msg.result());
 }
 
 void dmcr::Socket::run()
@@ -174,14 +181,14 @@ void dmcr::Socket::run()
 
 void dmcr::Socket::handleNewTask(const dmcr::Packet::NewTask &msg)
 {
-    if (m_listener)
-        m_listener->onNewTask(this, msg.width(), msg.height(),
-                              msg.iterations(), msg.scene());
+    if (m_task_listener)
+        m_task_listener->onNewTask(this, msg.id(), msg.width(), msg.height(),
+                                   msg.iterations(), msg.scene());
 }
 
 void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
                                      uint32_t height, uint32_t iterations_done,
-                                     float *data)
+                                     dmcr::Color *data)
 {
     dmcr::Packet::RenderedData packet;
     packet.set_width(width);
@@ -191,12 +198,22 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     packet.set_data_length(width*height*3*sizeof(uint32_t));
 
     std::unique_ptr<uint32_t[]> data_buf(new uint32_t[width*height*3]);
-    for (uint32_t i = 0; i < width*height*3; ++i)
-        data_buf[i] = htonl((uint32_t)(data[i] * 0xffffffff));
+    for (uint32_t i = 0; i < width*height; ++i) {
+        data_buf[3*i+0] = htonl((uint32_t)(data[i].r * 0xffffffff));
+        data_buf[3*i+1] = htonl((uint32_t)(data[i].g * 0xffffffff));
+        data_buf[3*i+2] = htonl((uint32_t)(data[i].b * 0xffffffff));
+    }
 
     std::lock_guard<std::mutex> G(m_mutex);
 
     sendPacketUnsafe(Packet_RenderedData, packet);
 
     checkError(send(m_fd, data_buf.get(), width*height*3*sizeof(uint32_t), 0));
+}
+
+void dmcr::Socket::onTaskCompleted(uint32_t task_id,
+                                   dmcr::RenderResultPtr result)
+{
+    sendRenderedImage(task_id, result->width(), result->height(), 1,
+                      result->data());
 }

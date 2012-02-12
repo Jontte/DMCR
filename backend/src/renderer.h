@@ -51,6 +51,8 @@ public:
     uint16_t width() const { return m_width; }
     uint16_t height() const { return m_height; }
     
+    Color *data() const { return m_data; }
+    
 private:
     uint16_t m_left, m_right, m_top, m_bottom;
     uint16_t m_width;
