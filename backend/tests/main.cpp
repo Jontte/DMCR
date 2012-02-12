@@ -9,6 +9,7 @@ typedef std::function<void(void)> test_t;
 // Introduce your test functions here..
 void test_sharedstream();
 void test_loadbalancer();
+void test_tasks();
 
 int main()
 {
@@ -17,6 +18,7 @@ int main()
     // And list them again here..
     DEF_TEST(test_sharedstream);
     DEF_TEST(test_loadbalancer);
+    DEF_TEST(test_tasks);
 
     for(size_t i = 0; i < tests.size(); i++)
     {
