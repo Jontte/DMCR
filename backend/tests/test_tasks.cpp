@@ -3,6 +3,7 @@
 #include "../src/scene.h"
 #include "../src/dummyscene.h"
 #include "../src/itaskprovider.h"
+#include <unistd.h>
 #include <string>
 #include <iostream>
 
