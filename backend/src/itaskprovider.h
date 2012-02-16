@@ -17,7 +17,7 @@ public:
      * \param result Result of the rendering
      */
     virtual void onTaskCompleted(uint32_t task_id,
-                                 dmcr::RenderResultPtr result) = 0;
+                                 const dmcr::RenderResultPtr& result) = 0;
 };
 
 }

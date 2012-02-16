@@ -192,7 +192,7 @@ void dmcr::Socket::handleNewTask(const dmcr::Packet::NewTask &msg)
 
 void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
                                      uint32_t height, uint32_t iterations_done,
-                                     dmcr::Color *data)
+                                     std::vector<dmcr::Color> data)
 {
     dmcr::Packet::RenderedData packet;
     packet.set_width(width);
@@ -216,7 +216,7 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
 }
 
 void dmcr::Socket::onTaskCompleted(uint32_t task_id,
-                                   dmcr::RenderResultPtr result)
+                                   const dmcr::RenderResultPtr& result)
 {
     sendRenderedImage(task_id, result->width(), result->height(), 1,
                       result->data());

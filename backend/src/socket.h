@@ -91,7 +91,8 @@ public:
       \param data Array of floats of size width*height*3
       */
     void sendRenderedImage(uint32_t task, uint32_t width, uint32_t height,
-                           uint32_t iterations_done, dmcr::Color *data);
+                           uint32_t iterations_done, 
+                           std::vector<dmcr::Color> data);
     
     /*! \brief Called on task completion by the task listener
      * 
@@ -99,7 +100,7 @@ public:
      * \param result Render result to transmit
      */
     virtual void onTaskCompleted(uint32_t task_id, 
-                                 dmcr::RenderResultPtr result);
+                                 const dmcr::RenderResultPtr& result);
 
 
 private:

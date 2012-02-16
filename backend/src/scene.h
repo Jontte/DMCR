@@ -8,6 +8,7 @@
 #include "sceneobject.h"
 #include "ray.h"
 #include "camera.h"
+#include "unique_ptr"
 
 namespace dmcr {
 
@@ -72,7 +73,7 @@ public:
      * subclass.
      * \param object Object to add
      */
-    virtual void addObject(dmcr::SceneObjectPtr &object) = 0;
+    virtual void addObject(std::unique_ptr<dmcr::SceneObject> object) = 0;
     
     /*!
      * \brief Shoot a ray in the scene

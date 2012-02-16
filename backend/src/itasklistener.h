@@ -35,7 +35,7 @@ public:
       \param socket Receiving socket
       \param result Connection result
       */
-    virtual void onConnectionResult(ITaskProvider *socket,
+    virtual void onConnectionResult(ITaskProvider *provider,
                                     ConnectionResult result) = 0;
 };
 

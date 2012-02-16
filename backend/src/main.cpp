@@ -38,6 +38,7 @@ int main(int argc, char * argv[])
     dmcr::ScenePtr scene(new dmcr::DummyScene);
     try {
         scene->loadFromFile("assets/scene.json");
+        ((dmcr::DummyScene*)scene.get())->debugPrint();
     } catch (const dmcr::SceneException& e) {
         std::cout << "SceneException: " << e.what() << std::endl;
     }

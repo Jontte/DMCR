@@ -49,7 +49,7 @@ protected:
     dmcr::Vector3f m_extents;
 };
 
-typedef std::shared_ptr<SceneObject> SceneObjectPtr;
+typedef SceneObject* SceneObjectPtr;
 
 }
 

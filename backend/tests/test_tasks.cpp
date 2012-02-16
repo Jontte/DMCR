@@ -16,7 +16,7 @@ public:
     bool completed;
     
     virtual void onTaskCompleted(uint32_t /*task_id*/, 
-                                 dmcr::RenderResultPtr /*result*/)
+                                 const dmcr::RenderResultPtr& /*result*/)
     {
         completed = true;
     }

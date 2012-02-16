@@ -1,0 +1,13 @@
+#ifndef DMCR_UNIQUE_PTR
+#define DMCR_UNIQUE_PTR
+
+#include <memory>
+
+namespace dmcr {
+    template<typename T, typename... As>
+    std::unique_ptr<T> make_unique(As&&... args) {
+        return std::unique_ptr<T>(new T(std::forward<As>(args)...));
+    }
+}
+
+#endif

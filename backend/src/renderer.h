@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include "scene.h"
+#include <vector>
 
 namespace dmcr {
 
@@ -34,7 +35,6 @@ public:
      * \param bottom Y coordinate of bottom border of rendered area in pixels
      */
     RenderResult(uint16_t left, uint16_t right, uint16_t top, uint16_t bottom);
-    ~RenderResult();
    
     /*!
      * \brief Set pixel to a color
@@ -60,14 +60,14 @@ public:
     uint16_t height() const { return m_height; }
     
     /*! \brief Get rendered image as array of Color structs */
-    Color *data() const { return m_data; }
+    const std::vector<Color>& data() const { return m_data; }
     
 private:
     uint16_t m_left, m_right, m_top, m_bottom;
     uint16_t m_width;
     uint16_t m_height;
     
-    Color *m_data;
+    std::vector<Color> m_data;
 };
 
 typedef std::shared_ptr<dmcr::RenderResult> RenderResultPtr;

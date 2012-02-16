@@ -7,16 +7,11 @@ dmcr::RenderResult::RenderResult(uint16_t left, uint16_t right,
     m_left(left),
     m_right(right),
     m_top(top),
-    m_bottom(bottom)
+    m_bottom(bottom),
+    m_width(right - left + 1),
+    m_height(bottom - top + 1),
+    m_data(m_width * m_height)
 {
-    m_width = right - left + 1;
-    m_height = bottom - top + 1;
-    m_data = new Color[m_width * m_height];
-}
-
-dmcr::RenderResult::~RenderResult()
-{
-    delete [] m_data;
 }
 
 void dmcr::RenderResult::saveImage(const std::string& file_name) const

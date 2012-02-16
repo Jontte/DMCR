@@ -11,12 +11,12 @@ class DummyScene : public dmcr::Scene
 {
 public:
     DummyScene();
-    void addObject(dmcr::SceneObjectPtr &object);
+    void addObject(std::unique_ptr<dmcr::SceneObject> object);
     dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const;
     void debugPrint() const;
 
 private:
-    std::vector<dmcr::SceneObjectPtr> m_objects;
+    std::vector<std::unique_ptr<dmcr::SceneObject>> m_objects;
 };
 
 }
