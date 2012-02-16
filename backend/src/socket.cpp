@@ -4,9 +4,9 @@
 #include <netdb.h>
 #include "dmcr_protocol.pb.h"
 #include <cstdio>
-#include <memory>
 #include <unistd.h>
 #include <cerrno>
+#include <vector>
 
 static int checkError(int r) {
     if (r == -1)
@@ -111,7 +111,7 @@ void dmcr::Socket::sendPacket(PacketId id,
     sendPacketUnsafe(id, msg);
 }
 
-#define MAX_STACK_LENGTH 64
+static const uint32_t MAX_HEADER_LENGTH = 64;
 void dmcr::Socket::readPacket()
 {
     // Protobuf messages are always variable length, so we need to send the
@@ -120,39 +120,43 @@ void dmcr::Socket::readPacket()
     // 1. header length as uint32_t 2. protobuf header with message length
     // 3. actual protobuf message
     // But it works.
-
-    char len_buffer[4];
+    
+    /* Part 1 - Receive length of header as an uint32_t */
+    char header_len_buf[4];
     uint32_t read_len = 0;
     while (read_len < 4)
-        read_len += checkError(recv(m_fd, len_buffer+read_len, 4-read_len, 
+        read_len += checkError(recv(m_fd, header_len_buf+read_len, 4-read_len, 
                                     MSG_WAITALL));
 
-    uint32_t header_len = ntohl(*((uint32_t*)len_buffer));
-    if (header_len > MAX_STACK_LENGTH)
+    uint32_t header_len = ntohl(*((uint32_t*)header_len_buf));
+    if (header_len > MAX_HEADER_LENGTH)
         throw SocketException("Too long packet header");
     if (header_len == 0)
         throw SocketException("Zero length header");
 
-    char buffer[header_len];
+    /* Part 2 - Receive header */
+    std::vector<char> header_buf(header_len);
     read_len = 0;
     while (read_len < header_len)
-        read_len += checkError(recv(m_fd, buffer+read_len, header_len-read_len,
-                                    MSG_WAITALL));
+        read_len += checkError(recv(m_fd, header_buf.data()+read_len, 
+                                    header_len-read_len, MSG_WAITALL));
 
     dmcr::Packet::PacketHeader header;
-    header.ParseFromArray(buffer, header_len);
-
-    std::unique_ptr<char[]> buffer2(new char[header.length()]);
-
+    header.ParseFromArray(header_buf.data(), header_len);
+    
+    /* Part 3 - Receive packet */
+    std::vector<char> packet_buf(header.length());
     read_len = 0;
     while (read_len < header.length())
-        read_len += checkError(recv(m_fd, buffer2.get()+read_len,
+        read_len += checkError(recv(m_fd, packet_buf.data()+read_len,
                                     header.length()-read_len, 0));
+        
+    /* Dispatch packet to handler */
 
     PacketId pid = (PacketId)header.id();
 
 #define PACKET_CASE(name) case Packet_##name: { dmcr::Packet::name msg;\
-    msg.ParseFromArray(buffer2.get(), header.length()); handle##name(msg);\
+    msg.ParseFromArray(packet_buf.data(), header.length()); handle##name(msg);\
     break; };
 
     switch (pid) {
@@ -197,7 +201,7 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     packet.set_iterations_done(iterations_done);
     packet.set_data_length(width*height*3*sizeof(uint32_t));
 
-    std::unique_ptr<uint32_t[]> data_buf(new uint32_t[width*height*3]);
+    std::vector<uint32_t> data_buf(width*height*3);
     for (uint32_t i = 0; i < width*height; ++i) {
         data_buf[3*i+0] = htonl((uint32_t)(data[i].r * 0xffffffff));
         data_buf[3*i+1] = htonl((uint32_t)(data[i].g * 0xffffffff));
@@ -208,7 +212,7 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
 
     sendPacketUnsafe(Packet_RenderedData, packet);
 
-    checkError(send(m_fd, data_buf.get(), width*height*3*sizeof(uint32_t), 0));
+    checkError(send(m_fd, data_buf.data(), width*height*3*sizeof(uint32_t), 0));
 }
 
 void dmcr::Socket::onTaskCompleted(uint32_t task_id,
