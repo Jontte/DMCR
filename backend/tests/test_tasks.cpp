@@ -24,7 +24,7 @@ public:
 
 void test_tasks() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
-        dmcr::ScenePtr scene(new dmcr::DummyScene);
+        auto scene = std::make_shared<dmcr::DummyScene>();
         scene->loadFromFile("assets/scene.json");
         return scene;
     };

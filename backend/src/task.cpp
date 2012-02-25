@@ -26,6 +26,7 @@ private:
     dmcr::TaskManager *m_mgr;
 };
 
+/* Take scene by value because we are going to take it on a wild ride */
 dmcr::Task::Task(uint16_t width, uint16_t height, uint32_t iterations, 
            dmcr::ScenePtr scene, dmcr::TaskManager *mgr)
 : m_scene(scene), m_manager(mgr), m_width(width), m_height(height)

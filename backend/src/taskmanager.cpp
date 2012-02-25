@@ -15,22 +15,25 @@ void dmcr::TaskManager::onNewTask(dmcr::ITaskProvider* provider, uint32_t id,
                                   uint32_t iterations, 
                                   const std::string& scene_str)
 {
-    dmcr::ScenePtr scene = m_scene_factory(scene_str);
+    auto scene = m_scene_factory(scene_str);
     
-    dmcr::TaskPtr task(new dmcr::Task(width, height, iterations, scene, this));
+    auto task = dmcr::make_unique<Task>(width, height, iterations, scene, this);
+    dmcr::Task *task_ptr = task.get();
     
     {
         std::lock_guard<std::mutex> G(m_mutex);
         
         TaskData data;
-        data.task = task;
+        data.task = std::move(task);
         data.provider = provider;
         data.id = id;
         
-        m_tasks.push_front(data);
+        m_tasks.push_front(std::move(data));
     }
     
-    task->run();
+    // Hack, but should be safe as if an exception is raised this line
+    // won't be run
+    task_ptr->run();
 }
 
 #include <iostream>
@@ -41,9 +44,9 @@ void dmcr::TaskManager::onTaskCompleted(dmcr::Task *task)
         std::lock_guard<std::mutex> G(m_mutex);
         bool found = false;
         
-        for (auto i = m_tasks.begin(); i != m_tasks.end();) {
+        for (const auto& i = m_tasks.begin(); i != m_tasks.end();) {
             if ((*i).task.get() == task) {
-                data = *i;
+                data = std::move(*i);
                 m_tasks.erase(i);
                 found = true;
                 break;

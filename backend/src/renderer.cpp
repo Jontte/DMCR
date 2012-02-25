@@ -48,14 +48,13 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
         right = h_res - 1;
     if (bottom == 0)
         bottom = v_res - 1;
-    
-    dmcr::RenderResultPtr result(new dmcr::RenderResult(left, right, 
-                                                        top, bottom));
+
+    dmcr::RenderResultPtr result = std::make_shared<dmcr::RenderResult>(
+        left, right, top, bottom);
     
     // Scan the given portion of the scene
     for (uint16_t y = top; y <= bottom; ++y) {
         for (uint16_t x = left; x <= right; ++x) {
-            
             RaycastResult raycast_result = 
                 m_scene->shootRay(
                     m_scene->camera().ray((float)x / (float)h_res,

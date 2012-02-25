@@ -3,6 +3,10 @@
 
 #include <memory>
 
+/* This will probably be in the next revision of C++11, but for now we
+ * have to implement (read: copy) it ourselves.
+ */
+
 namespace dmcr {
     template<typename T, typename... As>
     std::unique_ptr<T> make_unique(As&&... args) {

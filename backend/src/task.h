@@ -62,8 +62,6 @@ private:
     uint16_t m_width, m_height;
 };
 
-typedef std::shared_ptr<Task> TaskPtr;
-
 }
 
 #endif // DMCR_TASK_H

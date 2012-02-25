@@ -10,6 +10,8 @@
 #include "renderer.h"
 #include <list>
 #include "itasklistener.h"
+#include <stdexcept>
+#include "unique_ptr"
 
 namespace dmcr {
     
@@ -55,7 +57,7 @@ public:
     
 private:
     struct TaskData {
-        TaskPtr task;
+        std::unique_ptr<Task> task;
         ITaskProvider *provider;
         uint32_t id;
     };
