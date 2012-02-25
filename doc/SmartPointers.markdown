@@ -11,7 +11,7 @@ Smart pointerit löytyvät headerista `<memory>` lukuunottamatta `dmcr::make_uni
 joka ei ole vielä päässyt standardiin. (mutta on pääsevä.) Se löytyy projektin sisältämästä
 headerista `"unique_ptr"`.
 
-## `std::shared_ptr`
+## std::shared_ptr
 
 `std::shared_ptr` on "reference-counted" pointteri. Sitä voi kopioida vapaasti ympäri ohjelmaa
 ja objekti, johon pointteri osoittaa vapautetaan vasta kun kaikki viittaukset ovat kadonneet.
@@ -44,7 +44,7 @@ ota siitä kopio `auto a = ...`. Referenssillä otettaessa pointerin reference c
 referenssiä siis tulkita objektin käytöksi jolloin jos pointer elää funktiokutsun ulkopuolelle,
 voi syntyä hauskoja segfaultteja y.m.
 
-## `std::unique_ptr`
+## std::unique_ptr
 
 `std::unique_ptr` on pointteri jolla on selkeästi määritelty omistaja. Kaikkien koodinosien,
 jotka käyttävät pointteria, elinaika täytyy olla omistajan elinajan subset. Yksikäsitteisen
@@ -57,6 +57,7 @@ vapautetaan, kun _sen omistaja tuhoutuu_.
 Omistajaa voi vaihtaa funktiolla `std::move(...)`. Otetaan esimerkki:
 
     class A {
+    public:
       std::unique_ptr<int> my_ptr;
 
       A() { my_ptr = make_unique<int>(42); }
@@ -81,12 +82,17 @@ se kääntyy ja toimii. Alkuperäisessä koodissa `my_ptr`:n osoittama muisti tu
 kun instanssi `a` tuhoutui. Nyt kuitenkin pointterin omistus siirtyi `a`:lta
 `main`-funktiolle joten muisti vapautuu kun `main` palaa.
 
+*HUOM!* `a`:n instanssimuuttuja `my_ptr` on nyt NULL-pointteri! Pointterin
+entinen omistaja ei voi enää käyttää pointteria jonka omistuksen se on menettänyt.
+(ellei se hanki sitä uudelleen "naked pointer"ina)
+
 Jossain vaiheessa kuitenkin epäilemättä tulee tarve päästä käsiksi unique_ptr:ien
 sisältämään dataan muista luokista jotka eivät omista kyseistä dataa. Tällöin
 voidaan kutsua `std::unique_ptr`:n metodia `get()` joka palauttaa "naked pointer"in.
 Esimerkiksi:
 
     class A {
+    public:
       A* ptr() { return my_ptr.get(); }
     }
 
