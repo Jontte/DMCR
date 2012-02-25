@@ -35,6 +35,7 @@ void dmcr::Socket::setSocketListener(dmcr::ISocketListener* listener)
     m_socket_listener = listener;
 }
 
+extern int snprintf(char *dst, const char *fmt, ...);
 
 void dmcr::Socket::connect()
 {
