@@ -6,6 +6,7 @@ Created on Feb 8, 2012
 
 import socket   # use BSD sockets
 import struct   # used to convert to and fro binary data
+import threading # each connection is a thread
 import dmcr_protocol_pb2 as proto # import protobuf classes
 
 # from socket.cpp
@@ -13,23 +14,21 @@ import dmcr_protocol_pb2 as proto # import protobuf classes
 #                  Packet_NewTask = 3, Packet_RenderedData = 4 };
 
 
-class Connection():
+
+class Connection(threading.Thread):
     '''
     classdocs
     '''
 
 
-    def __init__(self,host = '', port=9393):
+    def __init__(self, conn, addr):
         '''
         Initialize and connect
         '''
+        super(Connection, self).__init__()
+        self.conn = conn
+        self.addr = addr
         
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((host, port)) # takes tuple containing host and port
-        s.listen(1)
-        
-        self.conn, self.addr = s.accept()
         
     def __str__(self):
         '''
@@ -45,6 +44,11 @@ class Connection():
         
         '''
         self.conn.close()
+    
+    def run(self): # overriding threading.Thread.run()
+    
+        while True:
+            self.ReceivePacket()
     
     def ReceiveHeader(self):
         '''
@@ -103,22 +107,28 @@ class Connection():
         handshake = proto.BackendHandshake()
         handshake.ParseFromString(data)
         
+        self.protocol_version = handshake.protocol_version
+        self.description = handshake.description
         print handshake # nothing clever to do yet, just print
+        return handshake
         
     def Recv_ConnectionResult(self, data):
         conn_result = proto.ConnectionResult()
         conn_result.ParseFromString(data)
-        
+        result = conn_result.result
         print conn_result # nothing clever to do yet, just print
+        return conn_result
     
     def Recv_NewTask(self, data):
         newtask = proto.NewTask()
         newtask.ParseFromString(data)
         
         print newtask # nothing clever to do yet, just print
+        return newtask
         
     def RenderedData(self, data):
         rendered_data = proto.RenderedData()
         rendered_data.ParseFromString(data)
     
         print rendered_data # nothing clever to do yet, just print
+        return rendered_data

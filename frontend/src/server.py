@@ -3,7 +3,7 @@ Created on Feb 8, 2012
 
 @author: blizzara
 '''
-
+import socket
 import connection
 
 class Server(object):
@@ -17,11 +17,18 @@ class Server(object):
         '''
         self.host = ''
         self.port = 9393
+        self.connections = list()
         
     
     def Listen(self):
-        self.connection = connection.Connection(self.host, self.port)
-        print self.connection # just for debugging
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind((self.host, self.port)) # takes tuple containing host and port
+        s.listen(1)
+
+        while True:
+            self.connections.append(connection.Connection(*s.accept()))
+            self.connections[-1].start()
         
-        self.connection.ReceivePacket()
-        self.connection.Close()
+        
