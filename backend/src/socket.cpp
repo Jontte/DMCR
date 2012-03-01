@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <vector>
+#include <sys/utsname.h>
 
 static int checkError(int r) {
     if (r == -1)
@@ -81,11 +82,29 @@ void dmcr::Socket::connect()
     sendHandshakePacket();
 }
 
+static std::string getMachineDescription() {
+    struct utsname data;
+    if (uname(&data) == -1)
+        return "DMCR/1.0 Unknown";
+
+    std::string s = "DMCR/1.0 ";
+
+    s.append(data.sysname);
+    s.append("/");
+    s.append(data.release);
+    s.append(" ");
+    s.append(data.nodename);
+    s.append(" ");
+    s.append(data.machine);
+
+    return s;
+}
+
 void dmcr::Socket::sendHandshakePacket()
 {
     dmcr::Packet::BackendHandshake packet;
     packet.set_protocol_version(0);
-    packet.set_description("DMCR/1.0");
+    packet.set_description(getMachineDescription());
     sendPacket(Packet_BackendHandshake, packet);
 }
 
