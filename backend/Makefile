@@ -13,7 +13,8 @@ PROTOC = protoc
 CPP_SOURCES = src/dmcr_protocol.pb.cpp src/socket.cpp \
 src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
 3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp\
-src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp
+src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
+src/backendapplication.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)
