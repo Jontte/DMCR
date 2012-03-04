@@ -57,12 +57,13 @@ void dmcr::Socket::connect()
         throw SocketException("Could not resolve hostname");
 
     int fd = 0;
-    for (; addr != NULL; addr = addr->ai_next) {
-        fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+    auto cur = addr;
+    for (; cur != NULL; cur = cur->ai_next) {
+        fd = socket(cur->ai_family, cur->ai_socktype, cur->ai_protocol);
         if (!fd)
             continue;
 
-        if (::connect(fd, addr->ai_addr, addr->ai_addrlen) == -1) {
+        if (::connect(fd, cur->ai_addr, cur->ai_addrlen) == -1) {
             close(fd);
             continue;
         }
@@ -70,12 +71,10 @@ void dmcr::Socket::connect()
         break;
     }
 
-    if (addr == NULL) {
-        freeaddrinfo(addr);
-        throw SocketException("Could not connect to host");
-    }
-
     freeaddrinfo(addr);
+
+    if (cur == NULL)
+        throw SocketException("Could not connect to host");
 
     m_fd = fd;
 
