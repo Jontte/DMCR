@@ -15,6 +15,13 @@ static int checkError(int r) {
     return r;
 }
 
+static int checkErrorRecv(int r) {
+    checkError(r);
+    if (r == 0)
+        throw dmcr::SocketException("Frontend closed connection");
+    return r;
+}
+
 dmcr::Socket::Socket(const std::string &hostname, in_port_t port)
     : m_hostname(hostname), m_port(port), m_task_listener(NULL),
       m_socket_listener(NULL), m_fd(0)
@@ -144,8 +151,8 @@ void dmcr::Socket::readPacket()
     char header_len_buf[4];
     uint32_t read_len = 0;
     while (read_len < 4)
-        read_len += checkError(recv(m_fd, header_len_buf+read_len, 4-read_len, 
-                                    MSG_WAITALL));
+        read_len += checkErrorRecv(recv(m_fd, header_len_buf+read_len,
+                                        4-read_len, MSG_WAITALL));
 
     uint32_t header_len = ntohl(*((uint32_t*)header_len_buf));
     if (header_len > MAX_HEADER_LENGTH)
@@ -157,7 +164,7 @@ void dmcr::Socket::readPacket()
     std::vector<char> header_buf(header_len);
     read_len = 0;
     while (read_len < header_len)
-        read_len += checkError(recv(m_fd, header_buf.data()+read_len, 
+        read_len += checkErrorRecv(recv(m_fd, header_buf.data()+read_len, 
                                     header_len-read_len, MSG_WAITALL));
 
     dmcr::Packet::PacketHeader header;
@@ -167,7 +174,7 @@ void dmcr::Socket::readPacket()
     std::vector<char> packet_buf(header.length());
     read_len = 0;
     while (read_len < header.length())
-        read_len += checkError(recv(m_fd, packet_buf.data()+read_len,
+        read_len += checkErrorRecv(recv(m_fd, packet_buf.data()+read_len,
                                     header.length()-read_len, 0));
         
     /* Dispatch packet to handler */
