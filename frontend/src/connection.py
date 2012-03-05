@@ -37,13 +37,19 @@ class Connection(threading.Thread):
         '''
         super(Connection, self).__init__()
         self.conn = conn
+        self.conn.settimeout(4)
         self.addr = addr
+        self.running = True
         
     def run(self): # overriding threading.Thread.run()
     
-        while True:
-            self.ReceivePacket()
-    
+        try:
+            while self.running:
+                self.ReceivePacket()
+        except:
+            pass
+        finally:
+            self.Close()
         
     def __str__(self):
         '''
@@ -52,6 +58,12 @@ class Connection(threading.Thread):
         
         '''
         return "Socket connected to {0}".format(self.addr)
+    
+    def stop(self):
+        
+        self.running = False
+        print "Thread stopped"
+        #raise Exception("Quitting")
     
     def Close(self):
         '''
@@ -71,7 +83,7 @@ class Connection(threading.Thread):
         
         # receive first header length
         data = '' # empty string to store what we get
-        while len(data) < 4: # first coming is 4 bytes
+        while len(data) < 4 and self.running: # first coming is 4 bytes
             data += self.conn.recv(4-len(data)) # recv may not give everything at once, so wait until we have 4 bytes
         
         data_tuple = struct.unpack("!L", data) # unpack binary data to long int (! means network)
@@ -79,26 +91,27 @@ class Connection(threading.Thread):
         
         # if header length is usable, receive whole header
         if header_length < 1:
-            return False
+            return False, False
         
         header_data = self.ReceiveData(header_length)
         
         header = proto.PacketHeader()
         header.ParseFromString(header_data)
         
-        return (header.id, header.length)
+        return header.id, header.length
         
     def ReceiveData(self, length):
         data = ''
         data_length = 0
-        while data_length < length:
+        while data_length < length and self.running:
             data += self.conn.recv(length-data_length)
             data_length = len(data)
         return data
         
     def ReceivePacket(self):
         packet_id, length = self.ReceiveHeader()
-        
+        if packet_id == False:
+            return
         data = self.ReceiveData(length)
         
         if packet_id == 1:
@@ -122,30 +135,31 @@ class Connection(threading.Thread):
         print handshake # nothing clever to do yet, just print
         
         self.Send_ConnectionResult(CONNECTIONRESULT_SUCCESS)
-        self.Send_NewTask()
+        self.Send_NewTask(1,400,300,10,self.scene)
         return handshake
         
-'''    def Recv_ConnectionResult(self, data):
+    '''    def Recv_ConnectionResult(self, data):
         conn_result = proto.ConnectionResult()
         conn_result.ParseFromString(data)
         result = conn_result.result
         print conn_result # nothing clever to do yet, just print
         return conn_result
-'''
+    '''
     
-'''    def Recv_NewTask(self, data):
+    '''    def Recv_NewTask(self, data):
         newtask = proto.NewTask()
         newtask.ParseFromString(data)
         
         print newtask # nothing clever to do yet, just print
         return newtask
-'''      
+    '''      
     def Recv_RenderedData(self, data):
         rendered_data = proto.RenderedData()
         rendered_data.ParseFromString(data)
-    
+        data = self.ReceiveData(rendered_data.data_length)
         print rendered_data # nothing clever to do yet, just print
-        return rendered_data
+        print "Image: ",data
+        #return rendered_data
 
 
     def SendHeader(self, id, length):
@@ -167,7 +181,7 @@ class Connection(threading.Thread):
         
         self.SendData(head_size_bin) # send size of header as !L
         
-        self.SendData(head) # send the header
+        self.SendData(head.SerializeToString()) # send the header
                 
     def SendData(self, data):
         ''' Just sends given data to client.
@@ -177,7 +191,7 @@ class Connection(threading.Thread):
     def SendPacket(self, type_id, data):
 
         self.SendHeader(type_id, data.ByteSize())
-        self.SendData(data)
+        self.SendData(data.SerializeToString())
         
         
     def Send_BackendHandshake(self, data):
