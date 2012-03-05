@@ -13,7 +13,17 @@ import dmcr_protocol_pb2 as proto # import protobuf classes
 #  enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2,
 #                  Packet_NewTask = 3, Packet_RenderedData = 4 };
 
+BACKENDHANDSHAKE = 1
+CONNECTIONRESULT = 2
+NEWTASK = 3
+RENDEREDDATA = 4
 
+
+# enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
+#                       ConnectionResult_ConnectionFailed };
+CONNECTIONRESULT_SUCCESS = 0
+CONNECTIONRESULT_INVALIDKEY = 1
+CONNECTIONRESULT_CONNECTIONFAILED = 2
 
 class Connection(threading.Thread):
     '''
@@ -29,6 +39,11 @@ class Connection(threading.Thread):
         self.conn = conn
         self.addr = addr
         
+    def run(self): # overriding threading.Thread.run()
+    
+        while True:
+            self.ReceivePacket()
+    
         
     def __str__(self):
         '''
@@ -44,11 +59,6 @@ class Connection(threading.Thread):
         
         '''
         self.conn.close()
-    
-    def run(self): # overriding threading.Thread.run()
-    
-        while True:
-            self.ReceivePacket()
     
     def ReceiveHeader(self):
         '''
@@ -110,25 +120,96 @@ class Connection(threading.Thread):
         self.protocol_version = handshake.protocol_version
         self.description = handshake.description
         print handshake # nothing clever to do yet, just print
+        
+        self.Send_ConnectionResult(CONNECTIONRESULT_SUCCESS)
+        self.Send_NewTask()
         return handshake
         
-    def Recv_ConnectionResult(self, data):
+'''    def Recv_ConnectionResult(self, data):
         conn_result = proto.ConnectionResult()
         conn_result.ParseFromString(data)
         result = conn_result.result
         print conn_result # nothing clever to do yet, just print
         return conn_result
+'''
     
-    def Recv_NewTask(self, data):
+'''    def Recv_NewTask(self, data):
         newtask = proto.NewTask()
         newtask.ParseFromString(data)
         
         print newtask # nothing clever to do yet, just print
         return newtask
-        
-    def RenderedData(self, data):
+'''      
+    def Recv_RenderedData(self, data):
         rendered_data = proto.RenderedData()
         rendered_data.ParseFromString(data)
     
         print rendered_data # nothing clever to do yet, just print
         return rendered_data
+
+
+    def SendHeader(self, id, length):
+        '''
+        Sends info about coming packet (id) and it's length.
+        
+        @return: a tuple containing (id, length)
+        
+        '''
+        
+        head = proto.PacketHeader()
+        head.length = length
+        head.id = id
+        
+        
+        
+        head_size = head.ByteSize()
+        head_size_bin = struct.pack("!L", head_size) 
+        
+        self.SendData(head_size_bin) # send size of header as !L
+        
+        self.SendData(head) # send the header
+                
+    def SendData(self, data):
+        ''' Just sends given data to client.
+        '''
+        self.conn.sendall(data)
+        
+    def SendPacket(self, type_id, data):
+
+        self.SendHeader(type_id, data.ByteSize())
+        self.SendData(data)
+        
+        
+    def Send_BackendHandshake(self, data):
+        
+        handshake = proto.BackendHandshake()
+        handshake.ParseFromString(data)
+        
+        self.protocol_version = handshake.protocol_version
+        self.description = handshake.description
+        print handshake # nothing clever to do yet, just print
+        return handshake
+        
+    def Send_ConnectionResult(self, result):
+        conn_result = proto.ConnectionResult()
+        conn_result.result = result
+        
+        self.SendPacket(CONNECTIONRESULT, conn_result)
+        
+    def Send_NewTask(self, task_id, width, height, iterations, scene):
+        newtask = proto.NewTask()
+        newtask.id = task_id
+        newtask.width = width
+        newtask.height = height
+        newtask.iterations = iterations
+        newtask.scene = scene
+        
+        self.SendPacket(NEWTASK, newtask)
+        
+'''    def Send_RenderedData(self, data):
+        rendered_data = proto.RenderedData()
+        rendered_data.ParseFromString(data)
+    
+        print rendered_data # nothing clever to do yet, just print
+        return rendered_data
+        '''
