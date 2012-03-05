@@ -18,7 +18,10 @@ class Server(object):
         self.host = ''
         self.port = 9393
         self.connections = list()
-        
+    
+    def FileToTask(self, filename):
+        with open(filename,'r') as f:
+            self.scene = '\n'.join(f.readlines())     
     
     def Listen(self):
 
@@ -29,6 +32,7 @@ class Server(object):
 
         while True:
             self.connections.append(connection.Connection(*s.accept()))
+            self.connection.scene = self.scene
             self.connections[-1].start()
         
         
