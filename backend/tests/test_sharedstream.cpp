@@ -79,6 +79,21 @@ void test_sharedstream()
         for(int i = 0; i < 5 ; i++)
             threads[i].join();
     }
+    {
+        SharedStream<std::unique_ptr<int>> stream;
+        {
+            std::unique_ptr<int> foo(new int);
+            *foo = 10;
+            assert(foo && *foo == 10);
+            stream.push(std::move(foo));
+            assert(!foo);
+        }
+        {
+            std::unique_ptr<int> foo(stream.pull());
+            assert(foo);
+            assert(*foo == 10);
+        }
+    }
 }
 
 

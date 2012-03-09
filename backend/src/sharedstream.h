@@ -53,7 +53,7 @@ public:
     // Optional parameter: maximum time duration to wait for
     // Default value is to wait forever
     template <class Rep=int, class Period=std::ratio<1> >
-    T && pull(
+    T pull(
         const std::chrono::duration<Rep, Period>& duration
         = std::chrono::seconds(0))
     {
@@ -91,13 +91,13 @@ public:
         return m_queue.empty();
     }
 
-    // Enable normal construction
+    // Enable normal construction and moving
     SharedStream() = default;
+    SharedStream(SharedStream<T>&& other) = default;
+    SharedStream<T>& operator=(SharedStream<T>&& other) = default;
 
-    // Prohibit moving, copying and assignment
-    SharedStream(SharedStream<T>&& other) = delete;
+    // Prohibit copying and assignment
     SharedStream(const SharedStream<T>&) = delete; 
-    SharedStream<T>& operator=(SharedStream<T>&& other) = delete;
     SharedStream<T>& operator=(const SharedStream<T>&) = delete;
 
 private:
