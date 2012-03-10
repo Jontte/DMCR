@@ -25,6 +25,20 @@ CONNECTIONRESULT_SUCCESS = 0
 CONNECTIONRESULT_INVALIDKEY = 1
 CONNECTIONRESULT_CONNECTIONFAILED = 2
 
+def ListToPPM(pixels, width, height, filename):
+    with open(filename, 'w') as fp:
+        #write ppm header
+        fp.write("P3\n")
+        fp.write("{} {}\n".format(width, height))
+        fp.write("255\n")    
+
+        #write pixels
+        for i in range(len(pixels)):
+            fp.write("%d %d %d\n" % (pixels[i][0],pixels[i][1],pixels[i][2])) #use with P3
+            #   pfile.write("%c%c%c" % (red,green,blue))#use with P6
+    
+        print "File {} was written".format(filename)
+
 class Connection(threading.Thread):
     '''
     classdocs
@@ -46,7 +60,7 @@ class Connection(threading.Thread):
         try:
             while self.running:
                 self.ReceivePacket()
-        except:
+        except KeyboardInterrupt:
             pass
         finally:
             self.Close()
@@ -156,9 +170,28 @@ class Connection(threading.Thread):
     def Recv_RenderedData(self, data):
         rendered_data = proto.RenderedData()
         rendered_data.ParseFromString(data)
-        data = self.ReceiveData(rendered_data.data_length)
-        print rendered_data # nothing clever to do yet, just print
-        print "Image: ",data
+        data_len = rendered_data.data_length
+        data = self.ReceiveData(data_len)
+        i = 0
+        pixels = list()
+        print rendered_data
+        print "unpacking image data"
+        print 
+        print str(i)+ "/" + str(data_len)
+        while i + 11 < data_len:
+            pixels.append([0,0,0,0])
+            pixels[-1][0] = struct.unpack("!L", data[i:i+4])[0]
+            pixels[-1][1] = struct.unpack("!L", data[i+4:i+8])[0]
+            pixels[-1][2] = struct.unpack("!L", data[i+8:i+12])[0]
+            
+            #pixels.append(struct.unpack("!L"*3, data[i,i+12])) #doesn't work
+            i = i + 12
+        if len(pixels) != rendered_data.width * rendered_data.height:
+            print "Dimension mismatch: got {} pixels, but image size should be {} x {}".format(len(pixels),rendered_data.width, rendered_data.height)
+            return
+        ListToPPM(pixels, rendered_data.width, rendered_data.height, "test.ppm")
+        
+
         #return rendered_data
 
 
@@ -178,6 +211,7 @@ class Connection(threading.Thread):
         
         head_size = head.ByteSize()
         head_size_bin = struct.pack("!L", head_size) 
+        
         
         self.SendData(head_size_bin) # send size of header as !L
         
