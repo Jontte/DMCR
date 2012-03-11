@@ -16,7 +16,6 @@ Authenticate with Github
 	- git config --global user.email "your@email.com"
 	
 
-
 Working with Aptana Studio 3
 --------------------
 1. Install Pydev (for frontend, Python coding) and CDT (for backend, C++ coding)
@@ -54,7 +53,7 @@ Building the backend
 --------------------
 
 1. Make sure you have the dependencies
-   - GCC + C++11 -compliant compiler
+   - GCC-compiler (version >=4.5.0 for C++11 functionality)
    - Google protobuf (libprotobuf-dev in Ubuntu)
 
 2. `$ make depend`
