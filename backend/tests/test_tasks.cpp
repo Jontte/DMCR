@@ -2,6 +2,7 @@
 #include "../src/task.h"
 #include "../src/scene.h"
 #include "../src/dummyscene.h"
+#include "../src/octreescene.h"
 #include "../src/itaskprovider.h"
 #include <unistd.h>
 #include <string>
@@ -24,7 +25,7 @@ public:
 
 void test_tasks() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
-        auto scene = std::make_shared<dmcr::DummyScene>();
+        auto scene = std::make_shared<dmcr::OctreeScene>();
         scene->loadFromFile("assets/scene.json");
         return scene;
     };
