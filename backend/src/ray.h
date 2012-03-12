@@ -8,6 +8,7 @@ namespace dmcr {
 class Ray
 {
 public:
+    Ray() { }
     Ray(const dmcr::Vector3f& origin, const dmcr::Vector3f& dir);
     
     void setOrigin(const dmcr::Vector3f& origin) { m_origin = origin; }
