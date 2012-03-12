@@ -65,11 +65,15 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
              * Implement me properly!
              */
             Color c;
-                        
-            if (raycast_result.object()->type() == "sphere")
-                c = { 1.0f, 0.0f, 0.0f };
-            else
+
+            if (raycast_result.object() == nullptr) {
                 c = { 0.0f, 0.0f, 0.0f };
+            } else {
+                if (raycast_result.object()->type() == "sphere")
+                    c = { 1.0f, 0.0f, 0.0f };
+                else
+                    c = { 0.0f, 0.0f, 1.0f };
+            }
             result->setPixel(x - left, y - top, c);
         }
     }
