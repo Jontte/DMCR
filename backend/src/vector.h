@@ -47,6 +47,24 @@ public:
       */
     void setZ(T z) { m_z = z; }
 
+    T& operator[](int idx) {
+        if (idx == 0)
+            return m_x;
+        else if (idx == 1)
+            return m_y;
+        else
+            return m_z;
+    }
+
+    const T& operator[](int idx) const {
+        if (idx == 0)
+            return m_x;
+        else if (idx == 1)
+            return m_y;
+        else
+            return m_z;
+    }
+
     /*!
       \brief Add two vectors
       \return Result of addition
@@ -136,6 +154,22 @@ public:
     Vector3<T> normalized() const {
         T length = length();
         return Vector3<T>(m_x / length, m_y / length, m_z / length);
+    }
+
+    /*!
+      \brief Componentwise multiplication
+      \return Multiplied vector
+      */
+    Vector3<T> operator*(const Vector3& v) const {
+        return Vector3<T>(m_x * v.x(), m_y * v.y(), m_z * v.z());
+    }
+
+    /*!
+      \brief Componentwise division
+      \return Divided vector
+      */
+    Vector3<T> operator/(const Vector3& v) const {
+        return Vector3<T>(m_x / v.x(), m_y / v.y(), m_z / v.z());
     }
 
 private:
