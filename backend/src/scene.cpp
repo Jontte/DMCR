@@ -7,6 +7,8 @@
 #include <json/json.h>
 #include "vector.h"
 #include "sceneobject.h"
+#include "box.h"
+#include "sphere.h"
 #include "unique_ptr"
 
 dmcr::Scene::Scene()
@@ -108,6 +110,8 @@ void dmcr::Scene::loadFromString(const std::string &string)
                                       camera_look_at[2].asDouble()));
     m_camera.setFov(camera_fov.asDouble());
     m_camera.setAspect(camera_aspect.asDouble());
+
+    beginAddObjects();
         
     const Json::Value objects = root["scene"];
     for (const Json::Value& value : objects) {
@@ -125,4 +129,6 @@ void dmcr::Scene::loadFromString(const std::string &string)
         
         addObject(std::move(object));
     }
+
+    endAddObjects();
 }

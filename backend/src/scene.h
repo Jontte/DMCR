@@ -66,6 +66,9 @@ public:
      */
     void loadFromString(const std::string &string);
 
+    virtual void beginAddObjects() = 0;
+    virtual void endAddObjects() = 0;
+
     /*!
      * \brief Add object to scene
      *
