@@ -109,7 +109,7 @@ public:
       \return Result of scalar division
       */
     Vector3<T> operator/(T s) const {
-        return Vector3<T>(s / m_x, s / m_y, s / m_z);
+        return Vector3<T>(m_x / s, m_y / s, m_z / s);
     }
     /*!
       \brief Divide by a scalar in place
