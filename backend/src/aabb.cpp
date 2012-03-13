@@ -1,7 +1,7 @@
 #include "aabb.h"
 #include <cmath>
 
-#define EPSILON 0.00000000000001
+#define EPSILON 0.000000001
 
 dmcr::AABB::AABB(const dmcr::Vector3f &min, const dmcr::Vector3f &max) :
     m_min(min), m_max(max)
@@ -25,17 +25,23 @@ bool dmcr::AABB::intersects(const dmcr::AABB &aabb) const
     return true;
 }
 
+// Test ray and AABB intersection using slabs method.
 bool dmcr::AABB::intersects(const dmcr::Ray &ray) const
 {
+    /* Check if the ray is parallel to a slab defined by parallel sides
+     * of the AABB. If it is, check if its origin is outside the slab.
+     */
     for (int i = 0; i < 3; ++i) {
         if (fabs(ray.direction()[i]) < EPSILON &&
                 (ray.origin()[i] < m_min[i] || ray.origin()[i] > m_max[i]))
             return false;
     }
 
+    // Calculate parameter values for ray and slab intersection points
     dmcr::Vector3f t1 = (m_min - ray.origin()) / ray.direction();
     dmcr::Vector3f t2 = (m_max - ray.origin()) / ray.direction();
 
+    // Assign minimum parameter values to t1
     for (int i = 0; i < 3; ++i) {
         if (t1[i] > t2[i]) {
             float tmp = t1[i];
@@ -43,6 +49,10 @@ bool dmcr::AABB::intersects(const dmcr::Ray &ray) const
             t2[i] = tmp;
         }
     }
+    
+    /* Find the maximum of the minimum parameters and the minimum of the
+     * maximum parameters.
+     */
 
     float tmin = t1[0];
     float tmax = t2[0];
@@ -54,9 +64,11 @@ bool dmcr::AABB::intersects(const dmcr::Ray &ray) const
             tmax = t2[i];
     }
 
+    // The ray must enter all slabs before leaving any.
     if (tmin > tmax)
         return false;
 
+    // Check if the intersection point is on the correct side of the ray origin.
     if (tmax < 0)
         return false;
 
