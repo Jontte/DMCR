@@ -10,7 +10,7 @@ namespace dmcr {
 class Sphere : public dmcr::SceneObject
 {
 public:
-    Sphere() { }
+    Sphere() : m_radius(0.0f) { }
 
     void setRadius(float radius) { m_radius = radius; }
     float radius() const { return m_radius; }

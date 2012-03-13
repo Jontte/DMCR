@@ -15,7 +15,7 @@ namespace dmcr {
 class Octree
 {
 public:
-    Octree() { }
+    Octree();
 
     void setAabb(const dmcr::AABB& aabb) { m_aabb = aabb; }
     void build(std::list<SceneObjectPtr> objects, int depth);

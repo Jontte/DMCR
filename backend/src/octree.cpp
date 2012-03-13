@@ -6,6 +6,11 @@ dmcr::Vector3f extentPermutations[8] =
   dmcr::Vector3f(-1, 1, 1), dmcr::Vector3f(-1, 1, -1),
   dmcr::Vector3f(-1, -1, 1), dmcr::Vector3f(-1, -1, -1) };
 
+dmcr::Octree::Octree() :
+    m_leaf(false)
+{
+}
+
 void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
                          int depth = 0)
 {
@@ -44,7 +49,7 @@ void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
             inside.push_back(obj);
     }
 
-    if (inside.size() == 0) {
+    if (inside.empty()) {
         m_leaf = true;
         return;
     }

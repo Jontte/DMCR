@@ -27,7 +27,7 @@ dmcr::RaycastResult dmcr::OctreeScene::shootRay(const dmcr::Ray &ray) const
     result.setIntersectionPoint(ray.origin());
 
     std::list<SceneObjectPtr> objects = m_octree.getObjects(ray);
-    if (objects.size() > 0)
+    if (!objects.empty())
         result.setObject(objects.front());
     else
         result.setObject(nullptr);
