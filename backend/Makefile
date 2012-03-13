@@ -124,12 +124,13 @@ obj/src/backendapplication.o: src/dmcr_protocol.pb.h src/itaskprovider.h
 obj/src/backendapplication.o: src/dummyscene.h
 obj/src/octreescene.o: src/octreescene.h src/vector.h src/sceneobject.h
 obj/src/octreescene.o: src/ray.h src/aabb.h src/scene.h src/camera.h
-obj/src/octreescene.o: src/unique_ptr
+obj/src/octreescene.o: src/unique_ptr src/octree.h
 obj/src/aabb.o: src/aabb.h src/vector.h src/ray.h
 obj/src/box.o: src/box.h src/sceneobject.h src/vector.h src/ray.h src/aabb.h
 obj/src/sphere.o: src/sphere.h src/sceneobject.h src/vector.h src/ray.h
 obj/src/sphere.o: src/aabb.h
-obj/src/octree.o: src/octree.h
+obj/src/octree.o: src/octree.h src/aabb.h src/vector.h src/ray.h
+obj/src/octree.o: src/sceneobject.h src/unique_ptr
 obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/main.o: src/ray.h src/aabb.h src/camera.h src/unique_ptr
 obj/src/main.o: src/sharedstream.h src/renderer.h src/backendapplication.h
@@ -141,5 +142,5 @@ obj/tests/test_tasks.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/tests/test_tasks.o: src/vector.h src/ray.h src/aabb.h src/camera.h
 obj/tests/test_tasks.o: src/unique_ptr src/task.h src/renderer.h
 obj/tests/test_tasks.o: src/itasklistener.h src/task.h src/scene.h
-obj/tests/test_tasks.o: src/dummyscene.h src/octreescene.h
+obj/tests/test_tasks.o: src/dummyscene.h src/octreescene.h src/octree.h
 obj/tests/test_tasks.o: src/itaskprovider.h
