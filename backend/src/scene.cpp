@@ -69,6 +69,14 @@ static std::unique_ptr<dmcr::SceneObject> buildObjectFromValue(
     } else if (type == "box") {
         auto box = dmcr::make_unique<dmcr::Box>();
 
+        const Json::Value extents = value["extents"];
+
+        if (!extents || !extents.isArray() || extents.size() != 3)
+            throw dmcr::SceneException("No extents specified for box");
+
+        box->setExtents(dmcr::Vector3f(extents[0u].asDouble(),
+                                       extents[1].asDouble(),
+                                       extents[2].asDouble()));
         return std::move(box);
     } else {
         throw dmcr::SceneException(std::string("Unknown object type ") + type);
