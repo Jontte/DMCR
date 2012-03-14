@@ -125,6 +125,16 @@ public:
     Vector3<T> operator*(T s) const {
         return Vector3<T>(s * m_x, s * m_y, s * m_z);
     }
+
+    /*!
+     * \brief Multiply scalar by vector
+     * \return Result of scalar multiplication
+     */
+    friend
+    Vector3<T> operator*(const T s, const Vector3& v) {
+      return v * s;
+    }
+
     /*!
       \brief Multiply by a scalar in place
       */
@@ -171,8 +181,8 @@ public:
       \brief Normalize vector in place
       */
     void normalize() {
-        T length = length();
-        m_x /= length; m_y /= length; m_z /= length;
+        T len = length();
+        m_x /= len; m_y /= len; m_z /= len;
     }
     /*!
       \brief Normalize vector
