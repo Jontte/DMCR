@@ -30,7 +30,7 @@ dmcr::RaycastResult dmcr::OctreeScene::shootRay(const dmcr::Ray &ray) const
     if (!objects.empty())
         result.setObject(objects.front());
     else
-        result.setObject(NULL);
+        result.setObject(nullptr);
     return result;
 }
 
