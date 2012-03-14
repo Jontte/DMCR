@@ -5,10 +5,12 @@
 #include <vector>
 #include <stdexcept>
 #include <memory>
+#include <list>
 #include "sceneobject.h"
 #include "ray.h"
 #include "camera.h"
 #include "unique_ptr"
+#include "raycastresult.h"
 
 namespace dmcr {
 
@@ -17,24 +19,6 @@ class SceneException : public std::runtime_error
 public:
     SceneException(const std::string& msg)
         : std::runtime_error(msg) {}
-};
-
-class RaycastResult
-{
-public:
-    RaycastResult() : m_object(nullptr) { }
-    
-    void setObject(dmcr::SceneObjectPtr object) { m_object = object; }
-    dmcr::SceneObjectPtr object() const { return m_object; }
-    
-    void setIntersectionPoint(const dmcr::Vector3f& intersection_point) {
-        m_intersection_point = intersection_point; 
-    }
-    dmcr::Vector3f intersectionPoint() const { return m_intersection_point; }
-    
-private:
-    dmcr::SceneObjectPtr m_object;
-    dmcr::Vector3f m_intersection_point;
 };
 
 /*!
