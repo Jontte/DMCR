@@ -32,7 +32,21 @@ PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
 
 # Compiler options
-CFLAGS += -Wall -Wextra -g $(PROTOBUF_CFLAGS) -I3rdparty
+CFLAGS += -Wall -Wextra $(PROTOBUF_CFLAGS) -I3rdparty
+
+DEBUG ?= 1
+PROFILE ?= 0
+
+ifeq ($(PROFILE), 1)
+CFLAGS += -pg
+DEBUG = 1
+endif
+
+ifeq ($(DEBUG), 1)
+CFLAGS += -DDEBUG -g
+else
+CFLAGS += -DNDEBUG -O3 -ffast-math
+endif
 
 # Linker options
 LDFLAGS = $(PROTOBUF_LDFLAGS)
