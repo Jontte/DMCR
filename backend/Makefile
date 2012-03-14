@@ -124,7 +124,7 @@ obj/src/backendapplication.o: src/ray.h src/aabb.h src/raycastresult.h
 obj/src/backendapplication.o: src/camera.h src/unique_ptr src/task.h
 obj/src/backendapplication.o: src/renderer.h src/itasklistener.h src/socket.h
 obj/src/backendapplication.o: src/dmcr_protocol.pb.h src/itaskprovider.h
-obj/src/backendapplication.o: src/dummyscene.h src/octreescene.h src/octree.h
+obj/src/backendapplication.o: src/dummyscene.h
 obj/src/octreescene.o: src/octreescene.h src/vector.h src/sceneobject.h
 obj/src/octreescene.o: src/ray.h src/aabb.h src/raycastresult.h src/scene.h
 obj/src/octreescene.o: src/camera.h src/unique_ptr src/octree.h
@@ -138,7 +138,7 @@ obj/src/octree.o: src/sceneobject.h src/raycastresult.h src/unique_ptr
 obj/src/raycastresult.o: src/raycastresult.h src/vector.h
 obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/main.o: src/ray.h src/aabb.h src/raycastresult.h src/camera.h
-obj/src/main.o: src/unique_ptr src/sharedstream.h src/renderer.h
+obj/src/main.o: src/unique_ptr src/sharedstream.h src/renderer.h src/util.h
 obj/src/main.o: src/backendapplication.h src/taskmanager.h src/task.h
 obj/src/main.o: src/itasklistener.h src/socket.h src/dmcr_protocol.pb.h
 obj/src/main.o: src/itaskprovider.h
@@ -153,3 +153,4 @@ obj/tests/test_tasks.o: src/itaskprovider.h
 obj/tests/test_intersections.o: src/box.h src/sceneobject.h src/vector.h
 obj/tests/test_intersections.o: src/ray.h src/aabb.h src/raycastresult.h
 obj/tests/test_intersections.o: src/ray.h
+obj/tests/test_vector.o: src/vector.h
