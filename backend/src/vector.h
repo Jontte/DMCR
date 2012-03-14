@@ -125,6 +125,16 @@ public:
     Vector3<T> operator*(T s) const {
         return Vector3<T>(s * m_x, s * m_y, s * m_z);
     }
+
+    /*!
+     * \brief Multiply scalar by vector
+     * \return Result of scalar multiplication
+     */
+    friend
+    Vector3<T> operator*(const T s, const Vector3& v) {
+      return v * s;
+    }
+
     /*!
       \brief Multiply by a scalar in place
       */
