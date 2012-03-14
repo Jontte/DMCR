@@ -29,14 +29,14 @@ class Server(object):
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((self.host, self.port)) # takes tuple containing host and port
         s.listen(1)
-        s.settimeout(10)
+        #s.settimeout(10)
         try:
             while True:
                 self.connections.append(connection.Connection(*s.accept()))
                 self.connections[-1].scene = self.scene
                 self.connections[-1].start()
         except KeyboardInterrupt as e:
-            print "Excepted, quitting:", e
+            print "Excepted, quitting", e
             for i,a in enumerate(self.connections):
                 print "Stopping thread ", a
                 self.connections[i].stop()

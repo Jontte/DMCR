@@ -44,6 +44,12 @@ class Connection(threading.Thread):
     classdocs
     '''
 
+    class ThreadStopped(Exception):
+        def __init__(self, value):
+            self.value = value
+        def __str__(self):
+            return repr(self.value)
+
 
     def __init__(self, conn, addr):
         '''
@@ -53,12 +59,12 @@ class Connection(threading.Thread):
         self.conn = conn
         self.conn.settimeout(4)
         self.addr = addr
-        self.running = True
+        self._stop = threading.Event()
         
     def run(self): # overriding threading.Thread.run()
     
         try:
-            while self.running:
+            while not self.stopped():
                 self.ReceivePacket()
         except KeyboardInterrupt:
             pass
@@ -74,10 +80,10 @@ class Connection(threading.Thread):
         return "Socket connected to {0}".format(self.addr)
     
     def stop(self):
+        self._stop.set()
         
-        self.running = False
-        print "Thread stopped"
-        #raise Exception("Quitting")
+    def stopped(self):
+        return self._stop.isSet()
     
     def Close(self):
         '''
@@ -85,6 +91,28 @@ class Connection(threading.Thread):
         
         '''
         self.conn.close()
+    
+    def ReceiveData(self, length):
+        '''
+        Receives data from own socket. 
+        Returns when has length bytes or self.stop() is called.
+        
+        
+        @param length: how many bytes are wanted
+        @return: received data as it was received
+        
+        '''
+        data = ''
+        data_length = 0
+        while data_length < length:
+            if self.stopped():
+                raise Connection.ThreadStopped("Stopped while receiveng data")
+            try: 
+                data += self.conn.recv(length-data_length)
+            except socket.timeout:
+                pass
+            data_length = len(data)
+        return data
     
     def ReceiveHeader(self):
         '''
@@ -94,11 +122,11 @@ class Connection(threading.Thread):
         
         '''
         
-        
         # receive first header length
-        data = '' # empty string to store what we get
-        while len(data) < 4 and self.running: # first coming is 4 bytes
-            data += self.conn.recv(4-len(data)) # recv may not give everything at once, so wait until we have 4 bytes
+        try:
+            data = self.ReceiveData(4) # first comes 4 bytes indicating headers length
+        except Connection.ThreadStopped:
+            return False, False
         
         data_tuple = struct.unpack("!L", data) # unpack binary data to long int (! means network)
         header_length  = int(data_tuple[0]) # int conversion maybe not needed, but first element of tuple anyways
@@ -107,26 +135,24 @@ class Connection(threading.Thread):
         if header_length < 1:
             return False, False
         
-        header_data = self.ReceiveData(header_length)
+        try:
+            header_data = self.ReceiveData(header_length)
+        except Connection.ThreadStopped:
+            return False, False
         
         header = proto.PacketHeader()
         header.ParseFromString(header_data)
         
         return header.id, header.length
         
-    def ReceiveData(self, length):
-        data = ''
-        data_length = 0
-        while data_length < length and self.running:
-            data += self.conn.recv(length-data_length)
-            data_length = len(data)
-        return data
-        
     def ReceivePacket(self):
         packet_id, length = self.ReceiveHeader()
         if packet_id == False:
             return
-        data = self.ReceiveData(length)
+        try:
+            data = self.ReceiveData(length)
+        except Connection.ThreadStopped:
+            return
         
         if packet_id == 1:
             self.Recv_BackendHandshake(data)
@@ -171,7 +197,11 @@ class Connection(threading.Thread):
         rendered_data = proto.RenderedData()
         rendered_data.ParseFromString(data)
         data_len = rendered_data.data_length
-        data = self.ReceiveData(data_len)
+        try:
+            data = self.ReceiveData(data_len)
+        except Connection.ThreadStopped:
+            print "Thread closed while receiveng picture."
+            return
         i = 0
         pixels = list()
         print rendered_data
