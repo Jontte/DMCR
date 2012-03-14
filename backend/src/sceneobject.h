@@ -6,6 +6,7 @@
 #include "vector.h"
 #include "ray.h"
 #include "aabb.h"
+#include "raycastresult.h"
 
 namespace dmcr {
 
@@ -19,6 +20,8 @@ public:
 
     virtual std::string type() const = 0;
     virtual dmcr::AABB aabb() const = 0;
+
+    virtual double intersects(const dmcr::Ray& ray) const = 0;
 
 protected:
     dmcr::Vector3f m_position;

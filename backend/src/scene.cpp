@@ -109,7 +109,6 @@ void dmcr::Scene::loadFromString(const std::string &string)
     if (!camera_aspect || !camera_aspect.isNumeric())
         throw SceneException("No aspect specified for camera");
     
-    
     m_camera.setPosition(dmcr::Vector3f(camera_pos[0u].asDouble(),
                                         camera_pos[1].asDouble(),
                                         camera_pos[2].asDouble()));
@@ -118,6 +117,8 @@ void dmcr::Scene::loadFromString(const std::string &string)
                                       camera_look_at[2].asDouble()));
     m_camera.setFov(camera_fov.asDouble());
     m_camera.setAspect(camera_aspect.asDouble());
+
+    std::cout << m_camera.aspect() << std::endl;
 
     beginAddObjects();
         
@@ -139,4 +140,27 @@ void dmcr::Scene::loadFromString(const std::string &string)
     }
 
     endAddObjects();
+}
+
+dmcr::RaycastResult dmcr::Scene::shootRay(const dmcr::Ray& ray) const
+{
+    std::list<SceneObjectPtr> objects = intersectionCandidates(ray);
+    double min = 1.0 / 0.0;
+    SceneObjectPtr min_obj = nullptr;
+
+    for (auto obj : objects) {
+        double d = obj->intersects(ray);
+        if (d > 0.0 && d < min) {
+            min_obj = obj;
+            min = d;
+        }
+    }
+
+    RaycastResult result;
+    if (min_obj) {
+        result.setObject(min_obj);
+        result.setIntersectionPoint(ray.origin() + ray.direction() * min);
+    }
+
+    return result;
 }

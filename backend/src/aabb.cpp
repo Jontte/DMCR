@@ -26,7 +26,7 @@ bool dmcr::AABB::intersects(const dmcr::AABB &aabb) const
 }
 
 // Test ray and AABB intersection using slabs method.
-bool dmcr::AABB::intersects(const dmcr::Ray &ray) const
+double dmcr::AABB::intersects(const dmcr::Ray &ray) const
 {
     /* Check if the ray is parallel to a slab defined by parallel sides
      * of the AABB. If it is, check if its origin is outside the slab.
@@ -34,7 +34,7 @@ bool dmcr::AABB::intersects(const dmcr::Ray &ray) const
     for (int i = 0; i < 3; ++i) {
         if (fabs(ray.direction()[i]) < EPSILON &&
                 (ray.origin()[i] < m_min[i] || ray.origin()[i] > m_max[i]))
-            return false;
+            return -1.0;
     }
 
     // Calculate parameter values for ray and slab intersection points
@@ -66,13 +66,17 @@ bool dmcr::AABB::intersects(const dmcr::Ray &ray) const
 
     // The ray must enter all slabs before leaving any.
     if (tmin > tmax)
-        return false;
+        return -1.0;
 
     // Check if the intersection point is on the correct side of the ray origin.
     if (tmax < 0)
-        return false;
+        return -1.0;
 
-    return true;
+
+    if (tmin < 0)
+        return tmax;
+
+    return tmin;
 }
 
 dmcr::AABB dmcr::AABB::fromCenterAndExtents(const dmcr::Vector3f &center,

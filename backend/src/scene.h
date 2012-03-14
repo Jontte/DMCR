@@ -63,6 +63,18 @@ public:
     virtual void addObject(std::unique_ptr<dmcr::SceneObject> object) = 0;
     
     /*!
+     * \brief Get list of possible objects in path of given ray
+     * \param ray A Ray
+     * \return List of objects, which have a chance of intersecting the given ray
+     *
+     * This method gets a list of objects which are to be considered for ray
+     * intersection. The specific list depends on the derived class's data
+     * structure implementation.
+     */
+    virtual std::list<SceneObjectPtr> intersectionCandidates(
+            const dmcr::Ray& ray) const = 0;
+
+    /*!
      * \brief Shoot a ray in the scene
      * 
      * Shoots given ray in the scene and finds the first object it intersects.
@@ -70,7 +82,7 @@ public:
      * \param ray Ray to shoot
      * \return RaycastResult object
      */
-    virtual dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const = 0;
+    dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const;
     
     dmcr::Camera camera() const { return m_camera; }
     

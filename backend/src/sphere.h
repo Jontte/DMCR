@@ -4,6 +4,7 @@
 #include "sceneobject.h"
 #include "vector.h"
 #include "aabb.h"
+#include "raycastresult.h"
 
 namespace dmcr {
 
@@ -17,6 +18,8 @@ public:
 
     virtual std::string type() const { return "sphere"; }
     virtual dmcr::AABB aabb() const;
+
+    double intersects(const Ray &ray) const;
 
 protected:
     float m_radius;
