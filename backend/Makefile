@@ -25,7 +25,7 @@ MAIN_SOURCES = src/main.cpp
 TEST_SOURCES = tests/main.cpp\
 							 tests/test_sharedstream.cpp\
 							 tests/test_loadbalancer.cpp\
-  tests/test_tasks.cpp
+  tests/test_tasks.cpp tests/test_intersections.cpp
 
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
