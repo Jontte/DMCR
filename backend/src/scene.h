@@ -22,7 +22,7 @@ public:
 class RaycastResult
 {
 public:
-    RaycastResult() : m_object(nullptr) { }
+    RaycastResult() : m_object(NULL) { }
     
     void setObject(dmcr::SceneObjectPtr object) { m_object = object; }
     dmcr::SceneObjectPtr object() const { return m_object; }
