@@ -18,6 +18,8 @@ public:
     virtual std::string type() const { return "box"; }
     virtual dmcr::AABB aabb() const;
 
+    double intersects(const Ray &ray) const;
+
 protected:
     dmcr::Vector3f m_extents;
 };

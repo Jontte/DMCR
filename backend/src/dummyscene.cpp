@@ -10,12 +10,13 @@ void dmcr::DummyScene::addObject(std::unique_ptr<dmcr::SceneObject> object)
     m_objects.push_back(std::move(object));
 }
 
-dmcr::RaycastResult dmcr::DummyScene::shootRay(const dmcr::Ray& ray) const
+std::list<dmcr::SceneObjectPtr> dmcr::DummyScene::intersectionCandidates(
+        const dmcr::Ray& /* ray */) const
 {
-    RaycastResult result;
-    result.setIntersectionPoint(ray.origin());
-    result.setObject(m_objects.front().get());
-    return result;
+    std::list<dmcr::SceneObjectPtr> objects;
+    for (auto& obj : m_objects)
+        objects.push_back(obj.get());
+    return objects;
 }
 
 void dmcr::DummyScene::debugPrint() const

@@ -73,9 +73,11 @@ public:
     bool intersects(const AABB& aabb) const;
     /*!
      * \brief Test intersection with a ray
-     * \return True, if the ray intersects the AABB. False, otherwise.
+     * \return If the ray intersects, a positive floating point value
+     * corresponding to the distance between the ray origin and the intersection
+     * point. If the ray does not intersect, a negative floating point value.
      */
-    bool intersects(const dmcr::Ray& ray) const;
+    double intersects(const dmcr::Ray& ray) const;
 
     /*!
      * \brief Construct an AABB using center and extents values

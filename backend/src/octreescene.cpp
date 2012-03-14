@@ -21,17 +21,11 @@ void dmcr::OctreeScene::addObject(std::unique_ptr<dmcr::SceneObject> object)
     m_objects.push_back(std::move(object));
 }
 
-dmcr::RaycastResult dmcr::OctreeScene::shootRay(const dmcr::Ray &ray) const
+std::list<dmcr::SceneObjectPtr> dmcr::OctreeScene::intersectionCandidates(
+        const dmcr::Ray &ray) const
 {
-    dmcr::RaycastResult result;
-    result.setIntersectionPoint(ray.origin());
-
-    std::list<SceneObjectPtr> objects = m_octree.getObjects(ray);
-    if (!objects.empty())
-        result.setObject(objects.front());
-    else
-        result.setObject(nullptr);
-    return result;
+    std::list<dmcr::SceneObjectPtr> objects = m_octree.getObjects(ray);
+    return objects;
 }
 
 

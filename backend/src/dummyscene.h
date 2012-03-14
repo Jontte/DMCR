@@ -19,6 +19,9 @@ public:
     dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const;
     void debugPrint() const;
 
+    std::list<SceneObjectPtr> intersectionCandidates(
+            const dmcr::Ray& ray) const;
+
 private:
     std::vector<std::unique_ptr<dmcr::SceneObject>> m_objects;
 };
