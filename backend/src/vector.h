@@ -171,8 +171,8 @@ public:
       \brief Normalize vector in place
       */
     void normalize() {
-        T length = length();
-        m_x /= length; m_y /= length; m_z /= length;
+        T len = length();
+        m_x /= len; m_y /= len; m_z /= len;
     }
     /*!
       \brief Normalize vector
