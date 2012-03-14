@@ -45,7 +45,7 @@ endif
 ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG -g
 else
-CFLAGS += -DNDEBUG -O3 -ffast-math
+CFLAGS += -DNDEBUG -O3 -ffast-math -mtune=native -march=native -mfpmath=sse
 endif
 
 # Linker options
