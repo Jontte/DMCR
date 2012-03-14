@@ -22,10 +22,10 @@ CC_SOURCES =
 MAIN_SOURCES = src/main.cpp
 
 # Source files that belong to unit testing framework:
-TEST_SOURCES = tests/main.cpp\
-							 tests/test_sharedstream.cpp\
-							 tests/test_loadbalancer.cpp\
-  tests/test_tasks.cpp tests/test_intersections.cpp
+TEST_SOURCES =	tests/main.cpp\
+								tests/test_sharedstream.cpp tests/test_loadbalancer.cpp\
+								tests/test_tasks.cpp tests/test_intersections.cpp\
+								tests/test_vector.cpp
 
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)

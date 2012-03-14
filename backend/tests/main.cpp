@@ -11,12 +11,14 @@ void test_sharedstream();
 void test_loadbalancer();
 void test_tasks();
 void test_intersections();
+void test_vector();
 
 int main()
 {
     std::vector<std::pair<const char*, test_t> > tests;
 
     // And list them again here..
+    DEF_TEST(test_vector);
     DEF_TEST(test_sharedstream);
     DEF_TEST(test_loadbalancer);
     DEF_TEST(test_tasks);
