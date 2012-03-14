@@ -66,7 +66,7 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
              */
             Color c;
 
-            if (raycast_result.object() == nullptr) {
+            if (!raycast_result.object()) {
                 c = { 0.0f, 0.0f, 0.0f };
             } else {
                 if (raycast_result.object()->type() == "sphere")
