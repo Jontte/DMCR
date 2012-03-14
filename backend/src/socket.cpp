@@ -229,9 +229,10 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
 
     std::vector<uint32_t> data_buf(width*height*3);
     for (uint32_t i = 0; i < width*height; ++i) {
-        data_buf[3*i+0] = htonl((uint32_t)(data[i].r * 0xffffffff));
-        data_buf[3*i+1] = htonl((uint32_t)(data[i].g * 0xffffffff));
-        data_buf[3*i+2] = htonl((uint32_t)(data[i].b * 0xffffffff));
+
+        data_buf[3*i+0] = htonl((uint32_t)(((double)data[i].r) * 0xfffffffful));
+        data_buf[3*i+1] = htonl((uint32_t)(((double)data[i].g) * 0xfffffffful));
+        data_buf[3*i+2] = htonl((uint32_t)(((double)data[i].b) * 0xfffffffful));
     }
 
     std::lock_guard<std::mutex> G(m_mutex);
