@@ -2,6 +2,7 @@
 #define VECTOR_H
 
 #include <cmath>
+#include <ostream>
 
 namespace dmcr {
 
@@ -20,6 +21,14 @@ public:
       \param z z coordinate
       */
     Vector3(T x, T y, T z) : m_x(x), m_y(y), m_z(z) { }
+
+    /*!
+      \brief Stream insertion operator
+      */
+    friend std::ostream& operator<<(std::ostream& output, const Vector3<T>& v) {
+        output << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
+        return output;
+    }
 
     /*!
       \brief Get vector x coordinate
@@ -47,6 +56,11 @@ public:
       */
     void setZ(T z) { m_z = z; }
 
+    /*!
+      \brief Index access operator
+      \param idx Vector coordinate index
+      \return Reference to coordinate
+      */
     T& operator[](int idx) {
         if (idx == 0)
             return m_x;
@@ -56,6 +70,11 @@ public:
             return m_z;
     }
 
+    /*!
+      \brief Index access operator
+      \param idx Vector coordinate index
+      \return Const reference to coordinate
+      */
     const T& operator[](int idx) const {
         if (idx == 0)
             return m_x;
@@ -63,6 +82,14 @@ public:
             return m_y;
         else
             return m_z;
+    }
+
+    /*!
+      \brief Negate vector
+      \return Negated vector
+      */
+    Vector3<T> operator-() const {
+        return Vector3<T>(-m_x, -m_y, -m_z);
     }
 
     /*!
@@ -152,8 +179,8 @@ public:
       \return Normalized vector
       */
     Vector3<T> normalized() const {
-        T length = length();
-        return Vector3<T>(m_x / length, m_y / length, m_z / length);
+        T l = length();
+        return Vector3<T>(m_x / l, m_y / l, m_z / l);
     }
 
     /*!
