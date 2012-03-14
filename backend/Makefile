@@ -23,6 +23,7 @@ MAIN_SOURCES = src/main.cpp
 
 # Source files that belong to unit testing framework:
 TEST_SOURCES = tests/main.cpp\
+							 tests/test_sharedstream.cpp\
 							 tests/test_loadbalancer.cpp\
   tests/test_tasks.cpp
 
@@ -132,9 +133,10 @@ obj/src/octree.o: src/octree.h src/aabb.h src/vector.h src/ray.h
 obj/src/octree.o: src/sceneobject.h src/unique_ptr
 obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/main.o: src/ray.h src/aabb.h src/camera.h src/unique_ptr
-obj/src/main.o: src/renderer.h src/backendapplication.h src/taskmanager.h
-obj/src/main.o: src/task.h src/itasklistener.h src/socket.h
+obj/src/main.o: src/sharedstream.h src/renderer.h src/backendapplication.h
+obj/src/main.o: src/taskmanager.h src/task.h src/itasklistener.h src/socket.h
 obj/src/main.o: src/dmcr_protocol.pb.h src/itaskprovider.h
+obj/tests/test_sharedstream.o: src/sharedstream.h
 obj/tests/test_loadbalancer.o: src/loadbalancer.h
 obj/tests/test_tasks.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/tests/test_tasks.o: src/vector.h src/ray.h src/aabb.h src/camera.h

@@ -3,6 +3,7 @@
 #include <string>
 #include "vector.h"
 #include "dummyscene.h"
+#include "sharedstream.h"
 #include "renderer.h"
 #include <csignal>
 
