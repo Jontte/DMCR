@@ -210,9 +210,9 @@ class Connection(threading.Thread):
         print str(i)+ "/" + str(data_len)
         while i + 11 < data_len:
             pixels.append([0,0,0,0])
-            pixels[-1][0] = struct.unpack("!L", data[i:i+4])[0]
-            pixels[-1][1] = struct.unpack("!L", data[i+4:i+8])[0]
-            pixels[-1][2] = struct.unpack("!L", data[i+8:i+12])[0]
+            pixels[-1][0] = int(struct.unpack("!L", data[i:i+4])[0] / 16843009)
+            pixels[-1][1] = int(struct.unpack("!L", data[i+4:i+8])[0] / 16843009)
+            pixels[-1][2] = int(struct.unpack("!L", data[i+8:i+12])[0] / 16843009)
             
             #pixels.append(struct.unpack("!L"*3, data[i,i+12])) #doesn't work
             i = i + 12
