@@ -118,8 +118,6 @@ void dmcr::Scene::loadFromString(const std::string &string)
     m_camera.setFov(camera_fov.asDouble());
     m_camera.setAspect(camera_aspect.asDouble());
 
-    std::cout << m_camera.aspect() << std::endl;
-
     beginAddObjects();
         
     const Json::Value objects = root["scene"];
