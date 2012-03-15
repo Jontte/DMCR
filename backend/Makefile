@@ -40,8 +40,7 @@ DEBUG ?= 1
 PROFILE ?= 0
 
 ifeq ($(PROFILE), 1)
-CFLAGS += -pg
-DEBUG = 1
+CFLAGS += -pg -g
 endif
 
 ifeq ($(DEBUG), 1)
