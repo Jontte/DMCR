@@ -27,6 +27,8 @@ TEST_SOURCES =	tests/main.cpp\
 								tests/test_tasks.cpp tests/test_intersections.cpp\
 								tests/test_vector.cpp
 
+BENCHMARK_SOURCES = tests/benchmark.cpp
+
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
@@ -54,6 +56,7 @@ LDFLAGS = $(PROTOBUF_LDFLAGS)
 # Target file
 EXECUTABLE = dmcr
 EXECUTABLE_UNITTEST = unittest
+EXECUTABLE_BENCHMARK = benchmark
 
 # C/C++-specific flags:
 CPPFLAGS = $(CFLAGS) -std=gnu++0x
@@ -64,9 +67,10 @@ OBJDIR = obj
 SRCDIR = src
 ASSETDIR = assets
 
-SOURCES = $(CPP_SOURCES) $(CC_SOURCES) $(MAIN_SOURCES) $(TEST_SOURCES)
+SOURCES = $(CPP_SOURCES) $(CC_SOURCES) $(MAIN_SOURCES) $(TEST_SOURCES) $(BENCHMARK_SOURCES)
 MAIN_OBJECTS = $(MAIN_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
 TEST_OBJECTS = $(TEST_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
+BENCHMARK_OBJECTS = $(BENCHMARK_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CPP_SOURCES:%.cpp=$(OBJDIR)/%.o) $(CC_SOURCES:%.c=$(OBJDIR)/%.o)
 
 DEPEND = makedepend -Y -pobj/
 
@@ -76,6 +80,9 @@ $(EXECUTABLE): $(MAIN_OBJECTS)
 
 $(EXECUTABLE_UNITTEST): $(TEST_OBJECTS)
 	$(CPP) $(TEST_OBJECTS) -o $@ $(CFLAGS) $(LDFLAGS)
+
+$(EXECUTABLE_BENCHMARK): $(BENCHMARK_OBJECTS)
+	$(CPP) $(BENCHMARK_OBJECTS) -o $@ $(CFLAGS) $(LDFLAGS)
 
 $(OBJDIR)/%.o: %.cpp
 		$(CPP) -c $(CPPFLAGS) $< -o $@
@@ -95,9 +102,9 @@ depend: $(SOURCES)
 clean:
 	-@rm $(EXECUTABLE) $(EXECUTABLE_UNITTEST) $(MAIN_OBJECTS) $(TEST_OBJECTS) 2>/dev/null || true
 
-builddirs: $(OBJDIR)/src $(OBJDIR)/tests $(OBJDIR)/3rdparty/json
+builddirs: $(OBJDIR) $(OBJDIR)/src $(OBJDIR)/tests $(OBJDIR)/3rdparty/json
 
-$(OBJDIR)/%:
+$(OBJDIR) $(OBJDIR)/src $(OBJDIR)/tests $(OBJDIR)/3rdparty/json:
 	@mkdir -p $@
 
 .PHONY: all builddirs depend clean
