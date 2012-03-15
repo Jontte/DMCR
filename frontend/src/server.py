@@ -33,7 +33,7 @@ class Server(object):
         try:
             while True:
                 self.connections.append(connection.Connection(*s.accept()))
-                self.connections[-1].scene = self.scene
+                self.connections[-1].SetScene(scene=self.scene, width=400, height=300, sceneid=1, name="test")
                 self.connections[-1].start()
         except KeyboardInterrupt as e:
             print "Excepted, quitting", e

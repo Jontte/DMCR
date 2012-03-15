@@ -4,26 +4,11 @@ Created on Feb 8, 2012
 @author: blizzara
 '''
 
-import socket   # use BSD sockets
-import struct   # used to convert to and fro binary data
+
 import threading # each connection is a thread
-import dmcr_protocol_pb2 as proto # import protobuf classes
 
-# from socket.cpp
-#  enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2,
-#                  Packet_NewTask = 3, Packet_RenderedData = 4 };
-
-BACKENDHANDSHAKE = 1
-CONNECTIONRESULT = 2
-NEWTASK = 3
-RENDEREDDATA = 4
-
-
-# enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
-#                       ConnectionResult_ConnectionFailed };
-CONNECTIONRESULT_SUCCESS = 0
-CONNECTIONRESULT_INVALIDKEY = 1
-CONNECTIONRESULT_CONNECTIONFAILED = 2
+from dmcr_socket import Socket
+from datetime import datetime
 
 def ListToPPM(pixels, width, height, filename):
     with open(filename, 'w') as fp:
@@ -57,10 +42,31 @@ class Connection(threading.Thread):
         
         '''
         super(Connection, self).__init__()
-        self.conn = conn
-        self.conn.settimeout(4)
-        self.addr = addr
+        self.socket = Socket(conn, addr)
         self._stop = threading.Event()
+        
+        
+    def SetScene(self, scene, width, height, sceneid, name, datestring="%Y%m%d-%H%M%S", extension = "ppm"):
+        '''
+        Sets the scene for the thread to render.
+        
+        @param scene: the json-scene (string)
+        @param width: wanted width of image (int)
+        @param height: wanted height of image (int)
+        @param sceneid: internal id of scene
+        @param name: wanted name of image (W/O extension, eg. "test")
+        @param datestring: formation of the date string to be included in filename (default "%Y%m%d-%H%M%S" results in "20120225-184236")
+        @param extension: filename extension (default "ppm")  
+        
+        '''     
+        self.scene = scene
+        self.width = width
+        self.height = height
+        self.iterations = 0
+        self.sceneid = sceneid
+        self.img_name = name
+        self.img_extension = extension
+        self.datestring = datestring 
         
     def run(self): # overriding threading.Thread.run()
         '''
@@ -71,14 +77,30 @@ class Connection(threading.Thread):
         @return: nothing
     
         '''
-    
+        result = False
         try:
+            while not self.stopped() and not result: # try to backend handshake until succeeded
+                result = self.socket.Recv_BackendHandshake() # [0] = version, [1]  = description
+            
+            if result[0] != result[0]: # if backend version doesn't match us
+                self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_CONNECTIONFAILED) # tell BE connection failed
+                raise Socket.SocketException    # raise exception so this loop ends
+            
+            self.be_description = result[1] # store the description backend gives about itself
+            
+            self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_SUCCESS)
+            self.socket.Send_NewTask(self.sceneid, self.width, self.height, self.iterations, self.scene)
+        
             while not self.stopped():
-                self.ReceivePacket()
+                image = self.socket.Recv_RenderedData()
+                if image:
+                    ListToPPM(image, self.width, self.height, self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
+            
+            
         except KeyboardInterrupt:
             pass
         finally:
-            self.Close()
+            self.socket.Close() # socket must be closed no matter what happens
         
     def __str__(self):
         '''
@@ -86,7 +108,7 @@ class Connection(threading.Thread):
         @return: string version of a connection
         
         '''
-        return "Socket connected to {0}".format(self.addr)
+        return "Socket connected to {0}".format(self.socket.addr)
     
     def stop(self):
         '''
@@ -98,6 +120,7 @@ class Connection(threading.Thread):
         '''
         
         self._stop.set()
+        self.socket.stopped = True
         
     def stopped(self):
         '''
@@ -111,68 +134,6 @@ class Connection(threading.Thread):
         
         return self._stop.isSet()
     
-    def Close(self):
-        '''
-        Closes connection
-        
-        @return: nothing
-        
-        '''
-        self.conn.close()
-    
-    def ReceiveData(self, length):
-        '''
-        Receives data from own socket. 
-        Returns when has received asked number of bytes.
-        Raises Connection.ThreadStopped if someone calls Connection.stop() 
-        while this is running.
-        
-        @param length: how many bytes are wanted (int)
-        @return: received data (as it was received)
-        
-        '''
-        data = ''
-        data_length = 0
-        while data_length < length:
-            if self.stopped():
-                raise Connection.ThreadStopped("Stopped while receiveng data")
-            try: 
-                data += self.conn.recv(length-data_length)
-            except socket.timeout:
-                pass
-            data_length = len(data)
-        return data
-    
-    def ReceiveHeader(self):
-        '''
-        Receives info about coming packet (id) and it's length.
-        
-        @return: a tuple containing (id, length)
-        
-        '''
-        
-        # receive first header length
-        try:
-            data = self.ReceiveData(4) # first comes 4 bytes indicating headers length
-        except Connection.ThreadStopped:
-            return False, False
-        
-        data_tuple = struct.unpack("!L", data) # unpack binary data to long int (! means network)
-        header_length  = int(data_tuple[0]) # int conversion maybe not needed, but first element of tuple anyways
-        
-        # if header length is usable, receive whole header
-        if header_length < 1:
-            return False, False
-        
-        try:
-            header_data = self.ReceiveData(header_length)
-        except Connection.ThreadStopped:
-            return False, False
-        
-        header = proto.PacketHeader()
-        header.ParseFromString(header_data)
-        
-        return header.id, header.length
         
     def ReceivePacket(self):
         '''
@@ -183,210 +144,24 @@ class Connection(threading.Thread):
         @return: nothing 
                 
         '''
-        packet_id, length = self.ReceiveHeader()
+        packet_id, length = self.socket.ReceiveHeader()
         if packet_id == False:
             return
         try:
-            data = self.ReceiveData(length)
+            data = self.socket.ReceiveData(length)
         except Connection.ThreadStopped:
             return
         
         if packet_id == 1:
-            self.Recv_BackendHandshake(data)
+            self.socket.Recv_BackendHandshake(data)
 #        elif packet_id == 2:                    # these packets are
 #            self.Recv_ConnectionResult(data)    # sent by frontend
 #        elif packet_id == 3:                    # so no need to 
 #            self.Recv_NewTask(data)            # receive them
         elif packet_id == 4:
-            self.Recv_RenderedData(data)
+            image = self.socket.Recv_RenderedData(data)
+            ListToPPM(image, self.width, self.height, "test.ppm")
+        
         else:
             pass
-        
-    def Recv_BackendHandshake(self, data):
-        '''
-        Turns binary string into BackendHandshake-protobuf packet.
-        
-        Stores protocol version and description, prints handshake and sends 
-        a ConnectionResult and a NewTask to backend. 
-        
-        
-        @param data: binary data containing BackendHandshake-protobuf packet
-        @return: received BackendHandshake-protobuf packet 
-        
-        ''' 
-        
-        handshake = proto.BackendHandshake()
-        handshake.ParseFromString(data)
-        
-        self.protocol_version = handshake.protocol_version
-        self.description = handshake.description
-        print handshake # nothing clever to do yet, just print
-        
-        self.Send_ConnectionResult(CONNECTIONRESULT_SUCCESS)
-        self.Send_NewTask(1,400,300,10,self.scene)
-        return handshake
-
-# these following packets are sent by frontend, no need to know how to receive them
-
-    '''    def Recv_ConnectionResult(self, data):
-        conn_result = proto.ConnectionResult()
-        conn_result.ParseFromString(data)
-        result = conn_result.result
-        print conn_result # nothing clever to do yet, just print
-        return conn_result
-    '''
     
-    '''    def Recv_NewTask(self, data):
-        newtask = proto.NewTask()
-        newtask.ParseFromString(data)
-        
-        print newtask # nothing clever to do yet, just print
-        return newtask
-    '''      
-    def Recv_RenderedData(self, data):
-        '''
-        Turns binary string into RenderedData-protobuf packet.
-        
-        Reads incoming image size from packet, then receives the image,
-        converts it to list of pixels and writes to "test.ppm".
-        
-        @param data: binary data containing BackendHandshake-protobuf packet
-        @return: nothing
-        
-        ''' 
-        rendered_data = proto.RenderedData()
-        rendered_data.ParseFromString(data)
-        data_len = rendered_data.data_length
-        try:
-            data = self.ReceiveData(data_len)
-        except Connection.ThreadStopped:
-            print "Thread closed while receiveng picture."
-            return
-        i = 0
-        pixels = list()
-        print rendered_data
-        print "unpacking image data"
-        print 
-        print str(i)+ "/" + str(data_len)
-        while i + 11 < data_len:
-            pixels.append([0,0,0,0])
-            pixels[-1][0] = int(struct.unpack("!L", data[i:i+4])[0] / 16843009)
-            pixels[-1][1] = int(struct.unpack("!L", data[i+4:i+8])[0] / 16843009)
-            pixels[-1][2] = int(struct.unpack("!L", data[i+8:i+12])[0] / 16843009)
-            
-            #pixels.append(struct.unpack("!L"*3, data[i,i+12])) #doesn't work
-            i = i + 12
-        if len(pixels) != rendered_data.width * rendered_data.height:
-            print "Dimension mismatch: got {} pixels, but image size should be {} x {}".format(len(pixels),rendered_data.width, rendered_data.height)
-            return
-        ListToPPM(pixels, rendered_data.width, rendered_data.height, "test.ppm")
-        
-
-        #return rendered_data
-
-
-    def SendHeader(self, id, length):
-        '''
-        Sends info about coming packet, first the length of header and then
-        the header (Protobuf-packet) itself: packet id and packet length.
-        
-        @return: nothing
-        
-        '''
-        
-        head = proto.PacketHeader()
-        head.length = length
-        head.id = id
-        
-        
-        
-        head_size = head.ByteSize()
-        head_size_bin = struct.pack("!L", head_size) 
-        
-        
-        self.SendData(head_size_bin) # send size of header as !L
-        
-        self.SendData(head.SerializeToString()) # send the header
-                
-    def SendData(self, data):
-        ''' 
-        Just sends given data to client.
-        
-        @param data: binary data to be sent (string)
-        
-        @return: nothing 
-        
-        '''
-        self.conn.sendall(data)
-        
-    def SendPacket(self, type_id, protobuf_packet):
-        '''
-        Sends packet (data) of type (type_id). Handles sending of header and packet itself.
-        
-        @param type_id: type of packet (enum)
-        @param protobuf_packet: packet to be sent as a protobuf-packet
-        
-        @return: nothing
-        
-        '''
-
-        self.SendHeader(type_id, protobuf_packet.ByteSize())
-        self.SendData(protobuf_packet.SerializeToString())
-        
-    # No need to send this packet from frontend
-    '''
-    def Send_BackendHandshake(self, data):
-        
-        handshake = proto.BackendHandshake()
-        handshake.ParseFromString(data)
-        
-        self.protocol_version = handshake.protocol_version
-        self.description = handshake.description
-        print handshake # nothing clever to do yet, just print
-        return handshake
-    '''
-         
-    def Send_ConnectionResult(self, result):
-        '''
-        Creates ConnectionResult -protobuf packet and sends it.
-        
-        @param result: result to be sent (eg. CONNECTIONRESULT_SUCCESS)
-        
-        @return: nothing
-        
-        ''' 
-        conn_result = proto.ConnectionResult()
-        conn_result.result = result
-        
-        self.SendPacket(CONNECTIONRESULT, conn_result)
-        
-    def Send_NewTask(self, task_id, width, height, iterations, scene):
-        '''
-        Creates NewTask -protobuf packet and sends it.
-        
-        @param task_id: id of task to be sent (int)
-        @param width: wanted width of image (int)
-        @param height: wanted height of image (int)
-        @param iterations: how many iterations we want to be done (int)   
-        @param scene: the json scene-file to be rendered (string) 
-        
-        @return: nothing
-        '''
-        newtask = proto.NewTask()
-        newtask.id = task_id
-        newtask.width = width
-        newtask.height = height
-        newtask.iterations = iterations
-        newtask.scene = scene
-        
-        self.SendPacket(NEWTASK, newtask)
-        
-        
-        #No need to send this packet from frontend
-'''    def Send_RenderedData(self, data):
-        rendered_data = proto.RenderedData()
-        rendered_data.ParseFromString(data)
-    
-        print rendered_data # nothing clever to do yet, just print
-        return rendered_data
-        '''
