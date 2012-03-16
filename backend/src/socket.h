@@ -36,6 +36,8 @@ public:
 enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2,
                 Packet_NewTask = 3, Packet_RenderedData = 4 };
 
+enum ResultFormat { ResultFormat_PNG8 = 1 };
+
 /*! \brief Backend-controller communication socket
 
    An abstracted TCP-based communication method between the backend and the

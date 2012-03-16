@@ -30,8 +30,9 @@ public:
 
 };
 
-enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
-                        ConnectionResult_ConnectionFailed };
+enum ConnectionResult { ConnectionResult_Success = 0,
+                        ConnectionResult_InvalidKey = 1,
+                        ConnectionResult_ConnectionFailed = 2 };
 
 /*! \brief Interface called by Socket when events happen */
 class ISocketListener {

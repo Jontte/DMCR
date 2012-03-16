@@ -39,6 +39,7 @@ BENCHMARK_SOURCES = tests/benchmark.cpp
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
+PNGPP_LDFLAGS = -lpng
 
 # Compiler options
 CFLAGS += -Wall -Wextra $(PROTOBUF_CFLAGS) -I3rdparty
@@ -57,7 +58,7 @@ CFLAGS += -DNDEBUG -O3 -ffast-math -mtune=native -march=native -mfpmath=sse
 endif
 
 # Linker options
-LDFLAGS = $(PROTOBUF_LDFLAGS)
+LDFLAGS = $(PROTOBUF_LDFLAGS) $(PNGPP_LDFLAGS)
 
 # Target file
 EXECUTABLE = dmcr

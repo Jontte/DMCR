@@ -14,6 +14,8 @@
 #include <cerrno>
 #include <vector>
 #include <sys/utsname.h>
+#include <png++/png.hpp>
+#include <sstream>
 
 static int checkError(int r) {
     if (r == -1)
@@ -115,7 +117,7 @@ static std::string getMachineDescription() {
 void dmcr::Socket::sendHandshakePacket()
 {
     dmcr::Packet::BackendHandshake packet;
-    packet.set_protocol_version(0);
+    packet.set_protocol_version(1);
     packet.set_description(getMachineDescription());
     sendPacket(Packet_BackendHandshake, packet);
 }
@@ -231,21 +233,28 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     packet.set_height(height);
     packet.set_id(task);
     packet.set_iterations_done(iterations_done);
-    packet.set_data_length(width*height*3*sizeof(uint32_t));
+    packet.set_data_format(ResultFormat_PNG8);
 
-    std::vector<uint32_t> data_buf(width*height*3);
-    for (uint32_t i = 0; i < width*height; ++i) {
+    png::image<png::rgb_pixel> image(width, height);
 
-        data_buf[3*i+0] = htonl((uint32_t)(((double)data[i].r) * 0xfffffffful));
-        data_buf[3*i+1] = htonl((uint32_t)(((double)data[i].g) * 0xfffffffful));
-        data_buf[3*i+2] = htonl((uint32_t)(((double)data[i].b) * 0xfffffffful));
+    for (uint32_t x = 0; x < width; ++x) {
+        for (uint32_t y = 0; y < height; ++y) {
+            const auto& c = data[y * width + x];
+            image[y][x] = png::rgb_pixel((uint8_t)((double)c.r * 0xff),
+                                         (uint8_t)((double)c.g * 0xff),
+                                         (uint8_t)((double)c.b * 0xff));
+        }
     }
+
+    std::ostringstream ss;
+    image.write_stream(ss);
+    packet.set_data_length(ss.str().length());
 
     std::lock_guard<std::mutex> G(m_mutex);
 
     sendPacketUnsafe(Packet_RenderedData, packet);
 
-    checkError(send(m_fd, data_buf.data(), width*height*3*sizeof(uint32_t), 0));
+    checkError(send(m_fd, ss.str().data(), ss.str().length(), 0));
 }
 
 void dmcr::Socket::onTaskCompleted(uint32_t task_id,
