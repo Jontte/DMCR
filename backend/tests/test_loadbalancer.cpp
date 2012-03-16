@@ -12,14 +12,15 @@
 
 void test_loadbalancer()
 {
-    dmcr::LoadBalancer b(10);
+    dmcr::LoadBalancer b(10, 20);
 
     std::vector<int> vals(10, 0);
     
     // Get 100 jobs, resulting in even load of 10 per job-id
     for(int i = 0 ; i < 100; ++i)
     {
-        size_t ret = b.get();
+        int ret = b.get();
+        assert(ret != -1);
         ++vals.at(ret);
     }
 
@@ -29,7 +30,7 @@ void test_loadbalancer()
       assert(vals[i] == 10);
     }
 
-    // Finish all 0-jobs
+    // Finish all pending 0-jobs
     for(int i = 0; i < 10; ++i)
         b.finish(0);
 
@@ -37,9 +38,18 @@ void test_loadbalancer()
     // the rest seem a lot heavier computationally
     for(int i = 0; i < 10; ++i)
     {
-        size_t ret = b.get();
-        assert(ret != 0);
+        int ret = b.get();
+        assert(ret != -1 && ret != 0);
     }
+    // The system should return jobs 90 times until running out of work
+    for(int i = 0; i < 90; i++)
+    {
+        int ret = b.get();
+        assert(ret != -1);
+    }
+    // All done
+    int ret = b.get();
+    assert(ret == -1);
 }
 
 

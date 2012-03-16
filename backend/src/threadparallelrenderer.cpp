@@ -30,7 +30,7 @@ static int hardware_threads() {
 const int RENDER_SLICES = 50;
 
 ThreadParallelRenderer::ThreadParallelRenderer(ScenePtr scene)
-: Renderer(scene), m_balancer(RENDER_SLICES) {
+: Renderer(scene), m_balancer(RENDER_SLICES, 1) {
 }
 
 std::shared_ptr<RenderResult> ThreadParallelRenderer::render(uint16_t h_res,
@@ -59,26 +59,28 @@ const
         slice_result->copyInto(result);
     };
 
-    std::atomic_int slices_done(0);
-
-    auto thread_fun = [&m_balancer, &slices_done, &slice_fun](int i) {
-        while (slices_done < RENDER_SLICES) {
+    auto thread_fun = [&m_balancer, &slice_fun](int i) {
+        while(true)
+        {
             int slice = m_balancer.get();
+            if( slice == -1) // Ran out of work, all done!
+                break;
             std::cout << "Thread " << i << " slice " << slice << std::endl;
             slice_fun(slice);
             m_balancer.finish(slice);
-            ++slices_done;
         }
+        std::cout << "Thread " << i << " done!" << std::endl;
     };
 
+    std::vector< std::thread > workers;
     for (unsigned int i = 0; i < hw_threads; ++i) {
-        std::thread t(thread_fun, i);
-        t.detach();
+        workers.emplace_back(thread_fun, i);
+    }
+    for (unsigned int i = 0; i < workers.size(); ++i) {
+        workers[i].join();
     }
 
-    while ((int)slices_done < RENDER_SLICES) {
-        sleep(1);
-    }
+    std::cout << "Frame finished!" << std::endl;
 
     return result;
 }

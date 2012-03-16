@@ -25,15 +25,17 @@ namespace dmcr
 class LoadBalancer
 {
     public:
-    LoadBalancer(size_t N);
+    LoadBalancer(size_t N_slices, int jobs_per_slice);
 
-    size_t get();
-    void finish(size_t job);
+    int get();
+    void finish(int job);
 
     private:
+
     std::vector<int> m_pending;
     std::vector<int> m_finished;
     std::mutex       m_mutex;
+    int              m_job_target;
 };
 
 }
