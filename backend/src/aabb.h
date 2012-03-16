@@ -57,9 +57,9 @@ public:
      * \return Extents
      * 
      * This function returns a vector describing the size of the AABB. It is
-     * the vector from the center point to the maximum corner.
+     * the vector from the minimum corner to the maximum corner.
      */
-    dmcr::Vector3f extents() const { return (m_max - m_min) / 2.0; }
+    dmcr::Vector3f extents() const { return m_max - m_min; }
 
     /*!
      * \brief Set minimum corner coordinates
@@ -93,6 +93,9 @@ public:
      */
     static dmcr::AABB fromCenterAndExtents(const dmcr::Vector3f& center,
                                            const dmcr::Vector3f& extents);
+    
+    static dmcr::AABB fromOppositeCorners(const dmcr::Vector3f& corner1,
+                                          const dmcr::Vector3f& corner2);
 
 private:
     dmcr::Vector3f m_min, m_max;

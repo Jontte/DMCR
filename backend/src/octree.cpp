@@ -67,13 +67,13 @@ void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
         m_leaf = false;
 
         dmcr::Vector3f center = m_aabb.center();
-        dmcr::Vector3f extents = m_aabb.extents();
+        dmcr::Vector3f half_extents = m_aabb.extents() / 2.0;
 
         for (int i = 0; i < 8; ++i) {
             m_children[i] = dmcr::make_unique<dmcr::Octree>();
 
-            m_children[i]->setAabb(dmcr::AABB(center,
-                                              center + extents *
+            m_children[i]->setAabb(dmcr::AABB::fromOppositeCorners(center,
+                                              center + half_extents *
                                               extentPermutations[i]));
 
             m_children[i]->build(inside, depth + 1);

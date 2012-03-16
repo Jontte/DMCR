@@ -88,5 +88,28 @@ double dmcr::AABB::intersects(const dmcr::Ray &ray) const
 dmcr::AABB dmcr::AABB::fromCenterAndExtents(const dmcr::Vector3f &center,
                                             const dmcr::Vector3f &extents)
 {
-    return dmcr::AABB(center - extents, center + extents);
+    return dmcr::AABB(center - extents / 2.0, center + extents / 2.0);
+}
+
+dmcr::AABB dmcr::AABB::fromOppositeCorners(const dmcr::Vector3f& corner1,
+                                           const dmcr::Vector3f& corner2)
+{
+    dmcr::Vector3f min = corner1;
+    dmcr::Vector3f max = corner1;
+    
+    if (corner2.x() < min.x())
+        min.setX(corner2.x());
+    if (corner2.y() < min.y())
+        min.setY(corner2.y());
+    if (corner2.z() < min.z())
+        min.setZ(corner2.z());
+    
+    if (corner2.x() > max.x())
+        max.setX(corner2.x());
+    if (corner2.y() > max.y())
+        max.setY(corner2.y());
+    if (corner2.z() > max.z())
+        max.setZ(corner2.z());
+    
+    return dmcr::AABB(min, max);
 }

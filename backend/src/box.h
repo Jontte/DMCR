@@ -18,7 +18,20 @@ class Box : public dmcr::SceneObject
 public:
     Box() { }
 
+    /*!
+     * \brief Set extents
+     * \param extents Box extents
+     * 
+     * The box's extents is defined as the vector between two opposite corners.
+     */
     void setExtents(dmcr::Vector3f extents) { m_extents = extents; }
+    /*!
+     * \brief Get extents
+     * \return Box extents
+     * 
+     * This function returns a vector describing the size of the box. It is
+     * the vector from the center point to the maximum corner.
+     */
     dmcr::Vector3f extents() const { return m_extents; }
 
     virtual std::string type() const { return "box"; }
