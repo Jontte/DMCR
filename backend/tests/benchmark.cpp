@@ -8,32 +8,41 @@
 #include "../src/task.h"
 #include "../src/scene.h"
 #include "../src/octreescene.h"
+#include "../src/dummyscene.h"
 #include "../src/itaskprovider.h"
 #include "../src/box.h"
 #include <unistd.h>
 #include <string>
 #include <iostream>
+#include <cmath>
 
 class BenchmarkTaskProvider : public dmcr::ITaskProvider {
 public:
     virtual void onTaskCompleted(uint32_t /*task_id*/, 
-                                 const dmcr::RenderResultPtr& /*result*/)
+                                 const dmcr::RenderResultPtr& result)
     {
         std::cout << "Benchmark done." << std::endl;
+        result->saveImage("benchmark.ppm");
         exit(0);
     }
 };
 
 int main() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
-        auto scene = std::make_shared<dmcr::OctreeScene>();
+        auto scene = std::make_shared<dmcr::DummyScene>();
+        auto& c = scene->camera();
+        c.setPosition(dmcr::Vector3f(0, 0, 10));
+        c.setFov(M_PI / 2);
+        c.setAspect(640.0f/480.0f);
+        c.setLookAt(dmcr::Vector3f(0,0,0));
+        
         scene->beginAddObjects();
 
         for (int i = 0; i < 10; ++i) {
             for (int j = 0; j < 10; ++j) {
                 auto a = dmcr::make_unique<dmcr::Box>();
                 a->setPosition(dmcr::Vector3f(2 * i, 2 * j, 0));
-                a->setExtents(dmcr::Vector3f(1, 1, 1));
+                a->setExtents(dmcr::Vector3f(0.5, 0.5, 0.5));
                 scene->addObject(std::move(a));
             }
         }

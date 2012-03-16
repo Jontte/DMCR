@@ -191,5 +191,5 @@ obj/tests/benchmark.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/tests/benchmark.o: src/vector.h src/ray.h src/aabb.h src/raycastresult.h
 obj/tests/benchmark.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
 obj/tests/benchmark.o: src/itasklistener.h src/task.h src/scene.h
-obj/tests/benchmark.o: src/octreescene.h src/octree.h src/itaskprovider.h
-obj/tests/benchmark.o: src/box.h
+obj/tests/benchmark.o: src/octreescene.h src/octree.h src/dummyscene.h
+obj/tests/benchmark.o: src/itaskprovider.h src/box.h
