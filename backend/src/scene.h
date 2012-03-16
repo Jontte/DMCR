@@ -90,7 +90,8 @@ public:
      */
     dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const;
     
-    dmcr::Camera camera() const { return m_camera; }
+    const dmcr::Camera& camera() const { return m_camera; }
+    dmcr::Camera& camera() { return m_camera; }
     
 protected:
     dmcr::Camera m_camera;
