@@ -6,6 +6,7 @@
 
 #include "aabb.h"
 #include <cmath>
+#include <algorithm>
 
 #define EPSILON 0.000000001
 
@@ -34,55 +35,18 @@ bool dmcr::AABB::intersects(const dmcr::AABB &aabb) const
 // Test ray and AABB intersection using slabs method.
 double dmcr::AABB::intersects(const dmcr::Ray &ray) const
 {
-    /* Check if the ray is parallel to a slab defined by parallel sides
-     * of the AABB. If it is, check if its origin is outside the slab.
-     */
-    for (int i = 0; i < 3; ++i) {
-        if (fabs(ray.direction()[i]) < EPSILON &&
-                (ray.origin()[i] < m_min[i] || ray.origin()[i] > m_max[i]))
-            return -1.0;
-    }
+    dmcr::Vector3f ray_dir_inv = dmcr::Vector3f(1, 1, 1) / ray.direction();
+    dmcr::Vector3f t1 = (m_min - ray.origin()) * ray_dir_inv;
+    dmcr::Vector3f t2 = (m_max - ray.origin()) * ray_dir_inv;
 
-    // Calculate parameter values for ray and slab intersection points
-    dmcr::Vector3f t1 = (m_min - ray.origin()) / ray.direction();
-    dmcr::Vector3f t2 = (m_max - ray.origin()) / ray.direction();
+    double tmin = std::max(std::min(t1.z(), t2.z()), 
+            std::max(std::min(t1.y(), t2.y()), std::min(t1.x(), t2.x())));
+    double tmax = std::min(std::max(t1.z(), t2.z()), 
+            std::min(std::max(t1.y(), t2.y()), std::max(t1.x(), t2.x())));
 
-    // Assign minimum parameter values to t1
-    for (int i = 0; i < 3; ++i) {
-        if (t1[i] > t2[i]) {
-            float tmp = t1[i];
-            t1[i] = t2[i];
-            t2[i] = tmp;
-        }
-    }
-    
-    /* Find the maximum of the minimum parameters and the minimum of the
-     * maximum parameters.
-     */
-
-    float tmin = t1[0];
-    float tmax = t2[0];
-
-    for (int i = 1; i < 3; ++i) {
-        if (t1[i] > tmin)
-            tmin = t1[i];
-        if (t2[i] < tmax)
-            tmax = t2[i];
-    }
-
-    // The ray must enter all slabs before leaving any.
-    if (tmin > tmax)
-        return -1.0;
-
-    // Check if the intersection point is on the correct side of the ray origin.
-    if (tmax < 0)
-        return -1.0;
-
-
-    if (tmin < 0)
+    if (tmax >= std::max(0.0, tmin))
         return tmax;
-
-    return tmin;
+    return -1.0;
 }
 
 dmcr::AABB dmcr::AABB::fromCenterAndExtents(const dmcr::Vector3f &center,
