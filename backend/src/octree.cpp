@@ -20,9 +20,6 @@ dmcr::Octree::Octree() :
 void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
                          int depth = 0)
 {
-    if (objects.size() == 0)
-        return;
-
     if (depth == 0) {
         dmcr::Vector3f min = objects.front()->position();
         dmcr::Vector3f max = objects.front()->position();
