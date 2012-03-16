@@ -15,7 +15,8 @@ src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
 3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp\
 src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
 src/backendapplication.cpp src/octreescene.cpp src/aabb.cpp src/box.cpp \
-src/sphere.cpp src/octree.cpp src/raycastresult.cpp
+src/sphere.cpp src/octree.cpp src/raycastresult.cpp \
+src/threadparallelrenderer.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)
@@ -127,7 +128,8 @@ obj/src/loadbalancer.o: src/loadbalancer.h
 obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/task.o: src/ray.h src/aabb.h src/raycastresult.h src/camera.h
 obj/src/task.o: src/unique_ptr src/renderer.h src/taskmanager.h
-obj/src/task.o: src/itasklistener.h
+obj/src/task.o: src/itasklistener.h src/threadparallelrenderer.h
+obj/src/task.o: src/loadbalancer.h
 obj/src/taskmanager.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/src/taskmanager.o: src/vector.h src/ray.h src/aabb.h src/raycastresult.h
 obj/src/taskmanager.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
@@ -156,6 +158,11 @@ obj/src/sphere.o: src/aabb.h src/raycastresult.h
 obj/src/octree.o: src/octree.h src/aabb.h src/vector.h src/ray.h
 obj/src/octree.o: src/sceneobject.h src/raycastresult.h src/unique_ptr
 obj/src/raycastresult.o: src/raycastresult.h src/vector.h
+obj/src/threadparallelrenderer.o: src/threadparallelrenderer.h src/scene.h
+obj/src/threadparallelrenderer.o: src/sceneobject.h src/vector.h src/ray.h
+obj/src/threadparallelrenderer.o: src/aabb.h src/raycastresult.h src/camera.h
+obj/src/threadparallelrenderer.o: src/unique_ptr src/renderer.h
+obj/src/threadparallelrenderer.o: src/loadbalancer.h
 obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/main.o: src/ray.h src/aabb.h src/raycastresult.h src/camera.h
 obj/src/main.o: src/unique_ptr src/sharedstream.h src/renderer.h src/util.h

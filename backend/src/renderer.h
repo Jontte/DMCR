@@ -21,6 +21,9 @@ public:
         : std::runtime_error(msg) {}
 };
 
+class RenderResult;
+typedef std::shared_ptr<dmcr::RenderResult> RenderResultPtr;
+
 /*!
  * \brief Stores the result of a rendering pass
  */
@@ -46,6 +49,10 @@ public:
         m_data[y * m_width + x] = color;
     }
 
+    Color pixel(uint16_t x, uint16_t y) const {
+        return m_data.at(y * m_width + x);
+    }
+
     /*!
      * \brief Save rendering result to PPM image
      * \throws RenderResultException
@@ -61,6 +68,8 @@ public:
     
     /*! \brief Get rendered image as array of Color structs */
     const std::vector<Color>& data() const { return m_data; }
+
+    void copyInto(RenderResultPtr result);
     
 private:
     uint16_t m_left, m_right, m_top, m_bottom;
@@ -69,8 +78,6 @@ private:
     
     std::vector<Color> m_data;
 };
-
-typedef std::shared_ptr<dmcr::RenderResult> RenderResultPtr;
 
 /*!
  * \brief Renders given scene
@@ -99,6 +106,7 @@ public:
      * \param bottom Bottom border of portion to render in pixels
      * \return Pointer to RenderResult object
      */
+    virtual
     std::shared_ptr<dmcr::RenderResult> render(uint16_t h_res, uint16_t v_res,
                                                uint16_t left = 0, 
                                                uint16_t right = 0,

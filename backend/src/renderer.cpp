@@ -39,6 +39,21 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
     file.close();
 }
 
+void dmcr::RenderResult::copyInto(dmcr::RenderResultPtr result) {
+    if (result->left() > left() || result->right() < right() ||
+        result->top() > top() || result->bottom() < bottom())
+        throw RenderResultException("Cannot copy into subset result");
+    if (result->left() != 0 || result->top() != 0)
+        throw RenderResultException("UNIMPLEMENTED copying into non-result");
+
+    for (uint16_t y = top(); y <= bottom(); ++y) {
+        for (uint16_t x = left(); x <= right(); ++x) {
+            result->setPixel(x, y, pixel(x-left(), y-top()));
+        }
+    }
+}
+
+
 dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res, 
                                              uint16_t left, uint16_t right, 
                                              uint16_t top, uint16_t bottom) const
