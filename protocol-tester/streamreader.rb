@@ -1,3 +1,9 @@
+#
+# This file is a part of the DMCR project and is subject to the terms and
+# conditions defined in file 'LICENSE.txt', which is a part of this source
+# code package.
+#
+
 module StreamReader
   def __read_count(bytes_per_obj, count, type)
     data = read(count*bytes_per_obj)
