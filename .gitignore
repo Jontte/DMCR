@@ -6,5 +6,6 @@
 *.pyc
 backend/dmcr
 backend/unittest
+backend/benchmark
 frontend/src/*.png
 frontend/src/*.ppm
