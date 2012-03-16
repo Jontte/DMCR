@@ -101,16 +101,16 @@ public:
     
     /*!
      * \brief Render a given portion of the scene
-     * 
-     * By default the whole scene is rendered. 
-     * 
      * \param h_res Horizontal resolution of full image in pixels
      * \param v_res Vertical resolution of full image in pixels
-     * \param left Left border of portion to render in pixels
-     * \param right Right border of portion to render in pixels
-     * \param top Top border of portion to render in pixels
-     * \param bottom Bottom border of portion to render in pixels
+     * \param left Left border of portion to render in pixels (inclusive)
+     * \param right Right border of portion to render in pixels (inclusive)
+     * \param top Top border of portion to render in pixels (inclusive)
+     * \param bottom Bottom border of portion to render in pixels (inclusive)
      * \return Pointer to RenderResult object
+     * 
+     * By default, if this function is called with only the resolution
+     * parameters, the whole image is rendered.
      */
     virtual
     std::shared_ptr<dmcr::RenderResult> render(uint16_t h_res, uint16_t v_res,
