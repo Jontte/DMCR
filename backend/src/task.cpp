@@ -16,8 +16,8 @@ public:
         dmcr::Renderer renderer(m_task->scene());
         dmcr::RenderResultPtr result = renderer.render(m_task->width(),
                                                        m_task->height(),
-                                                       0, m_task->width(),
-                                                       0, m_task->height());
+                                                       0, m_task->width()-1,
+                                                       0, m_task->height()-1);
         m_task->onThreadCompleted(result);
     }
     
