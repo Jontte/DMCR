@@ -55,6 +55,7 @@ Building the backend
 1. Make sure you have the dependencies
    - GCC-compiler (version >=4.6.0 for C++11 functionality)
    - Google protobuf (libprotobuf-dev in Ubuntu)
+   - libpng
 
 2. `$ make depend`
 
