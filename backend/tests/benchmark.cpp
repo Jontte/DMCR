@@ -7,6 +7,7 @@
 #include "../src/taskmanager.h"
 #include "../src/task.h"
 #include "../src/scene.h"
+#include "../src/kdtreescene.h"
 #include "../src/octreescene.h"
 #include "../src/dummyscene.h"
 #include "../src/itaskprovider.h"
@@ -29,7 +30,8 @@ public:
 
 int main() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
-        auto scene = std::make_shared<dmcr::DummyScene>();
+        auto scene = std::make_shared<dmcr::KDTreeScene>();
+        //auto scene = std::make_shared<dmcr::OctreeScene>();
         auto& c = scene->camera();
         c.setPosition(dmcr::Vector3f(0, 0, 10));
         c.setFov(M_PI / 2);
@@ -38,11 +40,11 @@ int main() {
         
         scene->beginAddObjects();
 
-        for (int i = 0; i < 10; ++i) {
-            for (int j = 0; j < 10; ++j) {
+        for (int i = 0; i < 1000; ++i) {
+            for (int j = 0; j < 1000; ++j) {
                 auto a = dmcr::make_unique<dmcr::Box>();
-                a->setPosition(dmcr::Vector3f(2 * i, 2 * j, 0));
-                a->setExtents(dmcr::Vector3f(0.5, 0.5, 0.5));
+                a->setPosition(dmcr::Vector3f(i/20.0, j/20.0, 0));
+                a->setExtents(dmcr::Vector3f(0.01, 0.01, 0.01));
                 scene->addObject(std::move(a));
             }
         }
