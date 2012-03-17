@@ -30,6 +30,8 @@ def ListToPPM(pixels, width, height, filename):
     
         print "File {} was written".format(filename)
 
+VERSION = 0
+
 class Connection(threading.Thread):
     '''
     classdocs
@@ -88,7 +90,7 @@ class Connection(threading.Thread):
             while not self.stopped() and not result: # try to backend handshake until succeeded
                 result = self.socket.Recv_BackendHandshake() # [0] = version, [1]  = description
             
-            if result[0] != result[0]: # if backend version doesn't match us
+            if result[0] != VERSION: # if backend version doesn't match us 
                 self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_CONNECTIONFAILED) # tell BE connection failed
                 raise Socket.SocketException    # raise exception so this loop ends
             
@@ -139,35 +141,3 @@ class Connection(threading.Thread):
         '''
         
         return self._stop.isSet()
-    
-        
-    def ReceivePacket(self):
-        '''
-        Receives a complete packet: first header and then the packet-data itself. 
-        Packets are given to separate functions to handle. 
-        
-        
-        @return: nothing 
-                
-        '''
-        packet_id, length = self.socket.ReceiveHeader()
-        if packet_id == False:
-            return
-        try:
-            data = self.socket.ReceiveData(length)
-        except Connection.ThreadStopped:
-            return
-        
-        if packet_id == 1:
-            self.socket.Recv_BackendHandshake(data)
-#        elif packet_id == 2:                    # these packets are
-#            self.Recv_ConnectionResult(data)    # sent by frontend
-#        elif packet_id == 3:                    # so no need to 
-#            self.Recv_NewTask(data)            # receive them
-        elif packet_id == 4:
-            image = self.socket.Recv_RenderedData(data)
-            ListToPPM(image, self.width, self.height, "test.ppm")
-        
-        else:
-            pass
-    
