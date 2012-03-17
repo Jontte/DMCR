@@ -11,20 +11,44 @@
 
 namespace dmcr {
 
+// Forward declaration to prevent circular dependency
 class SceneObject;
 typedef SceneObject* SceneObjectPtr;
 
+/*!
+ * \brief This class stores the result of a raycast
+ * 
+ * The RaycastResult class stores the intersection point and a pointer to the 
+ * object with which the ray collided. It is used to pass data from a Scene
+ * object to a Renderer object.
+ */
 class RaycastResult
 {
 public:
     RaycastResult() : m_object(nullptr) { }
 
+    /*!
+     * \brief Set pointer to collided object
+     * \param object Pointer to object with which the ray collided
+     */
     void setObject(dmcr::SceneObjectPtr object) { m_object = object; }
+    /*!
+     * \brief Get pointer to collided object
+     * \return Pointer to object with which the ray collided
+     */
     dmcr::SceneObjectPtr object() const { return m_object; }
 
+    /*!
+     * \brief Set intersection point between ray and object
+     * \param intersection_point Intersection point between ray and object
+     */
     void setIntersectionPoint(const dmcr::Vector3f& intersection_point) {
         m_intersection_point = intersection_point;
     }
+    /*!
+     * \brief Get intersection point between ray and object
+     * \return Intersection point between ray and object
+     */
     dmcr::Vector3f intersectionPoint() const { return m_intersection_point; }
 
 private:

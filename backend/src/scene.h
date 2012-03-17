@@ -84,7 +84,7 @@ public:
      * \brief Shoot a ray in the scene
      * 
      * Shoots given ray in the scene and finds the first object it intersects.
-     * Implement this method in a subclass.
+     * 
      * \param ray Ray to shoot
      * \return RaycastResult object
      */
