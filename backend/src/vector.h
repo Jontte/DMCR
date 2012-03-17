@@ -52,15 +52,15 @@ public:
     /*!
       \brief Set vector x coordinate
       */
-    void setX(T x) { m_x = x; }
+    Vector3<T>& setX(T x) { m_x = x; return *this; }
     /*!
       \brief Set vector y coordinate
       */
-    void setY(T y) { m_y = y; }
+    Vector3<T>& setY(T y) { m_y = y; return *this; }
     /*!
       \brief Set vector z coordinate
       */
-    void setZ(T z) { m_z = z; }
+    Vector3<T>& setZ(T z) { m_z = z; return *this; }
 
     /*!
       \brief Index access operator
