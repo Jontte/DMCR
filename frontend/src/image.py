@@ -15,7 +15,7 @@ Created on Mar 17, 2012
 
 
 #Requires PyPNG
-import assets.png as png
+import pypng as png
 
 
 # the exception to throw when something bad happens here
