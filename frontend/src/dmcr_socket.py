@@ -44,6 +44,8 @@ class Socket(object):
     CONNECTIONRESULT_SUCCESS = 0
     CONNECTIONRESULT_INVALIDKEY = 1
     CONNECTIONRESULT_CONNECTIONFAILED = 2
+    
+    PNG_8BIT = 1
 
     class SocketException:
         def __init__(self, value = ""):
@@ -184,12 +186,18 @@ class Socket(object):
         except ThreadStopped:
             print "Thread closed while receiveng picture."
             return False
+
+        print rendered_data
+        if rendered_data.data_format == Socket.PNG_8BIT:
+            return (data, rendered_data.iterations_done)
+        else:
+            print "Unknown file type"
+            return False
+        
+        #The old code for PPM
+        '''
         i = 0
         pixels = list()
-        print rendered_data
-        print "unpacking image data"
-        print 
-        print str(i)+ "/" + str(data_len)
         while i + 11 < data_len:
             pixels.append([0,0,0,0])
             pixels[-1][0] = int(struct.unpack("!L", data[i:i+4])[0] / 16843009)
@@ -202,9 +210,10 @@ class Socket(object):
             print "Dimension mismatch: got {} pixels, but image size should be {} x {}".format(len(pixels),rendered_data.width, rendered_data.height)
             return False
         return pixels
+        '''
         
-
-        #return rendered_data
+        
+ 
 
 
     def SendHeader(self, id, length):
