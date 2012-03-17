@@ -16,6 +16,8 @@ import threading # each connection is a thread
 from dmcr_socket import Socket
 from datetime import datetime
 
+import image
+
 def ListToPPM(pixels, width, height, filename):
     with open(filename, 'w') as fp:
         #write ppm header
@@ -30,7 +32,7 @@ def ListToPPM(pixels, width, height, filename):
     
         print "File {} was written".format(filename)
 
-VERSION = 0
+VERSION = 1
 
 class Connection(threading.Thread):
     '''
@@ -54,7 +56,7 @@ class Connection(threading.Thread):
         self._stop = threading.Event()
         
         
-    def SetScene(self, scene, width, height, sceneid, name, datestring="%Y%m%d-%H%M%S", extension = "ppm"):
+    def SetScene(self, scene, width, height, sceneid, name, datestring="%Y%m%d-%H%M%S", extension = "png"):
         '''
         Sets the scene for the thread to render.
         
@@ -74,7 +76,8 @@ class Connection(threading.Thread):
         self.sceneid = sceneid
         self.img_name = name
         self.img_extension = extension
-        self.datestring = datestring 
+        self.datestring = datestring
+        self.image = image.Image(width = width, height=height)
         
     def run(self): # overriding threading.Thread.run()
         '''
@@ -92,7 +95,7 @@ class Connection(threading.Thread):
             
             if result[0] != VERSION: # if backend version doesn't match us 
                 self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_CONNECTIONFAILED) # tell BE connection failed
-                raise Socket.SocketException    # raise exception so this loop ends
+                raise Socket.SocketException("Incompatible version")    # raise exception so this loop ends
             
             self.be_description = result[1] # store the description backend gives about itself
             
@@ -100,10 +103,12 @@ class Connection(threading.Thread):
             self.socket.Send_NewTask(self.sceneid, self.width, self.height, self.iterations, self.scene)
         
             while not self.stopped():
+                #image = self.socket.Recv_RenderedData()
                 image = self.socket.Recv_RenderedData()
                 if image:
-                    ListToPPM(image, self.width, self.height, self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
-            
+                    #ListToPPM(image, self.width, self.height, self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
+                    self.image.AddFromString(*image) #image contains (data, iterations)
+                    self.image.Write(self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
             
         except KeyboardInterrupt:
             pass
