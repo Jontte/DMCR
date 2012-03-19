@@ -63,7 +63,7 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
             float _r = ((r.r * fc) + c.r) / (fc + 1.0);
             float _g = ((r.g * fc) + c.g) / (fc + 1.0);
             float _b = ((r.b * fc) + c.b) / (fc + 1.0);
-            result->setPixel(x, y, Color{_r, _g, _b});
+            result->setPixel(x, y, dmcr::Color{_r, _g, _b});
         }
     }
 }
@@ -90,7 +90,7 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
             float fy = (float)y / (float)v_res;
             fx += (rng.random() - 0.5) * 0.001;
             fy += (rng.random() - 0.5) * 0.001;
-            Color c = midfunc(m_scene->camera().ray(fx, fy));
+            dmcr::Color c = midfunc(m_scene->camera().ray(fx, fy));
             result->setPixel(x - left, y - top, c);
         }
     }
@@ -136,7 +136,7 @@ dmcr::Color dmcr::Renderer::midfunc(dmcr::Ray ray) const
 dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray) const
 {
     RaycastResult raycast_result = m_scene->shootRay(ray);
-    Color c;
+    dmcr::Color c;
 
     if (raycast_result.object() == nullptr) {
         c = { 0.0f, 0.0f, 0.0f };

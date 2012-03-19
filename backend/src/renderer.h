@@ -15,11 +15,6 @@
 
 namespace dmcr {
 
-/*! \brief Holds the color of one pixel in RGB as three floats */
-struct Color {
-    float r, g, b;
-};
-
 class RenderResultException : public std::runtime_error
 {
 public:
@@ -51,11 +46,11 @@ public:
      * \param y y-coordinate of pixel
      * \param color Color of pixel
      */
-    void setPixel(uint16_t x, uint16_t y, Color color) {
+    void setPixel(uint16_t x, uint16_t y, dmcr::Color color) {
         m_data[y * m_width + x] = color;
     }
 
-    const Color& pixel(uint16_t x, uint16_t y) const {
+    const dmcr::Color& pixel(uint16_t x, uint16_t y) const {
         return m_data.at(y * m_width + x);
     }
 
@@ -73,7 +68,7 @@ public:
     uint16_t height() const { return m_height; }
     
     /*! \brief Get rendered image as array of Color structs */
-    const std::vector<Color>& data() const { return m_data; }
+    const std::vector<dmcr::Color>& data() const { return m_data; }
 
     /*! \brief Blend into a subrectangle of other render result
      * Blends using a moving average
@@ -87,7 +82,7 @@ private:
     uint16_t m_width;
     uint16_t m_height;
     
-    std::vector<Color> m_data;
+    std::vector<dmcr::Color> m_data;
 };
 
 /*!
@@ -124,9 +119,9 @@ public:
                                                uint16_t top = 0, 
                                                uint16_t bottom = 0) const;
     
-    Color midfunc(dmcr::Ray ray) const;
+    dmcr::Color midfunc(dmcr::Ray ray) const;
     
-    Color iterator(dmcr::Ray ray) const;
+    dmcr::Color iterator(dmcr::Ray ray) const;
 private:
     dmcr::ScenePtr m_scene;
 };
