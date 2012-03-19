@@ -88,8 +88,8 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
         for (uint16_t x = left; x <= right; ++x) {
             float fx = (float)x / (float)h_res;
             float fy = (float)y / (float)v_res;
-            fx += (rng.random() - 0.5) * 0.001;
-            fy += (rng.random() - 0.5) * 0.001;
+            fx += rng.random() / h_res;
+            fy += rng.random() / v_res;
             Color c = midfunc(m_scene->camera().ray(fx, fy));
             result->setPixel(x - left, y - top, c);
         }
