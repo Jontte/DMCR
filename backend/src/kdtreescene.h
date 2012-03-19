@@ -25,7 +25,6 @@ public:
     void endAddObjects();
 
     void addObject(std::unique_ptr<dmcr::SceneObject> object);
-    dmcr::RaycastResult shootRay(const dmcr::Ray& ray) const;
 
     std::list<SceneObjectPtr> intersectionCandidates(
             const dmcr::Ray& ray) const;
