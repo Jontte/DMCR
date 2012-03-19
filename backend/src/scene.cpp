@@ -137,8 +137,19 @@ void dmcr::Scene::loadFromString(const std::string &string)
                                       position[1].asDouble(),
                                       position[2].asDouble());
         
+        const Json::Value colors = value["color"];
+        
+        if(!colors || !colors.isArray() || colors.size() != 3)
+            throw SceneException("No color specified for object");
+
+        dmcr::Color color;
+        color.r = colors[0].asFloat();
+        color.g = colors[1].asFloat();
+        color.b = colors[2].asFloat();
+        
         std::unique_ptr<dmcr::SceneObject> object = buildObjectFromValue(value);
         object->setPosition(position_value);
+        object->setColor(color);
         
         addObject(std::move(object));
     }

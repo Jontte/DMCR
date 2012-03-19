@@ -12,6 +12,11 @@
 
 namespace dmcr {
 
+/*! \brief Holds the color of one pixel in RGB as three floats */
+struct Color {
+    float r, g, b;
+};
+
 template<typename T>
 class Vector3
 {

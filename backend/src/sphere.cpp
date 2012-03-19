@@ -9,7 +9,7 @@
 dmcr::AABB dmcr::Sphere::aabb() const
 {
     return dmcr::AABB::
-            fromCenterAndExtents(m_position,
+            fromCenterAndExtents(dmcr::SceneObject::position(),
                                  dmcr::Vector3f(m_radius, m_radius, m_radius));
 }
 

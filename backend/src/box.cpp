@@ -8,7 +8,7 @@
 
 dmcr::AABB dmcr::Box::aabb() const
 {
-    return dmcr::AABB::fromCenterAndExtents(m_position, m_extents);
+    return dmcr::AABB::fromCenterAndExtents(dmcr::SceneObject::position(), m_extents);
 }
 
 double dmcr::Box::intersects(const dmcr::Ray &ray) const

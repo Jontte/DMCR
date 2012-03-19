@@ -37,7 +37,17 @@ public:
      * \return Object's position
      */
     dmcr::Vector3f position() const { return m_position; }
-    
+   /*!
+    * \brief Set object's color'
+    * \param color New color
+    */
+    void setColor(dmcr::Color color) { m_color = color; }
+   /*!
+    * \brief Get object's color'
+    * \return Object's color
+    */
+    dmcr::Color color() const { return m_color; }
+
     /*!
      * \brief Get a string describing the object's typedef
      * \return String describing object's type
@@ -61,8 +71,9 @@ public:
      */
     virtual double intersects(const dmcr::Ray& ray) const = 0;
 
-protected:
+private:
     dmcr::Vector3f m_position;
+    dmcr::Color m_color;
 };
 
 typedef SceneObject* SceneObjectPtr;
