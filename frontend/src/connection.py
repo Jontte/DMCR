@@ -56,7 +56,7 @@ class Connection(threading.Thread):
         self._stop = threading.Event()
         
         
-    def SetScene(self, scene, width, height, sceneid, name, datestring="%Y%m%d-%H%M%S", extension = "png"):
+    def SetScene(self, scene, width, height, sceneid, name, iterations = 50, datestring="%Y%m%d-%H%M%S", extension = "png"):
         '''
         Sets the scene for the thread to render.
         
@@ -72,7 +72,7 @@ class Connection(threading.Thread):
         self.scene = scene
         self.width = width
         self.height = height
-        self.iterations = 0
+        self.iterations = iterations
         self.sceneid = sceneid
         self.img_name = name
         self.img_extension = extension
