@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include <fstream>
 #include <iostream>
+#include "random.h"
 
 dmcr::RenderResult::RenderResult(uint16_t left, uint16_t right,
                                  uint16_t top, uint16_t bottom) :
@@ -79,12 +80,16 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
 
     dmcr::RenderResultPtr result = std::make_shared<dmcr::RenderResult>(
         left, right, top, bottom);
-    
+
+    RNG rng;
 
     for (uint16_t y = top; y <= bottom; ++y) {
         for (uint16_t x = left; x <= right; ++x) {
-            Color c = midfunc(m_scene->camera().ray((float)x / 
-                (float)h_res,(float)y / (float)v_res));
+            float fx = (float)x / (float)h_res;
+            float fy = (float)y / (float)v_res;
+            fx += (rng.random() - 0.5) * 0.001;
+            fy += (rng.random() - 0.5) * 0.001;
+            Color c = midfunc(m_scene->camera().ray(fx, fy));
             result->setPixel(x - left, y - top, c);
         }
     }
