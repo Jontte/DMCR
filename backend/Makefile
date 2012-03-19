@@ -22,7 +22,7 @@ src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
 src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
 src/backendapplication.cpp src/octreescene.cpp src/aabb.cpp src/box.cpp \
 src/sphere.cpp src/octree.cpp src/raycastresult.cpp \
-src/threadparallelrenderer.cpp src/kdtreescene.cpp
+src/threadparallelrenderer.cpp src/kdtreescene.cpp src/random.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)

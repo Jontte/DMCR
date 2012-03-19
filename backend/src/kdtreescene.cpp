@@ -80,7 +80,7 @@ struct KDTreeScene::impl
             high->  build(high_list , level+1);
         }
 
-        std::list<SceneObjectPtr> getObjects(Ray ray, size_t level, AABB bb)
+        std::list<SceneObjectPtr> getObjects(Ray ray, size_t level, const AABB& bb)
         {
             if(is_leaf())
                 return std::list<SceneObjectPtr>(children.begin(), children.end());
