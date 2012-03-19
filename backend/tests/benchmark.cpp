@@ -60,7 +60,7 @@ int main() {
     
     BenchmarkTaskProvider provider;
     
-    manager.onNewTask(&provider, 1, 640, 480, 1, "");
+    manager.onNewTask(&provider, 1, 640, 480, 25, "");
     
     for (;;)
         sleep(1);

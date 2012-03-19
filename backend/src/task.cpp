@@ -21,7 +21,8 @@ public:
     
     void operator ()() const
     {
-        dmcr::ThreadParallelRenderer renderer(m_task->scene());
+        dmcr::ThreadParallelRenderer renderer(m_task->scene(),
+                                              m_task->iterations());
         dmcr::RenderResultPtr result = renderer.render(m_task->width(),
                                                        m_task->height(),
                                                        0, m_task->width()-1,
@@ -36,9 +37,9 @@ private:
 
 dmcr::Task::Task(uint16_t width, uint16_t height, uint32_t iterations, 
            dmcr::ScenePtr scene, dmcr::TaskManager *mgr)
-: m_scene(scene), m_manager(mgr), m_width(width), m_height(height)
+: m_scene(scene), m_manager(mgr), m_width(width), m_height(height),
+  m_iterations(iterations)
 {
-    (void)iterations;
 }
 
 void dmcr::Task::run()

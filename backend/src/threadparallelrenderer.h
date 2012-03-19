@@ -17,7 +17,7 @@ namespace dmcr
 class ThreadParallelRenderer : public Renderer
 {
 public:
-    ThreadParallelRenderer(ScenePtr scene);
+    ThreadParallelRenderer(ScenePtr scene, uint32_t iterations);
 
     virtual
     std::shared_ptr<RenderResult> render(uint16_t h_res, uint16_t v_res,
@@ -27,6 +27,7 @@ public:
     
 private:
     mutable dmcr::LoadBalancer m_balancer;
+    uint32_t m_iterations;
 };
 
 }

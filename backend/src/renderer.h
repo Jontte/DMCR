@@ -55,7 +55,7 @@ public:
         m_data[y * m_width + x] = color;
     }
 
-    Color pixel(uint16_t x, uint16_t y) const {
+    const Color& pixel(uint16_t x, uint16_t y) const {
         return m_data.at(y * m_width + x);
     }
 
@@ -75,7 +75,11 @@ public:
     /*! \brief Get rendered image as array of Color structs */
     const std::vector<Color>& data() const { return m_data; }
 
-    void copyInto(RenderResultPtr result);
+    /*! \brief Blend into a subrectangle of other render result
+     * \param blend_multiplier blending multiplier applied to each color channel
+     * THREAD UNSAFE
+     */
+    void blendInto(dmcr::RenderResultPtr result, double blend_multiplier);
     
 private:
     uint16_t m_left, m_right, m_top, m_bottom;

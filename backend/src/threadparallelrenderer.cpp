@@ -10,6 +10,7 @@
 #include <vector>
 #include <functional>
 #include <unistd.h>
+#include <mutex>
 
 #include <iostream>
 
@@ -33,10 +34,12 @@ static int hardware_threads() {
     return hw_threads;
 }
 
-const int RENDER_SLICES = 50;
+const int RENDER_SLICES = 25;
 
-ThreadParallelRenderer::ThreadParallelRenderer(ScenePtr scene)
-: Renderer(scene), m_balancer(RENDER_SLICES, 1) {
+ThreadParallelRenderer::ThreadParallelRenderer(ScenePtr scene,
+                                               uint32_t iterations)
+: Renderer(scene), m_balancer(RENDER_SLICES, iterations),
+  m_iterations(iterations) {
 }
 
 std::shared_ptr<RenderResult> ThreadParallelRenderer::render(uint16_t h_res,
@@ -53,7 +56,9 @@ const
 
     uint16_t slice_width = (uint16_t)ceil((right - left) / (float)RENDER_SLICES);
 
-    // TODO lock result slices before copying into them
+    double blend_multiplier = 1.0 / m_iterations;
+
+    std::vector<std::mutex> slice_locks(RENDER_SLICES);
     
     auto slice_fun = [&](int slice_no) {
         uint16_t l = left + slice_width * slice_no;
@@ -62,7 +67,8 @@ const
             r = right;
         auto slice_result = dmcr::Renderer::render(
             h_res, v_res, l, r, top, bottom);
-        slice_result->copyInto(result);
+        std::lock_guard<std::mutex> G(slice_locks[slice_no]);
+        slice_result->blendInto(result, blend_multiplier);
     };
 
     auto thread_fun = [&m_balancer, &slice_fun](int i) {

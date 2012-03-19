@@ -45,7 +45,9 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
     file.close();
 }
 
-void dmcr::RenderResult::copyInto(dmcr::RenderResultPtr result) {
+void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
+                                   double blend_multiplier)
+{
     if (result->left() > left() || result->right() < right() ||
         result->top() > top() || result->bottom() < bottom())
         throw RenderResultException("Cannot copy into subset result");
@@ -54,7 +56,12 @@ void dmcr::RenderResult::copyInto(dmcr::RenderResultPtr result) {
 
     for (uint16_t y = top(); y <= bottom(); ++y) {
         for (uint16_t x = left(); x <= right(); ++x) {
-            result->setPixel(x, y, pixel(x-left(), y-top()));
+            const auto& c = pixel(x-left(), y-top());
+            const auto& r = result->pixel(x, y);
+            result->setPixel(x, y, Color{r.r + (float)(c.r * blend_multiplier),
+                                         r.g + (float)(c.g * blend_multiplier),
+                                         r.b + (float)(c.b * blend_multiplier)}
+            );
         }
     }
 }

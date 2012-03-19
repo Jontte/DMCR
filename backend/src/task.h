@@ -47,7 +47,10 @@ public:
     uint16_t height() const {
         return m_height;
     }
-    
+    uint32_t iterations() const {
+        return m_iterations;
+    }
+
     /*! \brief Get the result of the rendering task
      * 
      * This method will return the result of the rendering once 
@@ -66,6 +69,7 @@ private:
     dmcr::TaskManager *m_manager;
     dmcr::RenderResultPtr m_result;
     uint16_t m_width, m_height;
+    uint32_t m_iterations;
 };
 
 }
