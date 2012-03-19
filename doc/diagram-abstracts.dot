@@ -1,0 +1,25 @@
+digraph {
+  color=black
+  label="Abstract class implementations"
+  node [
+    shape=record
+  ]
+
+  ITaskListener [shape=diamond]
+  TaskManagerB -> ITaskListener [label="implements"]
+  ISocketListener [shape=diamond]
+  BackendApplicationB -> ISocketListener [label="implements"]
+  TaskManagerB [label="TaskManager"]
+  BackendApplicationB [label="BackendApplication"]
+
+  KDTreeSceneB -> SceneB [label="implements"]
+  OctreeSceneB -> SceneB [label="implements"]
+  DummySceneB -> SceneB [label="implements"]
+  KDTreeSceneB [label="KDTreeScene"]
+  OctreeSceneB [label="OctreeScene"]
+  DummySceneB [label="DummyScene"]
+  SceneB [label="Scene",shape=diamond]
+
+  Socket -> ITaskProvider
+  ITaskProvider [shape=diamond]
+}

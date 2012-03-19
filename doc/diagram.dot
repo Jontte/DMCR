@@ -1,0 +1,75 @@
+digraph G {
+  edge [
+    fontname = "DejaVu Sans"
+    fontsize = 8
+  ]
+
+  node [
+    shape = record
+    fontsize = 8
+    fontname = "DejaVu Sans"
+  ]
+
+  subgraph cluster_0 {
+    color=black
+    label="Task management"
+
+    Socket -> TaskManager [label="gives tasks to"]
+    Socket -> BackendApplication [label="delivers socket\nevents to"]
+    Socket -> Frontend [label="receives tasks from"]
+    Frontend [shape=ellipse]
+
+    TaskManager -> Socket [label="delivers results to"]
+
+
+
+    "main()" -> BackendApplication [label="constructs"]
+
+    // ...
+
+    TaskManager -> Task [label="constructs in threads"]
+    Task -> TaskManager [label="delivers result to"]
+
+    Task -> SceneFactory [label="calls"]
+    SceneFactory [shape=diamond]
+    SceneFactory -> Task [label="returns loaded scene"]
+  }
+
+  SceneFactory -> Scene
+
+  subgraph cluster_3 {
+    color=black
+    label="Scene description"
+
+    Scene [shape=diamond]
+
+    Scene -> SceneObject
+    SceneObject -> AABB
+    AABB [label="{AABB|Axis aligned bounding box}"]
+
+    Box -> SceneObject [label="implements"]
+    Sphere -> SceneObject [label="implements"]
+  }
+
+  subgraph cluster_1 {
+    color=black
+    label="Rendering"
+
+    ThreadParallelRenderer [label="{ThreadParallelRenderer | splits task into vertical slices}"]
+    ThreadParallelRenderer -> LoadBalancer [label="requests job (slice) ids"]
+    ThreadParallelRenderer -> Renderer [label="renders slices in threads"]
+
+    Renderer [label="{Renderer|loops through slice pixels once}"]
+    Renderer -> RenderResult [label="creates"]
+    Renderer -> Camera
+    Renderer -> SceneH
+    RenderResult [label="{RenderResult|image container}"]
+    Camera [label="{Camera|calculates rays from pixel coords}"]
+    Renderer -> Ray
+    SceneH [label="{Scene|answers collision queries}"]
+    SceneH -> RaycastResult
+  }
+
+  Task -> ThreadParallelRenderer [label="constructs,\ngives scene to"]
+  ThreadParallelRenderer -> Task [label="returns result"]
+}
