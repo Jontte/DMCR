@@ -18,6 +18,7 @@ void test_loadbalancer();
 void test_tasks();
 void test_intersections();
 void test_vector();
+void test_random();
 
 int main()
 {
@@ -29,6 +30,7 @@ int main()
     DEF_TEST(test_loadbalancer);
     DEF_TEST(test_tasks);
     DEF_TEST(test_intersections);
+    DEF_TEST(test_random);
 
     for(size_t i = 0; i < tests.size(); i++)
     {
