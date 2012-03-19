@@ -76,10 +76,11 @@ public:
     const std::vector<Color>& data() const { return m_data; }
 
     /*! \brief Blend into a subrectangle of other render result
-     * \param blend_multiplier blending multiplier applied to each color channel
+     * Blends using a moving average
+     * \param count count of blended samples before this sample
      * THREAD UNSAFE
      */
-    void blendInto(dmcr::RenderResultPtr result, double blend_multiplier);
+    void blendInto(dmcr::RenderResultPtr result, uint32_t count);
     
 private:
     uint16_t m_left, m_right, m_top, m_bottom;

@@ -47,7 +47,7 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
 }
 
 void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
-                                   double blend_multiplier)
+                                   uint32_t count)
 {
     if (result->left() > left() || result->right() < right() ||
         result->top() > top() || result->bottom() < bottom())
@@ -55,14 +55,15 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
     if (result->left() != 0 || result->top() != 0)
         throw RenderResultException("UNIMPLEMENTED copying into non-result");
 
+    float fc = (float)count;
     for (uint16_t y = top(); y <= bottom(); ++y) {
         for (uint16_t x = left(); x <= right(); ++x) {
             const auto& c = pixel(x-left(), y-top());
             const auto& r = result->pixel(x, y);
-            result->setPixel(x, y, Color{r.r + (float)(c.r * blend_multiplier),
-                                         r.g + (float)(c.g * blend_multiplier),
-                                         r.b + (float)(c.b * blend_multiplier)}
-            );
+            float _r = ((r.r * fc) + c.r) / (fc + 1.0);
+            float _g = ((r.g * fc) + c.g) / (fc + 1.0);
+            float _b = ((r.b * fc) + c.b) / (fc + 1.0);
+            result->setPixel(x, y, Color{_r, _g, _b});
         }
     }
 }

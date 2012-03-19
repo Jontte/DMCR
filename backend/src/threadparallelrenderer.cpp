@@ -56,9 +56,8 @@ const
 
     uint16_t slice_width = (uint16_t)ceil((right - left) / (float)RENDER_SLICES);
 
-    double blend_multiplier = 1.0 / m_iterations;
-
     std::vector<std::mutex> slice_locks(RENDER_SLICES);
+    std::vector<uint32_t> slice_counts(RENDER_SLICES, 0);
     
     auto slice_fun = [&](int slice_no) {
         uint16_t l = left + slice_width * slice_no;
@@ -68,7 +67,7 @@ const
         auto slice_result = dmcr::Renderer::render(
             h_res, v_res, l, r, top, bottom);
         std::lock_guard<std::mutex> G(slice_locks[slice_no]);
-        slice_result->blendInto(result, blend_multiplier);
+        slice_result->blendInto(result, slice_counts[slice_no]++);
     };
 
     auto thread_fun = [&m_balancer, &slice_fun](int i) {
