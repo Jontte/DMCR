@@ -73,34 +73,65 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
     dmcr::RenderResultPtr result = std::make_shared<dmcr::RenderResult>(
         left, right, top, bottom);
     
-    // Scan the given portion of the scene
+
     for (uint16_t y = top; y <= bottom; ++y) {
         for (uint16_t x = left; x <= right; ++x) {
-            RaycastResult raycast_result = 
-                m_scene->shootRay(
-                    m_scene->camera().ray((float)x / (float)h_res,
-                                          (float)y / (float)v_res));
-            
-            /*
-             * TODO
-             * Implement me properly!
-             */
-            Color c;
-
-            if (raycast_result.object() == nullptr) {
-                c = { 0.0f, 0.0f, 0.0f };
-            } else {
-                if (raycast_result.object()->type() == "sphere")
-                    c = { 1.0f, 0.0f, 0.0f };
-                else
-                    c = { 0.0f, 0.0f, 1.0f };
-            }
+            Color c = midfunc(m_scene->camera().ray((float)x / 
+                (float)h_res,(float)y / (float)v_res));
             result->setPixel(x - left, y - top, c);
         }
     }
     
     return result;
 }
-                                         
-                                     
-                                     
+
+// ye olde version:
+//    // Scan the given portion of the scene
+//    for (uint16_t y = top; y <= bottom; ++y) {
+//        for (uint16_t x = left; x <= right; ++x) {
+//            RaycastResult raycast_result = 
+//                m_scene->shootRay(
+//                    m_scene->camera().ray((float)x / (float)h_res,
+//                                          (float)y / (float)v_res));
+//            
+//            /*
+//             * TODO
+//             * Implement me properly!
+//             */
+//            Color c;
+
+//            if (raycast_result.object() == nullptr) {
+//                c = { 0.0f, 0.0f, 0.0f };
+//            } else {
+//                if (raycast_result.object()->type() == "sphere")
+//                    c = { 1.0f, 0.0f, 0.0f };
+//                else
+//                    c = { 0.0f, 0.0f, 1.0f };
+//            }
+//            result->setPixel(x - left, y - top, c);
+//        }
+//    }
+
+// splitting the original function in pieces (at the moment this
+// function just passes the parameter on to 'iterator')
+dmcr::Color dmcr::Renderer::midfunc(dmcr::Ray ray) const
+{
+    return dmcr::Renderer::iterator(ray);
+}
+
+// getting pixel color
+dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray) const
+{
+    RaycastResult raycast_result = m_scene->shootRay(ray);
+    Color c;
+
+    if (raycast_result.object() == nullptr) {
+        c = { 0.0f, 0.0f, 0.0f };
+    } else {
+        if (raycast_result.object()->type() == "sphere")
+            c = { 1.0f, 0.0f, 0.0f };
+        else
+            c = { 0.0f, 0.0f, 1.0f };
+    }
+    return c;
+}

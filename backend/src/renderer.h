@@ -118,6 +118,10 @@ public:
                                                uint16_t right = 0,
                                                uint16_t top = 0, 
                                                uint16_t bottom = 0) const;
+    
+    Color midfunc(dmcr::Ray ray) const;
+    
+    Color iterator(dmcr::Ray ray) const;
 private:
     dmcr::ScenePtr m_scene;
 };
