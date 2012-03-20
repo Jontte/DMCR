@@ -4,6 +4,8 @@
  * code package.
  */
 
+#include <vector>
+#include <algorithm>
 #include "octree.h"
 
 dmcr::Vector3f extentPermutations[8] =
@@ -21,28 +23,13 @@ void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
                          int depth = 0)
 {
     if (depth == 0) {
-        dmcr::Vector3f min = objects.front()->position();
-        dmcr::Vector3f max = objects.front()->position();
+        std::vector<AABB> aabbs;
+        aabbs.resize(objects.size());
+        std::transform(objects.begin(), objects.end(), aabbs.begin(),
+            [](dmcr::SceneObjectPtr p){return p->aabb();
+        });
 
-        for (auto obj : objects) {
-            dmcr::Vector3f objmin = obj->aabb().center() - obj->aabb().extents();
-            dmcr::Vector3f objmax = obj->aabb().center() + obj->aabb().extents();
-
-            if (objmin.x() < min.x())
-                min.setX(objmin.x());
-            if (objmin.y() < min.y())
-                min.setY(objmin.y());
-            if (objmin.z() < min.z())
-                min.setZ(objmin.z());
-            if (objmax.x() > max.x())
-                max.setX(objmax.x());
-            if (objmax.y() > max.y())
-                max.setY(objmax.y());
-            if (objmax.z() > max.z())
-                max.setZ(objmax.z());
-        }
-
-        m_aabb = dmcr::AABB(min, max);
+        m_aabb = dmcr::AABB::fromRange(aabbs.begin(), aabbs.end());
     }
 
     std::list<dmcr::SceneObjectPtr> inside;
