@@ -29,6 +29,7 @@ dmcr::Ray dmcr::Camera::ray(float x, float y) const
     float H = tan(0.5 * m_fov);
     horizontal = horizontal * H;
     vertical = vertical * (1 / m_aspect) * H;
-    return Ray(m_position, at + horizontal * (2*x-1) + vertical * (2*y-1));
+    return Ray(m_position, (at + horizontal * (2*x-1) + vertical *
+(2*y-1)).normalized());
     //return Ray(m_position, m_look_at - m_position); vanha
 }
