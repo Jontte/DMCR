@@ -127,22 +127,31 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
 // function just passes the parameter on to 'iterator')
 dmcr::Color dmcr::Renderer::midfunc(dmcr::Ray ray) const
 {
-    return dmcr::Renderer::iterator(ray);
+    return iterator(ray);
 }
 
 // getting pixel color
-dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray) const
+dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
 {
-    RaycastResult raycast_result = m_scene->shootRay(ray);
-    dmcr::Color c;
+    if (iterations == 20)
+        return { 0.0, 0.0, 0.0 };
+    RaycastResult rr = m_scene->shootRay(ray);
+    dmcr::Color c = { 0, 0, 0 };
+    
+    SceneObjectPtr obj = rr.object();
 
-    if (raycast_result.object() == nullptr) {
-        c = { 0.0f, 0.0f, 0.0f };
-    } else {
-        if (raycast_result.object()->type() == "sphere")
-            c = { 1.0f, 0.0f, 0.0f };
-        else
-            c = { 0.0f, 0.0f, 1.0f };
+    if (obj != nullptr) {
+        if (obj->light())
+            c = obj->color();
+        else {
+            dmcr::Vector3f dir = m_rng.random_vector();
+            if (dir.dot(rr.normal()) < 0.0)
+                dir = -dir;
+            
+            dmcr::Ray new_ray(rr.intersectionPoint(), dir);
+                              
+            c = iterator(new_ray, iterations + 1);
+        }
     }
     return c;
 }
