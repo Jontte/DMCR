@@ -7,6 +7,7 @@
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
+#include <cassert>
 #include "kdtreescene.h"
 #include "sceneobject.h"
 #include "aabb.h"
@@ -18,150 +19,143 @@ static const unsigned KDTREE_LEAF_SIZE = 4; // Max elements in a leaf node
 
 struct KDTreeScene::impl
 {
-    struct Node
+    class Node
     {
-        float min;
-        float max;
-        float split;
+        private:
 
-        uint8_t axis; // 0-5 inclusive
+        typedef std::pair<float,float> Range;
+        static float range_overlap(Range r1, Range r2)
+        {
+            // return how much of r2 is outside r1
+            float c = 0;
+            if(r2.first > r1.second)
+                c += r2.first - r1.second;
+            if(r2.second < r1.first)
+                c += r1.first - r2.second;
+            return c;
+        }
+        static Range range_combine(Range r1, Range r2)
+        {
+            return std::make_pair(std::min(r1.first,r2.first), std::max(r1.second, r2.second));
+        }
+        static float range_length(Range r1)
+        {
+            assert(r1.second > r1.first);
+            return r1.second - r1.first;
+        }
 
-        std::unique_ptr<Node> low;
-        std::unique_ptr<Node> high;
+        AABB m_aabb;
 
-        std::vector<SceneObjectPtr> children;
+        std::unique_ptr<Node> m_low;
+        std::unique_ptr<Node> m_high;
 
-        Node ()
-            : min(0)
-            , max(0)
-            , split(0)
-            , axis(0)
-        {}
+        std::vector<SceneObjectPtr> m_children;
+        
+        public:
 
-        bool is_leaf() {return !children.empty();}
+        Node () {}
 
-        void build(std::list<SceneObjectPtr> in)
+        bool is_leaf() {return !m_low || !m_high;}
+
+        void clear()
+        {
+            m_children.clear();
+            m_low.reset();
+            m_high.reset();
+        }
+
+        void build(std::list<SceneObjectPtr>& in, uint8_t axis)
         {
             if(in.size() <= KDTREE_LEAF_SIZE)
             {
                 // Leaf node!
-                children.assign(in.begin(), in.end());
+                m_children.assign(in.begin(), in.end());
+
+                std::vector<AABB> aabbs;
+                aabbs.resize(in.size());
+
+                std::transform(m_children.begin(), m_children.end(), aabbs.begin(), 
+                    [](const SceneObjectPtr& p){return p->aabb();});
+                m_aabb = AABB::fromRange(aabbs.begin(), aabbs.end());
+
                 return;
             }
 
-            auto get_value = [&](SceneObjectPtr p) -> float {
-                if(axis < 3)
-                    return p->aabb().min()[axis];
-                else
-                    return p->aabb().max()[axis%3];
-            };
+            float min = std::numeric_limits<float>::max();
+            float max = std::numeric_limits<float>::lowest();
 
-            auto compare_value = [&](const SceneObjectPtr& a, const SceneObjectPtr& b){
-                return get_value(a) < get_value(b);
-            };
-
-            uint8_t best_axis = 0;
-            float largest_diff = 0;
-
-            for(axis = 0; axis < 6; axis++)
+            for(auto ptr : in)
             {
-                // pick axis with largest difference
-                auto minmax = std::minmax_element( in.begin(), in.end(), compare_value);
+                const AABB& bb = ptr->aabb();
+                if(bb.min()[axis] < min)
+                    min = bb.min()[axis];
+                if(bb.max()[axis] > max)
+                    max = bb.max()[axis];
+            }
 
-                auto minmax_pair = 
-                    std::make_pair(
-                        get_value(*(minmax.first)),
-                        get_value(*(minmax.second))
-                );
+            auto low_range = std::make_pair(min,min);
+            auto high_range = std::make_pair(max,max);
 
-                float d = fabs(minmax_pair.second-minmax_pair.first);
-                if( d > largest_diff)
+            std::list<SceneObjectPtr> low_list, high_list;
+
+            std::cout << "{" << std::endl;
+            std::cout << "min/max: " << min << "/" << max << std::endl;
+            for(auto ptr : in)
+            {
+                const AABB& bb = ptr->aabb();
+                auto ptr_range = std::make_pair(bb.min()[axis], bb.max()[axis]);
+
+                std::cout << "min/max: " << low_range.second << "/" << high_range.first << std::endl;
+                std::cout << "range : " << ptr_range.first << "," << ptr_range.second << " | ";
+
+                float overlap_left = range_overlap(low_range, ptr_range);
+                float overlap_right = range_overlap(high_range, ptr_range);
+
+                std::cout << "olap " << overlap_left << "/" << overlap_right << std::endl;
+
+                if(overlap_left+range_length(low_range) < overlap_right+range_length(high_range))
                 {
-                    best_axis = axis;
-                    largest_diff = d;
-                    min = minmax_pair.first;
-                    max = minmax_pair.second;
+                    low_range = range_combine(low_range, ptr_range);
+                    low_list.push_back(ptr);
+                }
+                else
+                {
+                    high_range = range_combine(high_range, ptr_range);
+                    high_list.push_back(ptr);
                 }
             }
-            if(largest_diff < 0.001f)
-            {
-                // Unable to split further, make leaf node
-                children.assign(in.begin(), in.end());
-                return;
-            }
-            axis = best_axis;
-            //std::cout << "Chose " << (int)axis << " sep: " << max-min << " with " << in.size() << " children" << std::endl;
 
-            // Find median
-            size_t elems = in.size();
-            in.sort(compare_value);
-            
-            std::list<SceneObjectPtr>::iterator iter = in.begin();
-            std::advance(iter, elems/2);
-            
-            // move higher half to a new sublist
-            std::list<SceneObjectPtr> high_list;
+            std::cout << "splitting " << in.size() << " nodes: " << low_list.size() << "/" << high_list.size() << std::endl;
+            std::cout << "}" << std::endl;
 
-            high_list.splice(high_list.begin(), in, iter, in.end());
-            split = get_value(high_list.front());
+            in.clear();
+            m_low = dmcr::make_unique<Node>();
+            m_high = dmcr::make_unique<Node>();
 
-            low = dmcr::make_unique<Node>();
-            high = dmcr::make_unique<Node>();
+            m_low ->  build(low_list , (axis+1)%3);
+            m_high->  build(high_list, (axis+1)%3);
 
-            low ->  build(in       );
-            high->  build(high_list);
+            AABB bb[] = {m_low->m_aabb, m_high->m_aabb};
+            m_aabb = AABB::fromRange(bb, bb+2);
         }
 
-        std::list<SceneObjectPtr> getObjects(Ray ray, const AABB& bb)
+        std::list<SceneObjectPtr> getObjects(Ray ray, uint8_t axis)
         {
+            if(!m_aabb.intersects(ray).intersects)
+                return std::list<SceneObjectPtr>();
             if(is_leaf())
-                return std::list<SceneObjectPtr>(children.begin(), children.end());
+                return std::list<SceneObjectPtr>(m_children.begin(), m_children.end());
 
-            AABB lower(bb);
-            AABB higher(bb);
-
-            switch(axis)
-            {
-                case 0:
-                    lower.setMin(lower.min().setX(min));
-                    higher.setMin(higher.min().setX(split));
-                break;
-                case 1:
-                    lower.setMin(lower.min().setY(min));
-                    higher.setMin(higher.min().setY(split));
-                break;
-                case 2:
-                    lower.setMin(lower.min().setZ(min));
-                    higher.setMin(higher.min().setZ(split));
-                break;
-                case 3:
-                    lower.setMax(lower.max().setX(split));
-                    higher.setMax(higher.max().setX(max));
-                break;
-                case 4:
-                    lower.setMax(lower.max().setY(split));
-                    higher.setMax(higher.max().setY(max));
-                break;
-                case 5:
-                    lower.setMax(lower.max().setZ(split));
-                    higher.setMax(higher.max().setZ(max));
-                break;
-                default:
-                    throw std::runtime_error("KDTree axis > 5 makes no sense");
-                break;
-            }
-            
             std::list<SceneObjectPtr> ret;
-            if( lower.intersects(ray).intersects )
-                ret.splice(ret.end(), low->getObjects(ray, lower));
-            if( higher.intersects(ray).intersects )
-                ret.splice(ret.end(), high->getObjects(ray, higher));
+
+            assert(m_low && m_high);
+            
+            ret.splice(ret.end(), m_low->getObjects(ray, (axis+1)%3));
+            ret.splice(ret.end(), m_high->getObjects(ray, (axis+1)%3));
+
             return ret;
         }
     } root;
-
-    // Minimal bounding volume that covers the whole tree
-    AABB bounding;
 };
 
 KDTreeScene::KDTreeScene() : 
@@ -175,6 +169,7 @@ KDTreeScene::~KDTreeScene()
 
 void KDTreeScene::beginAddObjects()
 {
+    m->root.clear();
 }
 
 void KDTreeScene::endAddObjects()
@@ -183,13 +178,7 @@ void KDTreeScene::endAddObjects()
     for (auto& i : m_objects)
         objects.push_back(i.get());
 
-    m->root.build(objects);
-
-    std::vector<AABB> aabbs;
-    aabbs.resize(m_objects.size());
-
-    std::transform(m_objects.begin(), m_objects.end(), aabbs.begin(), [](const std::unique_ptr<SceneObject>& p){return p->aabb();});
-    m->bounding = AABB::fromRange(aabbs.begin(), aabbs.end());
+    m->root.build(objects, 0);
 }
 
 void KDTreeScene::addObject(std::unique_ptr<SceneObject> object)
@@ -200,7 +189,7 @@ void KDTreeScene::addObject(std::unique_ptr<SceneObject> object)
 std::list<SceneObjectPtr> KDTreeScene::intersectionCandidates(
         const Ray &ray) const
 {
-    return m->root.getObjects(ray, m->bounding);
+    return m->root.getObjects(ray, 0);
 }
 
 }
