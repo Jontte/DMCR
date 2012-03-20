@@ -25,7 +25,7 @@ namespace dmcr {
 class SceneObject
 {
 public:
-    SceneObject() { }
+    SceneObject() : m_color({0.0f,0.0f,0.0f}) { }
 
     /*!
      * \brief Set object's position
