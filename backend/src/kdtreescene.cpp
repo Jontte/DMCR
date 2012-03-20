@@ -14,7 +14,8 @@
 namespace dmcr
 {
 
-    static const unsigned KDTREE_LEAF_SIZE = 4; // Max elements in a leaf node
+static const unsigned KDTREE_LEAF_SIZE = 4; // Max elements in a leaf node
+
 struct KDTreeScene::impl
 {
     struct Node
@@ -82,13 +83,14 @@ struct KDTreeScene::impl
                     max = minmax_pair.second;
                 }
             }
-            axis = best_axis;
             if(largest_diff < 0.001f)
             {
                 // Unable to split further, make leaf node
                 children.assign(in.begin(), in.end());
                 return;
             }
+            axis = best_axis;
+            //std::cout << "Chose " << (int)axis << " sep: " << max-min << " with " << in.size() << " children" << std::endl;
 
             // Find median
             size_t elems = in.size();
@@ -157,6 +159,9 @@ struct KDTreeScene::impl
             return ret;
         }
     } root;
+
+    // Minimal bounding volume that covers the whole tree
+    AABB bounding;
 };
 
 KDTreeScene::KDTreeScene() : 
@@ -179,6 +184,12 @@ void KDTreeScene::endAddObjects()
         objects.push_back(i.get());
 
     m->root.build(objects);
+
+    std::vector<AABB> aabbs;
+    aabbs.resize(m_objects.size());
+
+    std::transform(m_objects.begin(), m_objects.end(), aabbs.begin(), [](const std::unique_ptr<SceneObject>& p){return p->aabb();});
+    m->bounding = AABB::fromRange(aabbs.begin(), aabbs.end());
 }
 
 void KDTreeScene::addObject(std::unique_ptr<SceneObject> object)
@@ -189,15 +200,7 @@ void KDTreeScene::addObject(std::unique_ptr<SceneObject> object)
 std::list<SceneObjectPtr> KDTreeScene::intersectionCandidates(
         const Ray &ray) const
 {
-    float min_value = std::numeric_limits<float>::min();
-    float max_value = std::numeric_limits<float>::max();
-
-    auto foo = m->root.getObjects(ray, 
-        AABB(Vector3f(min_value,min_value,min_value), 
-             Vector3f(max_value,max_value,max_value)));
-    //if(!foo.empty())
-    //    std::cout << foo.size() << " " << std::flush;
-    return foo;
+    return m->root.getObjects(ray, m->bounding);
 }
 
 }
