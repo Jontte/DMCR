@@ -12,11 +12,6 @@
 
 namespace dmcr {
 
-/*! \brief Holds the color of one pixel in RGB as three floats */
-struct Color {
-    float r, g, b;
-};
-
 template<typename T>
 class Vector3
 {
@@ -225,6 +220,19 @@ private:
 };
 
 typedef Vector3<float> Vector3f;
+
+/*! \brief Holds the color of one pixel in RGB as three floats */
+class Color : public Vector3f
+{
+public:
+    Color(float r, float g, float b) : Vector3f(r,g,b) {}
+    Color() : Vector3f() {}
+    Color(Vector3f v) : Vector3f(v) {}
+    
+    float r() const { return x(); }
+    float g() const { return y(); }
+    float b() const { return z(); }
+};
 
 }
 

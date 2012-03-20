@@ -240,9 +240,9 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     for (uint32_t x = 0; x < width; ++x) {
         for (uint32_t y = 0; y < height; ++y) {
             const auto& c = data[y * width + x];
-            image[y][x] = png::rgb_pixel((uint8_t)((double)c.r * 0xff),
-                                         (uint8_t)((double)c.g * 0xff),
-                                         (uint8_t)((double)c.b * 0xff));
+            image[y][x] = png::rgb_pixel((uint8_t)((double)c.r() * 0xff),
+                                         (uint8_t)((double)c.g() * 0xff),
+                                         (uint8_t)((double)c.b() * 0xff));
         }
     }
 

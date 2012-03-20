@@ -37,9 +37,9 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
     // Write pixel array
     for (int i = 0; i < m_width * m_height; ++i) {
         // Convert floats to chars
-        char c[3] = { (char)(m_data[i].r * 255), 
-                      (char)(m_data[i].g * 255),
-                      (char)(m_data[i].b * 255) };
+        char c[3] = { (char)(m_data[i].r() * 255), 
+                      (char)(m_data[i].g() * 255),
+                      (char)(m_data[i].b() * 255) };
         file.write(c, 3);
     }
     
@@ -60,9 +60,9 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
         for (uint16_t x = left(); x <= right(); ++x) {
             const auto& c = pixel(x-left(), y-top());
             const auto& r = result->pixel(x, y);
-            float _r = ((r.r * fc) + c.r) / (fc + 1.0);
-            float _g = ((r.g * fc) + c.g) / (fc + 1.0);
-            float _b = ((r.b * fc) + c.b) / (fc + 1.0);
+            float _r = ((r.r() * fc) + c.r()) / (fc + 1.0);
+            float _g = ((r.g() * fc) + c.g()) / (fc + 1.0);
+            float _b = ((r.b() * fc) + c.b()) / (fc + 1.0);
             result->setPixel(x, y, dmcr::Color{_r, _g, _b});
         }
     }
