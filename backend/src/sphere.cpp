@@ -21,7 +21,7 @@ const
     
     float a = ray.direction().dot(ray.direction());
     float b = 2 * ray.direction().dot(ray_origin);
-    float c = ray_origin.dot(ray_origin) - m_radius;
+    float c = ray_origin.dot(ray_origin) - m_radius * m_radius;
 
     float dcrim = b * b - 4 * a * c;
     if (dcrim < 0.0f) {
