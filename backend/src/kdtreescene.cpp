@@ -4,7 +4,6 @@
  * code package.
  */
 
-#include <iostream>
 #include <algorithm>
 #include <stdexcept>
 #include <cassert>
@@ -40,7 +39,7 @@ struct KDTreeScene::impl
         }
         static float range_length(Range r1)
         {
-            assert(r1.second > r1.first);
+            assert(r1.second >= r1.first);
             return r1.second - r1.first;
         }
 
@@ -64,9 +63,9 @@ struct KDTreeScene::impl
             m_high.reset();
         }
 
-        void build(std::list<SceneObjectPtr>& in, uint8_t axis)
+        void build(std::list<SceneObjectPtr>& in, uint8_t axis, uint8_t bail = 0)
         {
-            if(in.size() <= KDTREE_LEAF_SIZE)
+            if(in.size() <= KDTREE_LEAF_SIZE || bail > 3)
             {
                 // Leaf node!
                 m_children.assign(in.begin(), in.end());
@@ -98,20 +97,13 @@ struct KDTreeScene::impl
 
             std::list<SceneObjectPtr> low_list, high_list;
 
-            std::cout << "{" << std::endl;
-            std::cout << "min/max: " << min << "/" << max << std::endl;
             for(auto ptr : in)
             {
                 const AABB& bb = ptr->aabb();
                 auto ptr_range = std::make_pair(bb.min()[axis], bb.max()[axis]);
 
-                std::cout << "min/max: " << low_range.second << "/" << high_range.first << std::endl;
-                std::cout << "range : " << ptr_range.first << "," << ptr_range.second << " | ";
-
                 float overlap_left = range_overlap(low_range, ptr_range);
                 float overlap_right = range_overlap(high_range, ptr_range);
-
-                std::cout << "olap " << overlap_left << "/" << overlap_right << std::endl;
 
                 if(overlap_left+range_length(low_range) < overlap_right+range_length(high_range))
                 {
@@ -125,15 +117,17 @@ struct KDTreeScene::impl
                 }
             }
 
-            std::cout << "splitting " << in.size() << " nodes: " << low_list.size() << "/" << high_list.size() << std::endl;
-            std::cout << "}" << std::endl;
-
             in.clear();
             m_low = dmcr::make_unique<Node>();
             m_high = dmcr::make_unique<Node>();
 
-            m_low ->  build(low_list , (axis+1)%3);
-            m_high->  build(high_list, (axis+1)%3);
+            if(low_list.empty() || high_list.empty())
+                bail++;
+            else
+                bail = 0;
+
+            m_low ->  build(low_list , (axis+1)%3, bail);
+            m_high->  build(high_list, (axis+1)%3, bail);
 
             AABB bb[] = {m_low->m_aabb, m_high->m_aabb};
             m_aabb = AABB::fromRange(bb, bb+2);

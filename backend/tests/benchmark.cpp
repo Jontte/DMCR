@@ -31,7 +31,7 @@ public:
 
 int main() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
-        auto scene = std::make_shared<dmcr::DummyScene>();
+        auto scene = std::make_shared<dmcr::KDTreeScene>();
         auto& c = scene->camera();
         c.setPosition(dmcr::Vector3f(9, 3, 5));
         c.setFov(M_PI / 2);
