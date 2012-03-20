@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include "scene.h"
 #include <vector>
+#include "random.h"
 
 namespace dmcr {
 
@@ -124,6 +125,7 @@ public:
     dmcr::Color iterator(dmcr::Ray ray) const;
 private:
     dmcr::ScenePtr m_scene;
+    mutable dmcr::RNG m_rng;
 };
 
 }
