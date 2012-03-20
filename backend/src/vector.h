@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <ostream>
+#include <limits>
 
 namespace dmcr {
 
@@ -213,6 +214,13 @@ public:
       */
     Vector3<T> operator/(const Vector3& v) const {
         return Vector3<T>(m_x / v.x(), m_y / v.y(), m_z / v.z());
+    }
+
+    bool operator==(const Vector3& other) const {
+        const T epsilon = std::numeric_limits<T>::epsilon();
+        return  fabs(x()-other.x()) < epsilon &&
+                fabs(y()-other.y()) < epsilon &&
+                fabs(z()-other.z()) < epsilon;
     }
 
 private:

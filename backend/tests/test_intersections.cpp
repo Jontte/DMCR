@@ -6,7 +6,9 @@
 
 #include <cassert>
 #include <vector>
+#include "../src/aabb.h"
 #include "../src/box.h"
+#include "../src/sphere.h"
 #include "../src/ray.h"
 
 void test_intersections()
@@ -28,5 +30,35 @@ void test_intersections()
         ray.setDirection(-ray.direction());
 
         assert(!box.intersects(ray).intersects);
+    }
+
+    {
+        dmcr::AABB bbs[] = {
+            dmcr::AABB(dmcr::Vector3f(0,0,0), dmcr::Vector3f(1,1,1)),
+            dmcr::AABB(dmcr::Vector3f(0,0,0), dmcr::Vector3f(1,1,1)),
+            dmcr::AABB(dmcr::Vector3f(2,2,2), dmcr::Vector3f(3,3,3))
+        };
+
+        assert(dmcr::AABB::fromRange(bbs,bbs+1) == bbs[0]);
+        assert(dmcr::AABB::fromRange(bbs+1,bbs+2) == bbs[1]);
+
+        assert(dmcr::AABB::fromRange(bbs,bbs+2) == bbs[0]);
+        assert(dmcr::AABB::fromRange(bbs,bbs+2) == bbs[1]);
+
+        assert(dmcr::AABB::fromRange(bbs,bbs+3) == dmcr::AABB(dmcr::Vector3f(0,0,0),dmcr::Vector3f(3,3,3)));
+        
+    }
+    {
+        dmcr::Sphere sph[2];
+        sph[0].setRadius(5);
+        sph[0].setPosition(dmcr::Vector3f(0,0,0));
+        sph[1].setRadius(3);
+        sph[1].setPosition(dmcr::Vector3f(10,0,0));
+
+        dmcr::AABB bbs[] = {
+            sph[0].aabb(),
+            sph[1].aabb()
+        };
+        assert(dmcr::AABB::fromRange(bbs,bbs+2) == dmcr::AABB(dmcr::Vector3f(-5,-5,-5),dmcr::Vector3f(13,5,5)));
     }
 }

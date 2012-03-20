@@ -131,6 +131,11 @@ public:
         }
         return dmcr::AABB(min, max);
     }
+
+    bool operator==(const AABB& other) const
+    {
+        return min() == other.min() && max() == other.max();
+    }
 private:
     dmcr::Vector3f m_min, m_max;
 };
