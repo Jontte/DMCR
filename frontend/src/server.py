@@ -11,6 +11,7 @@ Created on Feb 8, 2012
 '''
 import socket
 import connection
+import taskmanager
 
 class Server(object):
     '''
@@ -32,16 +33,18 @@ class Server(object):
         self.host = ''
         self.port = port
         self.connections = list()
+        self.taskmanager = taskmanager.TaskManager()
     
-    def FileToTask(self, filename):
+    def FileToTask(self, filename, width, height, iterations):
         '''
         Reads a file and stores in self.task, which is given to every connection.
         
         @param filename: the filename of the json-file describing the scene.
         
-        ''' 
-        with open(filename,'r') as f:
-            self.scene = '\n'.join(f.readlines())     
+        '''
+        self.taskmanager.AddScene(filename, width, height, iterations)
+         
+
     
     def Listen(self):
         '''
@@ -62,7 +65,7 @@ class Server(object):
         try:
             while True:
                 self.connections.append(connection.Connection(*s.accept()))
-                self.connections[-1].SetScene(scene=self.scene, width=400, height=300, sceneid=1, name="test")
+                self.connections[-1].SetTaskManager(self.taskmanager)
                 self.connections[-1].start()
         except KeyboardInterrupt as e:
             print "Excepted, quitting", e

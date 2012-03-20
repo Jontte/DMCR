@@ -11,7 +11,7 @@ from server import Server
 
 def main():
     server = Server()
-    server.FileToTask("../../backend/assets/scene.json")
+    server.FileToTask("../../backend/assets/scene.json", 800, 600, 5)
     server.Listen()
 
 

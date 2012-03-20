@@ -14,9 +14,6 @@ Created on Feb 8, 2012
 import threading # each connection is a thread
 
 from dmcr_socket import Socket
-from datetime import datetime
-
-import image
 
 def ListToPPM(pixels, width, height, filename):
     with open(filename, 'w') as fp:
@@ -54,30 +51,19 @@ class Connection(threading.Thread):
         super(Connection, self).__init__()
         self.socket = Socket(conn, addr)
         self._stop = threading.Event()
-        
-        
-    def SetScene(self, scene, width, height, sceneid, name, iterations = 50, datestring="%Y%m%d-%H%M%S", extension = "png"):
-        '''
-        Sets the scene for the thread to render.
-        
-        @param scene: the json-scene (string)
-        @param width: wanted width of image (int)
-        @param height: wanted height of image (int)
-        @param sceneid: internal id of scene
-        @param name: wanted name of image (W/O extension, eg. "test")
-        @param datestring: formation of the date string to be included in filename (default "%Y%m%d-%H%M%S" results in "20120225-184236")
-        @param extension: filename extension (default "ppm")  
-        
-        '''     
-        self.scene = scene
-        self.width = width
-        self.height = height
-        self.iterations = iterations
-        self.sceneid = sceneid
-        self.img_name = name
-        self.img_extension = extension
-        self.datestring = datestring
-        self.image = image.Image(width = width, height=height)
+        self.taskmanager = None
+        self.task = None
+    
+    
+    def SetTaskManager(self, taskmanager):
+        self.taskmanager = taskmanager
+    
+    def FetchTask(self):
+        if self.taskmanager:
+            self.task = self.taskmanager.GetTask()
+        else:
+            print "No taskmanager, can't fetch task"
+
         
     def run(self): # overriding threading.Thread.run()
         '''
@@ -88,6 +74,9 @@ class Connection(threading.Thread):
         @return: nothing
     
         '''
+        
+        self.FetchTask()
+        
         result = False
         try:
             while not self.stopped() and not result: # try to backend handshake until succeeded
@@ -100,15 +89,16 @@ class Connection(threading.Thread):
             self.be_description = result[1] # store the description backend gives about itself
             
             self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_SUCCESS)
-            self.socket.Send_NewTask(self.sceneid, self.width, self.height, self.iterations, self.scene)
+            self.socket.Send_NewTask(*self.task)
         
             while not self.stopped():
                 #image = self.socket.Recv_RenderedData()
                 image = self.socket.Recv_RenderedData()
                 if image:
                     #ListToPPM(image, self.width, self.height, self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
-                    self.image.AddFromString(*image) #image contains (data, iterations)
-                    self.image.Write(self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
+                    self.taskmanager.OnTaskEnd(self.task[0], image) #image contains (data, iterations)
+                    
+                    
             
         except KeyboardInterrupt:
             pass
