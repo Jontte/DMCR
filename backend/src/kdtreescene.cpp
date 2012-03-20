@@ -119,9 +119,9 @@ struct KDTreeScene::impl
             }
             
             std::list<SceneObjectPtr> ret;
-            if( lower.intersects(ray) >= 0)
+            if( lower.intersects(ray).intersects )
                 ret.splice(ret.end(), low->getObjects(ray, level+1, lower));
-            if( higher.intersects(ray) >= 0)
+            if( higher.intersects(ray).intersects )
                 ret.splice(ret.end(), high->getObjects(ray, level+1, higher));
             return ret;
         }

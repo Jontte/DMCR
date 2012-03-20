@@ -23,10 +23,10 @@ void test_intersections()
                            rand() % 5 + 7);
         dmcr::Ray ray(pos, (dmcr::Vector3f(0, 0, 0) - pos).normalized());
 
-        assert(box.intersects(ray) > 0.0);
+        assert(box.intersects(ray).intersects);
 
         ray.setDirection(-ray.direction());
 
-        assert(box.intersects(ray) < 0.0);
+        assert(!box.intersects(ray).intersects);
     }
 }

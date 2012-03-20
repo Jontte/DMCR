@@ -25,7 +25,7 @@ public:
     virtual std::string type() const { return "sphere"; }
     virtual dmcr::AABB aabb() const;
 
-    double intersects(const Ray &ray) const;
+    dmcr::IntersectionResult intersects(const Ray &ray) const;
 
 protected:
     float m_radius;

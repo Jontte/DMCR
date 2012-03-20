@@ -10,11 +10,19 @@
 #include <memory>
 #include <string>
 #include "vector.h"
-#include "ray.h"
-#include "aabb.h"
 #include "raycastresult.h"
 
 namespace dmcr {
+
+struct IntersectionResult
+{
+    bool intersects;
+    double t;
+    dmcr::Vector3f normal;
+};
+
+class AABB;
+class Ray;
 
 /*!
  * \brief Describes an object in a scene
@@ -69,7 +77,7 @@ public:
      * intersection point. If the ray does not intersect, a negative floating
      * point value.
      */
-    virtual double intersects(const dmcr::Ray& ray) const = 0;
+    virtual IntersectionResult intersects(const dmcr::Ray& ray) const = 0;
 
 private:
     dmcr::Vector3f m_position;

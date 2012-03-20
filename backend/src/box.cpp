@@ -11,7 +11,7 @@ dmcr::AABB dmcr::Box::aabb() const
     return dmcr::AABB::fromCenterAndExtents(dmcr::SceneObject::position(), m_extents);
 }
 
-double dmcr::Box::intersects(const dmcr::Ray &ray) const
+dmcr::IntersectionResult dmcr::Box::intersects(const dmcr::Ray &ray) const
 {
     return aabb().intersects(ray);
 }

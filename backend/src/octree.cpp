@@ -85,7 +85,7 @@ std::list<dmcr::SceneObjectPtr>
 {
     std::list<dmcr::SceneObjectPtr> result;
 
-    if (m_aabb.intersects(ray) < 0.0)
+    if (!m_aabb.intersects(ray).intersects)
         return result;
 
     if (m_leaf) {

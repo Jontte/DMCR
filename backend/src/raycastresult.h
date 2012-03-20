@@ -50,10 +50,14 @@ public:
      * \return Intersection point between ray and object
      */
     dmcr::Vector3f intersectionPoint() const { return m_intersection_point; }
+    
+    void setNormal(const dmcr::Vector3f& normal) { m_normal = normal; }
+    dmcr::Vector3f normal() const { return m_normal; }
 
 private:
     dmcr::SceneObjectPtr m_object;
     dmcr::Vector3f m_intersection_point;
+    dmcr::Vector3f m_normal;
 };
 
 } // namespace dmcr

@@ -13,8 +13,9 @@ dmcr::AABB dmcr::Sphere::aabb() const
                                  dmcr::Vector3f(m_radius, m_radius, m_radius));
 }
 
-double dmcr::Sphere::intersects(const dmcr::Ray &/*ray*/) const
+dmcr::IntersectionResult dmcr::Sphere::intersects(const dmcr::Ray &/*ray*/)
+const
 {
     /* TODO: Implement me! */
-    return -1.0;
+    
 }

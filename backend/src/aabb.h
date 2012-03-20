@@ -9,6 +9,7 @@
 
 #include "vector.h"
 #include "ray.h"
+#include "sceneobject.h"
 
 namespace dmcr {
 
@@ -83,8 +84,8 @@ public:
      * corresponding to the distance between the ray origin and the intersection
      * point. If the ray does not intersect, a negative floating point value.
      */
-    double intersects(const dmcr::Ray& ray) const;
-
+    dmcr::IntersectionResult intersects(const dmcr::Ray& ray) const;
+    
     /*!
      * \brief Construct an AABB using center and extents values
      * \param center AABB center
