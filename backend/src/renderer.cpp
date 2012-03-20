@@ -150,7 +150,8 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
             
             dmcr::Ray new_ray(rr.intersectionPoint(), dir);
                               
-            c = iterator(new_ray, iterations + 1);
+            c = dmcr::Color(
+                iterator(new_ray, iterations + 1) * rr.object()->color());
         }
     }
     return c;
