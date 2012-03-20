@@ -97,7 +97,40 @@ public:
     
     static dmcr::AABB fromOppositeCorners(const dmcr::Vector3f& corner1,
                                           const dmcr::Vector3f& corner2);
+    /*!
+     * \brief Construct a minimal AABB that contains the given list of AABBs
+     * \param begin iterator to the beginning of the range
+     * \param end iterator to the end of the range
+     * \return minimal AABB that contains the given AABBs
+     */
+    template <class Iter>
+    static dmcr::AABB fromRange(Iter begin, Iter end)
+    {
+        if( begin == end )
+            return dmcr::AABB();
+        
+        dmcr::Vector3f min = begin->min();
+        dmcr::Vector3f max = begin->max();
 
+        for (;begin != end; begin++) {
+            
+            const dmcr::AABB& bb = *begin;
+
+            if (bb.min().x() < min.x())
+                min.setX(bb.min().x());
+            if (bb.min().y() < min.y())
+                min.setY(bb.min().y());
+            if (bb.min().z() < min.z())
+                min.setZ(bb.min().z());
+            if (bb.max().x() > max.x())
+                max.setX(bb.max().x());
+            if (bb.max().y() > max.y())
+                max.setY(bb.max().y());
+            if (bb.max().z() > max.z())
+                max.setZ(bb.max().z());
+        }
+        return dmcr::AABB(min, max);
+    }
 private:
     dmcr::Vector3f m_min, m_max;
 };
