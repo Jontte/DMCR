@@ -85,6 +85,11 @@ public:
      * point. If the ray does not intersect, a negative floating point value.
      */
     dmcr::IntersectionResult intersects(const dmcr::Ray& ray) const;
+    /*!
+     * \brief Test intersection with a ray
+     * \return True, if the ray intersects. False, otherwise.
+     */
+    bool intersectsBool(const dmcr::Ray& ray) const;
     
     /*!
      * \brief Construct an AABB using center and extents values

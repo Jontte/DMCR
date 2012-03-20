@@ -135,7 +135,7 @@ struct KDTreeScene::impl
 
         std::list<SceneObjectPtr> getObjects(Ray ray, uint8_t axis)
         {
-            if(!m_aabb.intersects(ray).intersects)
+            if(!m_aabb.intersectsBool(ray))
                 return std::list<SceneObjectPtr>();
             if(is_leaf())
                 return std::list<SceneObjectPtr>(m_children.begin(), m_children.end());

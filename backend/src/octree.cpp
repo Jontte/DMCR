@@ -67,14 +67,12 @@ void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
     }
 }
 
-#include <iostream>
-
 std::list<dmcr::SceneObjectPtr>
     dmcr::Octree::getObjects(const dmcr::Ray &ray) const
 {
     std::list<dmcr::SceneObjectPtr> result;
 
-    if (!m_aabb.intersects(ray).intersects)
+    if (!m_aabb.intersectsBool(ray))
         return result;
 
     if (m_leaf) {

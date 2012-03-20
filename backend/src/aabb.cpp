@@ -79,6 +79,21 @@ dmcr::IntersectionResult dmcr::AABB::intersects(const dmcr::Ray &ray) const
     return result;
 }
 
+bool dmcr::AABB::intersectsBool(const dmcr::Ray& ray) const
+{
+    dmcr::Vector3f ray_dir_inv = dmcr::Vector3f(1, 1, 1) / ray.direction();
+    dmcr::Vector3f t1 = (m_min - ray.origin()) * ray_dir_inv;
+    dmcr::Vector3f t2 = (m_max - ray.origin()) * ray_dir_inv;
+
+    double tmin = std::max(std::min(t1.z(), t2.z()), 
+            std::max(std::min(t1.y(), t2.y()), std::min(t1.x(), t2.x())));
+    double tmax = std::min(std::max(t1.z(), t2.z()), 
+            std::min(std::max(t1.y(), t2.y()), std::max(t1.x(), t2.x())));
+    
+    return tmax >= tmin;
+}
+
+
 dmcr::AABB dmcr::AABB::fromCenterAndExtents(const dmcr::Vector3f &center,
                                             const dmcr::Vector3f &extents)
 {
