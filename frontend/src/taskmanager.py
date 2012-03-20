@@ -25,7 +25,7 @@ class Scene(object):
         self.image = None
         self.width = 800
         self.height = 600
-        self.iterations = 25
+        self.iterations = 2
         self.img_name = ""
         self.datestring = "%Y%m%d-%H%M%S"
         self.img_extension = "png"
@@ -54,12 +54,12 @@ class Scene(object):
     def BlendResult(self, data, iterations):
         if not self.image:
             self.image = image.Image(self.width, self.height)
-        
         self.image.AddFromString(data, iterations)
         
     def OnTaskEnd(self, image):
+        print "Task finished, blending and writing."
         self.BlendResult(*image)
-        self.task.Write(self.img_name+str(datetime.datetime.now().strftime(self.datestring))+"."+self.img_extension)
+        self.image.Write(self.img_name+str(datetime.datetime.now().strftime(self.datestring))+"."+self.img_extension)
     
 
 class TaskManager(object):
@@ -69,7 +69,7 @@ class TaskManager(object):
     '''
 
 
-    def __init__(self,params):
+    def __init__(self):
         '''
         Constructor
         '''
@@ -92,4 +92,12 @@ class TaskManager(object):
         '''
         scene =self.scenes[self.scenes.keys()[0]] #dirtydirty 
         return (scene.id, scene.width, scene.height, scene.iterations, scene.json)
+    
+    def OnTaskEnd(self, id, result):
+        '''
+        '''
+        print id
+        self.scenes[id].OnTaskEnd(result)
+        
+        
         
