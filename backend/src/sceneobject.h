@@ -33,7 +33,7 @@ class Ray;
 class SceneObject
 {
 public:
-    SceneObject() : m_color({0.0f,0.0f,0.0f}) { }
+    SceneObject() : m_color({0.0f,0.0f,0.0f}), m_light(false) { }
 
     /*!
      * \brief Set object's position
@@ -55,6 +55,9 @@ public:
     * \return Object's color
     */
     dmcr::Color color() const { return m_color; }
+    
+    void setLight(bool light) { m_light = light; }
+    bool light() const { return m_light; }
 
     /*!
      * \brief Get a string describing the object's typedef
@@ -82,6 +85,7 @@ public:
 private:
     dmcr::Vector3f m_position;
     dmcr::Color m_color;
+    bool m_light;
 };
 
 typedef SceneObject* SceneObjectPtr;
