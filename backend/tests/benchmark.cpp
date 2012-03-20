@@ -33,18 +33,32 @@ int main() {
         auto scene = std::make_shared<dmcr::KDTreeScene>();
         //auto scene = std::make_shared<dmcr::OctreeScene>();
         auto& c = scene->camera();
-        c.setPosition(dmcr::Vector3f(0, 0, 10));
+        c.setPosition(dmcr::Vector3f(9, 3, 5));
         c.setFov(M_PI / 2);
-        c.setAspect(640.0f/480.0f);
-        c.setLookAt(dmcr::Vector3f(0,0,0));
-        
+        c.setAspect(640.0f / 480.0f);
+        c.setLookAt(dmcr::Vector3f(6, 6, 0));
+       
         scene->beginAddObjects();
+        
+        auto b = dmcr::make_unique<dmcr::Box>();
+        b->setPosition(dmcr::Vector3f(5, 0, 0));
+        b->setExtents(dmcr::Vector3f(10, 0.2, 10));
+        b->setColor({1, 1, 1});
+        b->setLight(1);
+        scene->addObject(std::move(b));
+        b = dmcr::make_unique<dmcr::Box>();
+        b->setPosition(dmcr::Vector3f(5, 11, 0));
+        b->setExtents(dmcr::Vector3f(10, 0.2, 10));
+        b->setColor({1, 1, 1});
+        scene->addObject(std::move(b));
 
-        for (int i = 0; i < 1000; ++i) {
-            for (int j = 0; j < 1000; ++j) {
+        for (int i = 0; i < 10; ++i) {
+            for (int j = 0; j < 10; ++j) {
                 auto a = dmcr::make_unique<dmcr::Box>();
-                a->setPosition(dmcr::Vector3f(i/20.0, j/20.0, 0));
-                a->setExtents(dmcr::Vector3f(0.01, 0.01, 0.01));
+                a->setPosition(dmcr::Vector3f(i + 0.5, j + 0.5, 0.5));
+                a->setExtents(dmcr::Vector3f(0.5, 0.5, 0.5));
+                a->setColor({1.0, 1.0, 1.0});
+                //a->setLight(i % 3 == 0 && j % 3 == 0);
                 scene->addObject(std::move(a));
             }
         }
