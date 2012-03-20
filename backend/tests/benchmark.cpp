@@ -12,6 +12,7 @@
 #include "../src/dummyscene.h"
 #include "../src/itaskprovider.h"
 #include "../src/box.h"
+#include "../src/sphere.h"
 #include <unistd.h>
 #include <string>
 #include <iostream>
@@ -30,8 +31,7 @@ public:
 
 int main() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
-        auto scene = std::make_shared<dmcr::KDTreeScene>();
-        //auto scene = std::make_shared<dmcr::OctreeScene>();
+        auto scene = std::make_shared<dmcr::DummyScene>();
         auto& c = scene->camera();
         c.setPosition(dmcr::Vector3f(9, 3, 5));
         c.setFov(M_PI / 2);
@@ -54,11 +54,19 @@ int main() {
 
         for (int i = 0; i < 10; ++i) {
             for (int j = 0; j < 10; ++j) {
+                /*
                 auto a = dmcr::make_unique<dmcr::Box>();
                 a->setPosition(dmcr::Vector3f(i + 0.5, j + 0.5, 0.5));
                 a->setExtents(dmcr::Vector3f(0.5, 0.5, 0.5));
                 a->setColor({1.0, 1.0, 1.0});
                 //a->setLight(i % 3 == 0 && j % 3 == 0);
+                scene->addObject(std::move(a));
+                */
+
+                auto a = dmcr::make_unique<dmcr::Sphere>();
+                a->setPosition(dmcr::Vector3f(i + 0.5, j + 0.5, 0.5));
+                a->setRadius(0.2);
+                a->setColor({1.0, 1.0, 1.0});
                 scene->addObject(std::move(a));
             }
         }
