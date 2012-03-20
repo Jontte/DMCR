@@ -96,9 +96,10 @@ class Image(object):
         print "Writing image to file", filename
         
         iterations = self.iterations if self.iterations > 0 else 1 #prevent division by zero
-        
+        print "So far we have done", self.iterations, "iterations, jea!"
         # values are weighted sums, so divide by iteration count
         scaled = [[value / iterations for value in row] for row in self.image] 
+ 
         
         #write to file (wb = write binary)
         with open(filename, 'wb') as fp:
