@@ -22,6 +22,8 @@ dmcr::Octree::Octree() :
 void dmcr::Octree::build(std::list<dmcr::SceneObjectPtr> objects,
                          int depth = 0)
 {
+    m_objects.clear();
+    
     if (depth == 0) {
         std::vector<AABB> aabbs;
         aabbs.resize(objects.size());
