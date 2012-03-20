@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <stdexcept>
 #include "kdtreescene.h"
 #include "sceneobject.h"
 #include "aabb.h"
@@ -22,6 +23,8 @@ struct KDTreeScene::impl
         float max;
         float split;
 
+        uint8_t axis; // 0-5 inclusive
+
         std::unique_ptr<Node> low;
         std::unique_ptr<Node> high;
 
@@ -31,11 +34,12 @@ struct KDTreeScene::impl
             : min(0)
             , max(0)
             , split(0)
+            , axis(0)
         {}
 
         bool is_leaf() {return !children.empty();}
 
-        void build(std::list<SceneObjectPtr> in, size_t level)
+        void build(std::list<SceneObjectPtr> in)
         {
             if(in.size() <= KDTREE_LEAF_SIZE)
             {
@@ -43,54 +47,78 @@ struct KDTreeScene::impl
                 children.assign(in.begin(), in.end());
                 return;
             }
-            level %= 6; // cycle thru 6 values: min x,y,z; max x,y,z
 
-            auto get_value = [=](SceneObjectPtr p) -> float {
-                AABB bb = p->aabb();
-                if(level < 3)
-                    return bb.min()[level];
+            auto get_value = [&](SceneObjectPtr p) -> float {
+                if(axis < 3)
+                    return p->aabb().min()[axis];
                 else
-                    return bb.max()[level%3];
+                    return p->aabb().max()[axis%3];
             };
 
             auto compare_value = [&](const SceneObjectPtr& a, const SceneObjectPtr& b){
                 return get_value(a) < get_value(b);
             };
 
+            uint8_t best_axis = 0;
+            float largest_diff = 0;
+
+            for(axis = 0; axis < 6; axis++)
+            {
+                // pick axis with largest difference
+                auto minmax = std::minmax_element( in.begin(), in.end(), compare_value);
+
+                auto minmax_pair = 
+                    std::make_pair(
+                        get_value(*(minmax.first)),
+                        get_value(*(minmax.second))
+                );
+
+                float d = fabs(minmax_pair.second-minmax_pair.first);
+                if( d > largest_diff)
+                {
+                    best_axis = axis;
+                    largest_diff = d;
+                    min = minmax_pair.first;
+                    max = minmax_pair.second;
+                }
+            }
+            axis = best_axis;
+            if(largest_diff < 0.001f)
+            {
+                // Unable to split further, make leaf node
+                children.assign(in.begin(), in.end());
+                return;
+            }
+
+            // Find median
             size_t elems = in.size();
             in.sort(compare_value);
-
-            min = get_value(in.front());
-            max = get_value(in.back());
-
+            
+            std::list<SceneObjectPtr>::iterator iter = in.begin();
+            std::advance(iter, elems/2);
+            
             // move higher half to a new sublist
             std::list<SceneObjectPtr> high_list;
 
-            std::list<SceneObjectPtr>::iterator iter = in.begin();
-            std::advance(iter, elems/2);
-
             high_list.splice(high_list.begin(), in, iter, in.end());
-
             split = get_value(high_list.front());
 
             low = dmcr::make_unique<Node>();
             high = dmcr::make_unique<Node>();
 
-            low ->  build(in        , level+1);
-            high->  build(high_list , level+1);
+            low ->  build(in       );
+            high->  build(high_list);
         }
 
-        std::list<SceneObjectPtr> getObjects(Ray ray, size_t level, const AABB& bb)
+        std::list<SceneObjectPtr> getObjects(Ray ray, const AABB& bb)
         {
             if(is_leaf())
                 return std::list<SceneObjectPtr>(children.begin(), children.end());
 
-            level %= 6;
-
             AABB lower(bb);
             AABB higher(bb);
 
-            switch(level)
+            switch(axis)
             {
                 case 0:
                     lower.setMin(lower.min().setX(min));
@@ -116,13 +144,16 @@ struct KDTreeScene::impl
                     lower.setMax(lower.max().setZ(split));
                     higher.setMax(higher.max().setZ(max));
                 break;
+                default:
+                    throw std::runtime_error("KDTree axis > 5 makes no sense");
+                break;
             }
             
             std::list<SceneObjectPtr> ret;
             if( lower.intersects(ray).intersects )
-                ret.splice(ret.end(), low->getObjects(ray, level+1, lower));
+                ret.splice(ret.end(), low->getObjects(ray, lower));
             if( higher.intersects(ray).intersects )
-                ret.splice(ret.end(), high->getObjects(ray, level+1, higher));
+                ret.splice(ret.end(), high->getObjects(ray, higher));
             return ret;
         }
     } root;
@@ -147,7 +178,7 @@ void KDTreeScene::endAddObjects()
     for (auto& i : m_objects)
         objects.push_back(i.get());
 
-    m->root.build(objects, 0);
+    m->root.build(objects);
 }
 
 void KDTreeScene::addObject(std::unique_ptr<SceneObject> object)
@@ -161,7 +192,7 @@ std::list<SceneObjectPtr> KDTreeScene::intersectionCandidates(
     float min_value = std::numeric_limits<float>::min();
     float max_value = std::numeric_limits<float>::max();
 
-    auto foo = m->root.getObjects(ray, 0, 
+    auto foo = m->root.getObjects(ray, 
         AABB(Vector3f(min_value,min_value,min_value), 
              Vector3f(max_value,max_value,max_value)));
     //if(!foo.empty())
