@@ -68,7 +68,7 @@ const
         auto slice_result = dmcr::Renderer::render(
             h_res, v_res, left, right, top, bottom);
         std::lock_guard<std::mutex> g(lock);
-        slice_result->blendInto(result, iters_claimed);
+        slice_result->blendInto(result, iters_done);
         ++iters_done;
     };
 
