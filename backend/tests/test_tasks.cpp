@@ -32,7 +32,7 @@ public:
 void test_tasks() {
     dmcr::SceneFactory factory = [](const std::string& /*str*/) {
         auto scene = std::make_shared<dmcr::KDTreeScene>();
-        scene->loadFromFile("assets/scene.json");
+        scene->loadFromFile("../scenes/scene.json");
         return scene;
     };
     
