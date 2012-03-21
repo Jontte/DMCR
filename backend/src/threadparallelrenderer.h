@@ -9,7 +9,6 @@
 
 #include "scene.h"
 #include "renderer.h"
-#include "loadbalancer.h"
 
 namespace dmcr
 {
@@ -26,7 +25,6 @@ public:
     const;
     
 private:
-    mutable dmcr::LoadBalancer m_balancer;
     uint32_t m_iterations;
 };
 

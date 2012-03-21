@@ -34,12 +34,11 @@ static int hardware_threads() {
     return hw_threads;
 }
 
-const int RENDER_SLICES = 25;
+const int RENDER_SLICES = 1;
 
 ThreadParallelRenderer::ThreadParallelRenderer(ScenePtr scene,
                                                uint32_t iterations)
-: Renderer(scene), m_balancer(RENDER_SLICES, iterations),
-  m_iterations(iterations) {
+: Renderer(scene), m_iterations(iterations) {
 }
 
 std::shared_ptr<RenderResult> ThreadParallelRenderer::render(uint16_t h_res,
@@ -54,31 +53,29 @@ const
     dmcr::RenderResultPtr result = std::make_shared<dmcr::RenderResult>(
         left, right, top, bottom);
 
-    uint16_t slice_width = (uint16_t)ceil((right - left) / (float)RENDER_SLICES);
-
-    std::vector<std::mutex> slice_locks(RENDER_SLICES);
-    std::vector<uint32_t> slice_counts(RENDER_SLICES, 0);
+    std::mutex lock;
+    unsigned int iters_claimed = 0;
+    unsigned int iters_done = 0;
     
-    auto slice_fun = [&](int slice_no) {
-        uint16_t l = left + slice_width * slice_no;
-        uint16_t r = l + slice_width - 1;
-        if (r > right)
-            r = right;
+    auto slice_fun = [&]() {
         auto slice_result = dmcr::Renderer::render(
-            h_res, v_res, l, r, top, bottom);
-        std::lock_guard<std::mutex> G(slice_locks[slice_no]);
-        slice_result->blendInto(result, slice_counts[slice_no]++);
+            h_res, v_res, left, right, top, bottom);
+        std::lock_guard<std::mutex> g(lock);
+        slice_result->blendInto(result, iters_claimed);
+        ++iters_done;
     };
 
-    auto thread_fun = [&m_balancer, &slice_fun](int i) {
+    auto thread_fun = [&](int i) {
         while(true)
         {
-            int slice = m_balancer.get();
-            if( slice == -1) // Ran out of work, all done!
-                break;
-            std::cout << "Thread " << i << " slice " << slice << std::endl;
-            slice_fun(slice);
-            m_balancer.finish(slice);
+            {
+                if (iters_claimed >= m_iterations)
+                    break;
+                std::lock_guard<std::mutex> g(lock);
+                ++iters_claimed;
+            }
+            std::cout << "Thread " << i << " iter " << iters_claimed << std::endl;
+            slice_fun();
         }
         std::cout << "Thread " << i << " done!" << std::endl;
     };
