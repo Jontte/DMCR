@@ -1,0 +1,60 @@
+/*
+ * This file is a part of the DMCR project and is subject to the terms and
+ * conditions defined in file 'LICENSE.txt', which is a part of this source
+ * code package.
+ */
+
+{	
+	"camera":
+	{
+   	"position": [278,273,-800],
+    "look_at": [278,273,-799],
+    "fov": 63.4400,
+	"aspect": 1.333333
+
+    //"antialias": 2,
+		//"screen": [800, 600]
+  },
+
+	"scene": 
+	[
+		{   // white floor
+			"type": "box", 
+			"position": [278,-0.01,280],
+			"extents": [278, 0.01, 280],
+            "color":[1,1,1]
+		},
+        {   // light
+            "type":"box",
+            "position" : [278,548.8,279.5],
+            "extents":[65,0.01,52.5],
+            "color":[1,1,1],
+            "light":true
+        },
+		{   // white celiing
+			"type": "box", 
+			"position": [0,548.815,0],
+			"extents": [552, 0.01, 559],
+            "color":[1,1,1]
+		},
+
+		{   // white back wall
+			"type": "box", 
+			"position": [278,278, 559.2],
+			"extents": [278, 278, 0.01],
+            "color":[1,1,1]
+		},
+		{   // green right wall
+			"type": "box", 
+			"position": [0,278,278],
+			"extents": [0.01, 278, 278],
+            "color":[0,1,0]
+		},
+		{   // red left wall
+			"type": "box", 
+			"position": [550, 278,280],
+			"extents": [0.01, 278, 280],
+            "color":[1,1,1]
+		}
+	]
+}
