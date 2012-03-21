@@ -12,15 +12,15 @@
 #include "sharedstream.h"
 #include "renderer.h"
 #include "util.h"
+#include "settings.h"
 #include <csignal>
 
 #include "backendapplication.h"
 
 int main(int argc, char * argv[])
 {
-    // Parse command line parameters to a vector of strings
-    std::vector<std::string> args(argv, argv+argc);
-    
+    dmcr::Settings::get().loadArgs(argc, argv);
+
     signal(SIGPIPE, SIG_IGN);
 
     if (args.size() > 1) {

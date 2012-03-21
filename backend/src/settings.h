@@ -11,6 +11,7 @@ public:
     static Settings& get();
 
     void load(const std::string& path);
+    void loadArgs(int argc, char* argv[]);
 
     int readInt(const std::string& key, int def);
     std::string readString(const std::string& key, std::string def);

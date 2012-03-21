@@ -2,6 +2,7 @@
 #include <fstream>
 #include "util.h"
 #include <iostream>
+#include <vector>
 
 using namespace dmcr;
 
@@ -34,6 +35,25 @@ void Settings::load(const std::string& path)
     }
 }
 
+void Settings::loadArgs(int argc, char* argv[])
+{
+    std::vector<std::string> args(argv, argv+argc);
+
+    for (int i = 0; i < args.size(); ++i) {
+        std::string& s = args.at(i);
+        std::cout << s << std::endl;
+        if (s.length() > 2 && s[0] == '-' && s[1] == '-' 
+                && i+1 < args.size())
+        {
+            std::string v = args.at(i+1);
+            std::string k = s.substr(2);
+            std::cout << k << "," << v << std::endl;
+            m_keys.insert({k,v});
+            ++i;
+        }
+    }
+}
+
 int Settings::readInt(const std::string& key, int def)
 {
     if (m_keys.count(key) == 1) {
@@ -41,5 +61,11 @@ int Settings::readInt(const std::string& key, int def)
         return dmcr::lexical_cast<int>(v);
     } else
         return def;
+}
+
+std::string Settings::readString(const std::string& key, std::string def) {
+    if (m_keys.count(key) == 1) {
+        return m_keys[key];
+    } else return def;
 }
 
