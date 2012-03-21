@@ -80,8 +80,9 @@ const
                     break;
                 std::lock_guard<std::mutex> g(lock);
                 ++iters_claimed;
+                std::cout << "Thread " << i << " iter " << iters_claimed <<
+                             std::endl;
             }
-            std::cout << "Thread " << i << " iter " << iters_claimed << std::endl;
             slice_fun();
         }
         std::cout << "Thread " << i << " done!" << std::endl;
