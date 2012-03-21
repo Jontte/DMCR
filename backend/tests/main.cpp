@@ -14,7 +14,6 @@ typedef std::function<void(void)> test_t;
 // Simple unit testing framework
 // Introduce your test functions here..
 void test_sharedstream();
-void test_loadbalancer();
 void test_tasks();
 void test_intersections();
 void test_vector();
@@ -27,7 +26,6 @@ int main()
     // And list them again here..
     DEF_TEST(test_vector);
     DEF_TEST(test_sharedstream);
-    DEF_TEST(test_loadbalancer);
     DEF_TEST(test_tasks);
     DEF_TEST(test_intersections);
     DEF_TEST(test_random);

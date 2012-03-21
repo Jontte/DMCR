@@ -6,7 +6,6 @@
 
 #include "taskmanager.h"
 #include "scene.h"
-#include "loadbalancer.h"
 #include "task.h"
 #include "itaskprovider.h"
 

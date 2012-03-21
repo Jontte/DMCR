@@ -18,7 +18,7 @@ PROTOC = protoc
 # Common C/C++ source files
 CPP_SOURCES = src/dmcr_protocol.pb.cpp src/socket.cpp \
 src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
-3rdparty/json/jsoncpp.cpp src/loadbalancer.cpp\
+3rdparty/json/jsoncpp.cpp \
 src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
 src/backendapplication.cpp src/octreescene.cpp src/aabb.cpp src/box.cpp \
 src/sphere.cpp src/octree.cpp src/raycastresult.cpp \
@@ -30,7 +30,7 @@ MAIN_SOURCES = src/main.cpp
 
 # Source files that belong to unit testing framework:
 TEST_SOURCES =	tests/main.cpp\
-								tests/test_sharedstream.cpp tests/test_loadbalancer.cpp\
+								tests/test_sharedstream.cpp \
 								tests/test_tasks.cpp tests/test_intersections.cpp\
 								tests/test_vector.cpp tests/test_random.cpp
 
@@ -131,17 +131,14 @@ obj/src/sceneobject.o: src/sceneobject.h src/vector.h src/raycastresult.h
 obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/dummyscene.o: src/vector.h src/raycastresult.h src/ray.h src/camera.h
 obj/src/dummyscene.o: src/unique_ptr
-obj/src/loadbalancer.o: src/loadbalancer.h
 obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/task.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
 obj/src/task.o: src/renderer.h src/random.h src/taskmanager.h
 obj/src/task.o: src/itasklistener.h src/threadparallelrenderer.h
-obj/src/task.o: src/loadbalancer.h
 obj/src/taskmanager.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/src/taskmanager.o: src/vector.h src/raycastresult.h src/ray.h
 obj/src/taskmanager.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
-obj/src/taskmanager.o: src/random.h src/itasklistener.h src/loadbalancer.h
-obj/src/taskmanager.o: src/itaskprovider.h
+obj/src/taskmanager.o: src/random.h src/itasklistener.h src/itaskprovider.h
 obj/src/ray.o: src/ray.h src/vector.h
 obj/src/renderer.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/renderer.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
@@ -170,7 +167,6 @@ obj/src/threadparallelrenderer.o: src/threadparallelrenderer.h src/scene.h
 obj/src/threadparallelrenderer.o: src/sceneobject.h src/vector.h
 obj/src/threadparallelrenderer.o: src/raycastresult.h src/ray.h src/camera.h
 obj/src/threadparallelrenderer.o: src/unique_ptr src/renderer.h src/random.h
-obj/src/threadparallelrenderer.o: src/loadbalancer.h
 obj/src/kdtreescene.o: src/kdtreescene.h src/vector.h src/sceneobject.h
 obj/src/kdtreescene.o: src/raycastresult.h src/scene.h src/ray.h src/camera.h
 obj/src/kdtreescene.o: src/unique_ptr src/aabb.h
@@ -182,16 +178,15 @@ obj/src/main.o: src/backendapplication.h src/taskmanager.h src/task.h
 obj/src/main.o: src/itasklistener.h src/socket.h src/dmcr_protocol.pb.h
 obj/src/main.o: src/itaskprovider.h
 obj/tests/test_sharedstream.o: src/sharedstream.h
-obj/tests/test_loadbalancer.o: src/loadbalancer.h
 obj/tests/test_tasks.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/tests/test_tasks.o: src/vector.h src/raycastresult.h src/ray.h
 obj/tests/test_tasks.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
 obj/tests/test_tasks.o: src/random.h src/itasklistener.h src/task.h
 obj/tests/test_tasks.o: src/scene.h src/dummyscene.h src/kdtreescene.h
 obj/tests/test_tasks.o: src/itaskprovider.h
-obj/tests/test_intersections.o: src/box.h src/sceneobject.h src/vector.h
-obj/tests/test_intersections.o: src/raycastresult.h src/aabb.h src/ray.h
-obj/tests/test_intersections.o: src/ray.h
+obj/tests/test_intersections.o: src/aabb.h src/vector.h src/ray.h
+obj/tests/test_intersections.o: src/sceneobject.h src/raycastresult.h
+obj/tests/test_intersections.o: src/box.h src/aabb.h src/sphere.h src/ray.h
 obj/tests/test_vector.o: src/vector.h
 obj/tests/test_random.o: src/random.h src/vector.h
 obj/tests/benchmark.o: src/taskmanager.h src/scene.h src/sceneobject.h
@@ -200,4 +195,4 @@ obj/tests/benchmark.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
 obj/tests/benchmark.o: src/random.h src/itasklistener.h src/task.h
 obj/tests/benchmark.o: src/scene.h src/kdtreescene.h src/octreescene.h
 obj/tests/benchmark.o: src/octree.h src/aabb.h src/dummyscene.h
-obj/tests/benchmark.o: src/itaskprovider.h src/box.h
+obj/tests/benchmark.o: src/itaskprovider.h src/box.h src/sphere.h
