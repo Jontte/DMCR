@@ -5,13 +5,13 @@
  */
 
 #include "backendapplication.h"
-#include "dummyscene.h"
+#include "kdtreescene.h"
 #include <iostream>
 
 using namespace dmcr;
 
 static SceneFactory scene_factory = [](const std::string& str) {
-    auto scene = std::make_shared<DummyScene>();
+    auto scene = std::make_shared<KDTreeScene>();
     scene->loadFromString(str);
     return scene;
 };
