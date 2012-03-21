@@ -55,6 +55,10 @@ public:
         return m_data.at(y * m_width + x);
     }
 
+    void setIterationsDone(uint32_t i) {
+        m_iterations_done = i;
+    }
+
     /*!
      * \brief Save rendering result to PPM image
      * \throws RenderResultException

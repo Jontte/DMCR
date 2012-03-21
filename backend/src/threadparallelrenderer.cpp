@@ -97,5 +97,7 @@ const
 
     std::cout << "Frame finished!" << std::endl;
 
+    result->setIterationsDone(iters_done);
+
     return result;
 }

@@ -17,6 +17,7 @@ dmcr::RenderResult::RenderResult(uint16_t left, uint16_t right,
     m_bottom(bottom),
     m_width(right - left + 1),
     m_height(bottom - top + 1),
+    m_iterations_done(0),
     m_data(m_width * m_height)
 {
 }
@@ -66,8 +67,6 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
             result->setPixel(x, y, dmcr::Color{_r, _g, _b});
         }
     }
-
-    m_iterations_done = count+1;
 }
 
 
