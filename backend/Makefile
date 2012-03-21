@@ -57,7 +57,7 @@ ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG -g
 else
 # TODO: Profile-guided optimization
-CFLAGS += -DNDEBUG -Ofast -ffast-math -mtune=native -march=native -mfpmath=sse -flto -funroll-loops -fweb -frename-registers -fomit-frame-pointer
+CFLAGS += -DNDEBUG -Ofast -ffast-math -mtune=native -march=native -mfpmath=sse -flto -funroll-loops -fweb -frename-registers -fomit-frame-pointer -fno-stack-protector
 endif
 
 # Linker options
