@@ -169,16 +169,18 @@ obj/src/threadparallelrenderer.o: src/threadparallelrenderer.h src/scene.h
 obj/src/threadparallelrenderer.o: src/sceneobject.h src/vector.h
 obj/src/threadparallelrenderer.o: src/raycastresult.h src/ray.h src/camera.h
 obj/src/threadparallelrenderer.o: src/unique_ptr src/renderer.h src/random.h
+obj/src/threadparallelrenderer.o: src/settings.h
 obj/src/kdtreescene.o: src/kdtreescene.h src/vector.h src/sceneobject.h
 obj/src/kdtreescene.o: src/raycastresult.h src/scene.h src/ray.h src/camera.h
 obj/src/kdtreescene.o: src/unique_ptr src/aabb.h
 obj/src/random.o: src/random.h src/vector.h
+obj/src/settings.o: src/settings.h src/util.h
 obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/main.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
 obj/src/main.o: src/sharedstream.h src/renderer.h src/random.h src/util.h
-obj/src/main.o: src/backendapplication.h src/taskmanager.h src/task.h
-obj/src/main.o: src/itasklistener.h src/socket.h src/dmcr_protocol.pb.h
-obj/src/main.o: src/itaskprovider.h
+obj/src/main.o: src/settings.h src/backendapplication.h src/taskmanager.h
+obj/src/main.o: src/task.h src/itasklistener.h src/socket.h
+obj/src/main.o: src/dmcr_protocol.pb.h src/itaskprovider.h
 obj/tests/test_sharedstream.o: src/sharedstream.h
 obj/tests/test_tasks.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/tests/test_tasks.o: src/vector.h src/raycastresult.h src/ray.h
@@ -191,6 +193,7 @@ obj/tests/test_intersections.o: src/sceneobject.h src/raycastresult.h
 obj/tests/test_intersections.o: src/box.h src/aabb.h src/sphere.h src/ray.h
 obj/tests/test_vector.o: src/vector.h
 obj/tests/test_random.o: src/random.h src/vector.h
+obj/tests/test_settings.o: src/settings.h
 obj/tests/benchmark.o: src/taskmanager.h src/scene.h src/sceneobject.h
 obj/tests/benchmark.o: src/vector.h src/raycastresult.h src/ray.h
 obj/tests/benchmark.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
