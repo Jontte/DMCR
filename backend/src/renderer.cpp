@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include "random.h"
+#include "util.h"
 
 dmcr::RenderResult::RenderResult(uint16_t left, uint16_t right,
                                  uint16_t top, uint16_t bottom) :
@@ -33,15 +34,32 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
                                           file_name);
     
     // Write PPM file header
-    file << "P6 " << m_width << " " << m_height << " " << 255 << "\n";
+    file << "P3 " << m_width << " " << m_height << " " << 1023 << "\n";
 
     // Write pixel array
     for (int i = 0; i < m_width * m_height; ++i) {
         // Convert floats to chars
-        char c[3] = { (char)(m_data[i].r() * 255), 
-                      (char)(m_data[i].g() * 255),
-                      (char)(m_data[i].b() * 255) };
-        file.write(c, 3);
+        std::string px;
+        if (m_data[i].r() > 1.0f)
+            px += "1023";
+        else
+            px += dmcr::lexical_cast<std::string>((uint16_t)(m_data[i].r() *
+            1023));
+        px += " ";
+        if (m_data[i].g() > 1.0f)
+            px += "1023";
+        else
+            px += dmcr::lexical_cast<std::string>((uint16_t)(m_data[i].g() *
+                1023));        
+        px += " ";
+        if (m_data[i].b() > 1.0f)
+            px += "1023";
+        else
+            px += dmcr::lexical_cast<std::string>((uint16_t)(m_data[i].b() *
+                1023));        
+        px += "\n";
+
+        file << px;
     }
     
     file.close();
@@ -72,7 +90,8 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
 
 dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res, 
                                              uint16_t left, uint16_t right, 
-                                             uint16_t top, uint16_t bottom) const
+                                             uint16_t top, uint16_t bottom) 
+const
 {
     // By default render the whole image
     if (right == 0)
@@ -113,11 +132,11 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
     SceneObjectPtr obj = rr.object();
 
     if (obj != nullptr) {
-        if (obj->light())
-            c = obj->color();
+        if (obj->emit() > 0.0f)
+            c = obj->color() * obj->emit();
         else {
-            dmcr::Vector3f refl = ray.direction() - 2 * rr.normal().dot(ray.direction()) *
-                rr.normal();
+            dmcr::Vector3f refl = ray.direction() - 
+                2 * rr.normal().dot(ray.direction()) * rr.normal();
             dmcr::Vector3f random = m_rng.random_vector();
             if (random.dot(rr.normal()) < 0.0)
                 random = -random;
@@ -127,10 +146,11 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
                 (1.0f - blur) * refl).normalized();
             
             dmcr::Ray new_ray(rr.intersectionPoint(), dir);
-                              
-            c = dmcr::Color(
-                iterator(new_ray, iterations + 1) * rr.object()->color());
+                                
+            c += dmcr::Color(
+                    iterator(new_ray, iterations + 1) * rr.object()->color());
         }
     }
+    
     return c;
 }
