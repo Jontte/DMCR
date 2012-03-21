@@ -260,6 +260,6 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
 void dmcr::Socket::onTaskCompleted(uint32_t task_id,
                                    const dmcr::RenderResultPtr& result)
 {
-    sendRenderedImage(task_id, result->width(), result->height(), 1,
+    sendRenderedImage(task_id, result->width(), result->height(), result->iterationsDone(),
                       result->data());
 }

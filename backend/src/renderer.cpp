@@ -66,6 +66,8 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
             result->setPixel(x, y, dmcr::Color{_r, _g, _b});
         }
     }
+
+    m_iterations_done = count+1;
 }
 
 

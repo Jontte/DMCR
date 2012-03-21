@@ -67,6 +67,7 @@ public:
     uint16_t bottom() const { return m_bottom; }
     uint16_t width() const { return m_width; }
     uint16_t height() const { return m_height; }
+    uint32_t iterationsDone() const { return m_iterations_done; }
     
     /*! \brief Get rendered image as array of Color structs */
     const std::vector<dmcr::Color>& data() const { return m_data; }
@@ -82,6 +83,7 @@ private:
     uint16_t m_left, m_right, m_top, m_bottom;
     uint16_t m_width;
     uint16_t m_height;
+    uint32_t m_iterations_done;
     
     std::vector<dmcr::Color> m_data;
 };
