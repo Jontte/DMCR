@@ -33,7 +33,7 @@ class Ray;
 class SceneObject
 {
 public:
-    SceneObject() : m_color(0.0f,0.0f,0.0f), m_light(false) { }
+    SceneObject() : m_color(0.0f,0.0f,0.0f), m_light(false), m_blur(0.0f) { }
 
     /*!
      * \brief Set object's position
