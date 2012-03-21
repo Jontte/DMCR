@@ -8,6 +8,7 @@
 #define UTIL_H_
 
 #include <sstream>
+#include <stdexcept>
 
 namespace dmcr
 {

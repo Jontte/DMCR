@@ -22,7 +22,8 @@ src/scene.cpp src/sceneobject.cpp src/dummyscene.cpp \
 src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
 src/backendapplication.cpp src/octreescene.cpp src/aabb.cpp src/box.cpp \
 src/sphere.cpp src/octree.cpp src/raycastresult.cpp \
-src/threadparallelrenderer.cpp src/kdtreescene.cpp src/random.cpp
+src/threadparallelrenderer.cpp src/kdtreescene.cpp src/random.cpp \
+src/settings.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)
@@ -32,7 +33,8 @@ MAIN_SOURCES = src/main.cpp
 TEST_SOURCES =	tests/main.cpp\
 								tests/test_sharedstream.cpp \
 								tests/test_tasks.cpp tests/test_intersections.cpp\
-								tests/test_vector.cpp tests/test_random.cpp
+								tests/test_vector.cpp tests/test_random.cpp\
+                                tests/test_settings.cpp
 
 BENCHMARK_SOURCES = tests/benchmark.cpp
 
