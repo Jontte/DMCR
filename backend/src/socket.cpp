@@ -16,6 +16,7 @@
 #include <sys/utsname.h>
 #include <png++/png.hpp>
 #include <sstream>
+#include "settings.h"
 
 static int checkError(int r) {
     if (r == -1)
@@ -224,6 +225,12 @@ void dmcr::Socket::handleNewTask(const dmcr::Packet::NewTask &msg)
                                    msg.iterations(), msg.scene());
 }
 
+static uint16_t clamp16(double x) {
+    if (x > 65535)
+        x = 65535.0;
+    return (uint16_t)x;
+}
+
 void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
                                      uint32_t height, uint32_t iterations_done,
                                      std::vector<dmcr::Color> data)
@@ -233,21 +240,44 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     packet.set_height(height);
     packet.set_id(task);
     packet.set_iterations_done(iterations_done);
-    packet.set_data_format(ResultFormat_PNG8);
 
-    png::image<png::rgb_pixel> image(width, height);
-
-    for (uint32_t x = 0; x < width; ++x) {
-        for (uint32_t y = 0; y < height; ++y) {
-            const auto& c = data[y * width + x];
-            image[y][x] = png::rgb_pixel((uint8_t)((double)c.r() * 0xff),
-                                         (uint8_t)((double)c.g() * 0xff),
-                                         (uint8_t)((double)c.b() * 0xff));
-        }
-    }
+    auto fmt = dmcr::Settings::get().readString("image-format", "png8");
 
     std::ostringstream ss;
-    image.write_stream(ss);
+
+    if (fmt == "png8") {
+        png::image<png::rgb_pixel> image(width, height);
+
+        packet.set_data_format(ResultFormat_PNG8);
+
+        for (uint32_t x = 0; x < width; ++x) {
+            for (uint32_t y = 0; y < height; ++y) {
+                const auto& c = data[y * width + x];
+                image[y][x] = png::rgb_pixel((uint8_t)((double)c.r() * 0xff),
+                                             (uint8_t)((double)c.g() * 0xff),
+                                             (uint8_t)((double)c.b() * 0xff));
+            }
+        }
+
+        image.write_stream(ss);
+    } else if (fmt == "png16clamped") {
+        png::image<png::rgb_pixel_16> image(width, height);
+
+        packet.set_data_format(ResultFormat_PNG16_Clamped);
+
+        for (uint32_t x = 0; x < width; ++x) {
+            for (uint32_t y = 0; y < height; ++y) {
+                const auto& c = data[y * width + x];
+                uint16_t _r = clamp16((double)c.r() * 1024);
+                uint16_t _g = clamp16((double)c.g() * 1024);
+                uint16_t _b = clamp16((double)c.b() * 1024);
+                image[y][x] = png::rgb_pixel_16(_r, _g, _b);
+            }
+        }
+
+        image.write_stream(ss);
+    } else throw SocketException("Invalid result format specified");
+
     packet.set_data_length(ss.str().length());
 
     std::lock_guard<std::mutex> G(m_mutex);
