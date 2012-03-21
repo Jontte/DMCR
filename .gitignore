@@ -1,6 +1,7 @@
 # Files ignored by git
 *.o
 *~
+*.swp
 *.bak
 *.pb.*
 *.pyc
