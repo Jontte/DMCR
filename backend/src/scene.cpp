@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <json/json.h>
+#include <cmath>
 #include "vector.h"
 #include "sceneobject.h"
 #include "box.h"
@@ -121,7 +122,7 @@ void dmcr::Scene::loadFromString(const std::string &string)
     m_camera.setLookAt(dmcr::Vector3f(camera_look_at[0u].asDouble(),
                                       camera_look_at[1].asDouble(),
                                       camera_look_at[2].asDouble()));
-    m_camera.setFov(camera_fov.asDouble());
+    m_camera.setFov(camera_fov.asFloat() / 180.0f * M_PI);
     m_camera.setAspect(camera_aspect.asDouble());
 
     beginAddObjects();
