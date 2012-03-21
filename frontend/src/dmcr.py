@@ -40,8 +40,10 @@ def main():
                     iterations = int(opt)
                 else:  
                     print "Unknown option ({} = {}), use -f, -w, -h, -i.".format(cmd, opt)
+                    return
              else:
                  help()
+                 return
 
 
     print "Starting FE server with:\n{}: {}x{}, {} iterations".format(filename, width, height, iterations)
