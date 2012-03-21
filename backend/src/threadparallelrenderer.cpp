@@ -5,6 +5,7 @@
  */
 
 #include "threadparallelrenderer.h"
+#include "settings.h"
 #include <thread>
 #include <atomic>
 #include <vector>
@@ -49,7 +50,13 @@ std::shared_ptr<RenderResult> ThreadParallelRenderer::render(uint16_t h_res,
                                                              uint16_t bottom)
 const
 {
-    unsigned int hw_threads = hardware_threads();
+    int set_render_threads = dmcr::Settings::get().readInt("render-threads",-1);
+    unsigned int hw_threads;
+    if (set_render_threads < 0)
+        hw_threads = hardware_threads();
+    else
+        hw_threads = set_render_threads;
+
     dmcr::RenderResultPtr result = std::make_shared<dmcr::RenderResult>(
         left, right, top, bottom);
 

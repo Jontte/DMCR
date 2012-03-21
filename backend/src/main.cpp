@@ -23,23 +23,19 @@ int main(int argc, char * argv[])
 
     signal(SIGPIPE, SIG_IGN);
 
-    if (args.size() > 1) {
+    std::string host = dmcr::Settings::get().readString("host", "");
+    int port = dmcr::Settings::get().readInt("port", 9393);
+    if (host.length() > 0) {
         dmcr::BackendApplication app;
 
-        int port = 9393;
-        if( args.size() > 2)
-        {
-            port = dmcr::lexical_cast<int>(args[2]);
-        }
-
         try {
-            app.connect(args[1], port);
+            app.connect(host, port);
             app.start();
         } catch (const std::runtime_error& e) {
             std::cout << "Exception: " << e.what() << std::endl;
         }
     } else {
-        std::cout << "Usage: " << args.at(0) << " <address> [port=9393]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " --host <address> [--port 9393]" << std::endl;
         std::cout << "Connects to DMCR frontend located at <address> <port>" << std::endl;
         return 1;
     }
