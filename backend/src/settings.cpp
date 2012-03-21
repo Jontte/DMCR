@@ -41,13 +41,11 @@ void Settings::loadArgs(int argc, char* argv[])
 
     for (int i = 0; i < args.size(); ++i) {
         std::string& s = args.at(i);
-        std::cout << s << std::endl;
         if (s.length() > 2 && s[0] == '-' && s[1] == '-' 
                 && i+1 < args.size())
         {
             std::string v = args.at(i+1);
             std::string k = s.substr(2);
-            std::cout << k << "," << v << std::endl;
             m_keys.insert({k,v});
             ++i;
         }
