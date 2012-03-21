@@ -91,9 +91,8 @@ const
     for (unsigned int i = 0; i < hw_threads; ++i) {
         workers.emplace_back(thread_fun, i);
     }
-    for (unsigned int i = 0; i < workers.size(); ++i) {
-        workers[i].join();
-    }
+    for(auto& th: workers)
+        th.join();
 
     std::cout << "Frame finished!" << std::endl;
 
