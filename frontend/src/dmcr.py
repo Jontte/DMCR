@@ -7,11 +7,32 @@
 '''
 
 from server import Server
-
+import sys
 
 def main():
+    filename = "../../scenes/scene.json"
+    width = 800
+    height = 600
+    iterations = 5
+    if len(sys.argv) > 1: #if we have a filename
+        for opt in sys.argv[1:]:
+            cmd, opt = opt.split("=")
+            if cmd == "--file" or cmd == '-f':
+                filename = opt
+            elif cmd == '--width' or cmd == '-w':
+                width = int(opt)
+            elif cmd == '--height' or cmd=='-h':
+                height = int(opt)
+            elif cmd == '--iterations' or cmd=='-i':
+                iterations = int(opt)
+            else:
+                print "Unknown option ({} = {}), use -f, -w, -h, -i.".format(cmd, opt)
+
+
+    print "Starting FE server with:\n{}: {}x{}, {} iterations".format(filename, width, height, iterations)
+
     server = Server()
-    server.FileToTask("../../backend/assets/scene.json", 800, 600, 5)
+    server.FileToTask(filename, width, height, iterations)
     server.Listen()
 
 
