@@ -147,12 +147,14 @@ void dmcr::Scene::loadFromString(const std::string &string)
                           colors[2].asFloat());
         
         const bool light = value["light"].asBool();
+        float blur = value["blur"].asFloat();
 
         std::unique_ptr<dmcr::SceneObject> object = buildObjectFromValue(value);
         object->setPosition(position_value);
         object->setColor(color);
         if (light)
         	object->setLight(light);
+        object->setBlur(blur);
         
         addObject(std::move(object));
     }

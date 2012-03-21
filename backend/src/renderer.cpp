@@ -97,35 +97,6 @@ dmcr::RenderResultPtr dmcr::Renderer::render(uint16_t h_res, uint16_t v_res,
     return result;
 }
 
-// ye olde version:
-//    // Scan the given portion of the scene
-//    for (uint16_t y = top; y <= bottom; ++y) {
-//        for (uint16_t x = left; x <= right; ++x) {
-//            RaycastResult raycast_result = 
-//                m_scene->shootRay(
-//                    m_scene->camera().ray((float)x / (float)h_res,
-//                                          (float)y / (float)v_res));
-//            
-//            /*
-//             * TODO
-//             * Implement me properly!
-//             */
-//            Color c;
-
-//            if (raycast_result.object() == nullptr) {
-//                c = { 0.0f, 0.0f, 0.0f };
-//            } else {
-//                if (raycast_result.object()->type() == "sphere")
-//                    c = { 1.0f, 0.0f, 0.0f };
-//                else
-//                    c = { 0.0f, 0.0f, 1.0f };
-//            }
-//            result->setPixel(x - left, y - top, c);
-//        }
-//    }
-
-// splitting the original function in pieces (at the moment this
-// function just passes the parameter on to 'iterator')
 dmcr::Color dmcr::Renderer::midfunc(dmcr::Ray ray) const
 {
     return iterator(ray);
@@ -145,9 +116,15 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
         if (obj->light())
             c = obj->color();
         else {
-            dmcr::Vector3f dir = m_rng.random_vector();
-            if (dir.dot(rr.normal()) < 0.0)
-                dir = -dir;
+            dmcr::Vector3f refl = ray.direction() - 2 * rr.normal().dot(ray.direction()) *
+                rr.normal();
+            dmcr::Vector3f random = m_rng.random_vector();
+            if (random.dot(rr.normal()) < 0.0)
+                random = -random;
+
+            float blur = rr.object()->blur();
+            dmcr::Vector3f dir = (blur * random + 
+                (1.0f - blur) * refl).normalized();
             
             dmcr::Ray new_ray(rr.intersectionPoint(), dir);
                               

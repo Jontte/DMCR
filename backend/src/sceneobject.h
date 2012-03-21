@@ -58,6 +58,9 @@ public:
     
     void setLight(bool light) { m_light = light; }
     bool light() const { return m_light; }
+    
+    void setBlur(float blur) { m_blur = blur; }
+    float blur() const { return m_blur; }
 
     /*!
      * \brief Get a string describing the object's typedef
@@ -86,6 +89,7 @@ private:
     dmcr::Vector3f m_position;
     dmcr::Color m_color;
     bool m_light;
+    float m_blur;
 };
 
 typedef SceneObject* SceneObjectPtr;
