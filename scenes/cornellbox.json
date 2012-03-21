@@ -9,8 +9,8 @@
 	{
    	"position": [278,273,-800],
     "look_at": [278,273,-799],
-    "fov": 63.4400,
-	"aspect": 1.333333
+    "fov": 0.80724, 
+	"aspect": 1
   },
 
 	"scene": 
@@ -34,7 +34,7 @@
 			"position": [280,548.815,280],
 			"extents": [560, 0.01, 560],
             "color":[1,1,1],
-            "light":true
+            "light":false
 
 		},
 
@@ -54,7 +54,7 @@
 			"type": "box", 
 			"position": [550, 278,280],
 			"extents": [0.01, 560, 560],
-            "color":[1,1,1]
+            "color":[1,0,0]
 		}
 	]
 }
