@@ -285,6 +285,8 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     sendPacketUnsafe(Packet_RenderedData, packet);
 
     checkError(send(m_fd, ss.str().data(), ss.str().length(), 0));
+
+    std::cout << "Render result sent." << std::endl;
 }
 
 void dmcr::Socket::onTaskCompleted(uint32_t task_id,
