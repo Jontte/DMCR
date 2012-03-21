@@ -24,8 +24,8 @@ dmcr::Ray dmcr::Camera::ray(float x, float y) const
      */
     dmcr::Vector3f at = (m_look_at - m_position).normalized();
     dmcr::Vector3f up(0,1,0);
-    dmcr::Vector3f horizontal = at.cross(up).normalized();
-    dmcr::Vector3f vertical = horizontal.cross(at);
+    dmcr::Vector3f horizontal = at.cross(up);
+    dmcr::Vector3f vertical = at.cross(horizontal);
     float H = tan(0.5 * m_fov);
     horizontal = horizontal * H;
     vertical = vertical * (1 / m_aspect) * H;
