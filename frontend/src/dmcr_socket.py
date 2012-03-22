@@ -46,6 +46,7 @@ class Socket(object):
     CONNECTIONRESULT_CONNECTIONFAILED = 2
     
     PNG_8BIT = 1
+    PNG_16BIT_CLAMPED = 2
 
     class SocketException:
         def __init__(self, value = ""):
@@ -188,11 +189,7 @@ class Socket(object):
             return False
 
         print rendered_data
-        if rendered_data.data_format == Socket.PNG_8BIT:
-            return (data, rendered_data.iterations_done)
-        else:
-            print "Unknown file type"
-            return False
+        return (data, rendered_data.iterations_done, rendered_data.data_format)
         
         #The old code for PPM
         '''

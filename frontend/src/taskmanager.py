@@ -51,10 +51,10 @@ class Scene(object):
         if iterations:
             self.iterations = iterations
         
-    def BlendResult(self, data, iterations):
+    def BlendResult(self, data, iterations, fmt):
         if not self.image:
             self.image = image.Image(self.width, self.height)
-        self.image.AddFromString(data, iterations)
+        self.image.AddFromString(data, iterations, fmt)
         
     def OnTaskEnd(self, image):
         print "Task finished, blending and writing."

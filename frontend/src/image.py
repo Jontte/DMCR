@@ -16,7 +16,7 @@ Created on Mar 17, 2012
 
 #Requires PyPNG
 import pypng as png
-
+from dmcr_socket import Socket
 
 # the exception to throw when something bad happens here
 class InvalidImage(Exception):
@@ -53,7 +53,7 @@ class Image(object):
         # initialize png.Writer, see pypng for details 
         self.writer = png.Writer(width = self.width, height = self.height, bitdepth = 8)
     
-    def AddFromString(self, data, iterations):
+    def AddFromString(self, data, iterations, fmt):
         '''
         Average new image and the instance image. 
         Actually sums the iteration-weighted values of new image into existing one.
@@ -78,12 +78,21 @@ class Image(object):
         if new_img[WIDTH] != self.width or new_img[HEIGHT] != self.height:
             raise InvalidImage # raises exception if they don't
 
+        print "Image format", fmt
+
         for h, row in enumerate(new_img[PIXELS]): # boxed-row flat-pixel list
             for i, value in enumerate(row):
+                if (fmt == Socket.PNG_8BIT):
+                    value = value / 255 * 1023
                 self.image[h][i] += value*iterations # weight pixel values by iterations
                           
         self.iterations += iterations # increment instances iteration count
         
+    def Clamp16(self, v):
+        if v > 1023:
+            v = 1023
+        return v / 1023 * 255
+
     def Write(self,filename):
         '''
         Writes the image contained in this instance to file "filename"
@@ -98,7 +107,7 @@ class Image(object):
         iterations = self.iterations if self.iterations > 0 else 1 #prevent division by zero
         print "So far we have done", self.iterations, "iterations, jea!"
         # values are weighted sums, so divide by iteration count
-        scaled = [[value / iterations for value in row] for row in self.image] 
+        scaled = [[self.Clamp16(value / iterations) for value in row] for row in self.image] 
  
         
         #write to file (wb = write binary)
