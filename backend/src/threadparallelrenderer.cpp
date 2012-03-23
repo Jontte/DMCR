@@ -75,7 +75,7 @@ const
         ++iters_done;
     };
 
-    auto thread_fun = [&](int i) {
+    auto thread_fun = [&]() {
         while(true)
         {
             {
@@ -83,22 +83,41 @@ const
                     break;
                 std::lock_guard<std::mutex> g(lock);
                 ++iters_claimed;
-                std::cout << "Thread " << i << " iter " << iters_claimed <<
-                             std::endl;
             }
             slice_fun();
         }
-        std::cout << "Thread " << i << " done!" << std::endl;
     };
 
-    std::vector< std::thread > workers;
-    for (unsigned int i = 0; i < hw_threads; ++i) {
-        workers.emplace_back(thread_fun, i);
-    }
-    for(auto& th: workers)
-        th.join();
+    ProgressBar pbar(m_iterations);
 
-    std::cout << "Frame finished!" << std::endl;
+    auto pbar_fun = [&]() {
+        const int pixels = h_res * v_res;
+        while(true)
+        {
+            pbar.update(iters_claimed);
+            std::cout
+                << "\r"
+                << pbar.render()
+                << " @ "
+                << int(pbar.speed() * pixels)
+                << " pps    " << std::flush;
+            sleep(1);
+            std::lock_guard<std::mutex> g(lock);
+            if (iters_claimed >= m_iterations)
+                break;
+        }
+    };
+
+    std::vector<std::thread> workers;
+    for (unsigned int i = 0; i < hw_threads; ++i) {
+        workers.emplace_back(thread_fun);
+    }
+    std::thread progress_bar(pbar_fun);
+    for(auto& p: workers)
+        p.join();
+    progress_bar.join();
+
+    std::cout << std::endl << "Frame finished!" << std::endl;
 
     result->setIterationsDone(iters_done);
 

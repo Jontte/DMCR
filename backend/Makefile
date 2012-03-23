@@ -23,7 +23,7 @@ src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
 src/backendapplication.cpp src/octreescene.cpp src/aabb.cpp src/box.cpp \
 src/sphere.cpp src/octree.cpp src/raycastresult.cpp \
 src/threadparallelrenderer.cpp src/kdtreescene.cpp src/random.cpp \
-src/settings.cpp
+src/settings.cpp src/util.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)
@@ -125,7 +125,7 @@ obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
 obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h src/itaskprovider.h
 obj/src/socket.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/socket.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/socket.o: src/random.h src/itasklistener.h
+obj/src/socket.o: src/random.h src/itasklistener.h src/settings.h
 obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
 obj/src/scene.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
 obj/src/scene.o: src/box.h src/aabb.h src/sphere.h
@@ -144,7 +144,7 @@ obj/src/taskmanager.o: src/random.h src/itasklistener.h src/itaskprovider.h
 obj/src/ray.o: src/ray.h src/vector.h
 obj/src/renderer.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
 obj/src/renderer.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/renderer.o: src/random.h
+obj/src/renderer.o: src/random.h src/util.h
 obj/src/camera.o: src/camera.h src/vector.h src/ray.h
 obj/src/backendapplication.o: src/backendapplication.h src/taskmanager.h
 obj/src/backendapplication.o: src/scene.h src/sceneobject.h src/vector.h
@@ -152,7 +152,7 @@ obj/src/backendapplication.o: src/raycastresult.h src/ray.h src/camera.h
 obj/src/backendapplication.o: src/unique_ptr src/task.h src/renderer.h
 obj/src/backendapplication.o: src/random.h src/itasklistener.h src/socket.h
 obj/src/backendapplication.o: src/dmcr_protocol.pb.h src/itaskprovider.h
-obj/src/backendapplication.o: src/dummyscene.h
+obj/src/backendapplication.o: src/kdtreescene.h
 obj/src/octreescene.o: src/octreescene.h src/vector.h src/sceneobject.h
 obj/src/octreescene.o: src/raycastresult.h src/scene.h src/ray.h src/camera.h
 obj/src/octreescene.o: src/unique_ptr src/octree.h src/aabb.h
@@ -169,12 +169,13 @@ obj/src/threadparallelrenderer.o: src/threadparallelrenderer.h src/scene.h
 obj/src/threadparallelrenderer.o: src/sceneobject.h src/vector.h
 obj/src/threadparallelrenderer.o: src/raycastresult.h src/ray.h src/camera.h
 obj/src/threadparallelrenderer.o: src/unique_ptr src/renderer.h src/random.h
-obj/src/threadparallelrenderer.o: src/settings.h
+obj/src/threadparallelrenderer.o: src/util.h src/settings.h
 obj/src/kdtreescene.o: src/kdtreescene.h src/vector.h src/sceneobject.h
 obj/src/kdtreescene.o: src/raycastresult.h src/scene.h src/ray.h src/camera.h
 obj/src/kdtreescene.o: src/unique_ptr src/aabb.h
 obj/src/random.o: src/random.h src/vector.h
 obj/src/settings.o: src/settings.h src/util.h
+obj/src/util.o: src/util.h
 obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
 obj/src/main.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
 obj/src/main.o: src/sharedstream.h src/renderer.h src/random.h src/util.h

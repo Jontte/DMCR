@@ -8,6 +8,7 @@
 #define UTIL_H_
 
 #include <sstream>
+#include <chrono>
 #include <stdexcept>
 
 namespace dmcr
@@ -30,6 +31,27 @@ Dest lexical_cast(const Src& src)
         throw invalid_lexical_cast();
     return dest;
 }
+
+/*
+ * A very simple class that makes progressbar drawing easy
+ * It calculates the average progression speed and ETA
+ */
+class ProgressBar
+{
+    public:
+        ProgressBar(unsigned int max_progress);
+        void update(unsigned int progress);
+
+        double speed() const;
+        std::string render() const;
+
+    private:
+        std::chrono::system_clock::time_point
+                      m_last_update;
+        double        m_avg_speed;
+        unsigned int  m_last_progress;
+        unsigned int  m_max_progress;
+};
 
 
 }
