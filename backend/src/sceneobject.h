@@ -35,7 +35,9 @@ class SceneObject
 public:
     SceneObject() : m_color(0.0, 0.0, 0.0),
                     m_emit(0.0),
-                    m_blur(0.0)
+                    m_blur(0.0),
+                    m_opacity(0.0),
+                    m_refractive_index(0.0)
         { }
 
     /*!
