@@ -79,9 +79,9 @@ const
         while(true)
         {
             {
+                std::lock_guard<std::mutex> g(lock);
                 if (iters_claimed >= m_iterations)
                     break;
-                std::lock_guard<std::mutex> g(lock);
                 ++iters_claimed;
             }
             slice_fun();
