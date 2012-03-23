@@ -241,7 +241,7 @@ void dmcr::Socket::sendRenderedImage(uint32_t task, uint32_t width,
     packet.set_id(task);
     packet.set_iterations_done(iterations_done);
 
-    auto fmt = dmcr::Settings::get().readString("image-format", "png8");
+    auto fmt = dmcr::Settings::get().readString("image-format", "png16clamped");
 
     std::ostringstream ss;
 
