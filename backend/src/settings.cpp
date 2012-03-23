@@ -39,7 +39,7 @@ void Settings::loadArgs(int argc, char* argv[])
 {
     std::vector<std::string> args(argv, argv+argc);
 
-    for (int i = 0; i < args.size(); ++i) {
+    for (unsigned i = 0; i < args.size(); ++i) {
         std::string& s = args.at(i);
         if (s.length() > 2 && s[0] == '-' && s[1] == '-' 
                 && i+1 < args.size())

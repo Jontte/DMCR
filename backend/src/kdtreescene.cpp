@@ -143,7 +143,7 @@ struct KDTreeScene::impl
             std::list<SceneObjectPtr> ret;
 
             assert(m_low && m_high);
-            
+
             ret.splice(ret.end(), m_low->getObjects(ray, (axis+1)%3));
             ret.splice(ret.end(), m_high->getObjects(ray, (axis+1)%3));
 
