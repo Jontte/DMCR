@@ -38,21 +38,21 @@ void dmcr::RenderResult::saveImage(const std::string& file_name) const
 
     // Write pixel array
     for (int i = 0; i < m_width * m_height; ++i) {
-        // Convert floats to chars
+        // Convert doubles to chars
         std::string px;
-        if (m_data[i].r() > 1.0f)
+        if (m_data[i].r() > 1.0)
             px += "1023";
         else
             px += dmcr::lexical_cast<std::string>((uint16_t)(m_data[i].r() *
             1023));
         px += " ";
-        if (m_data[i].g() > 1.0f)
+        if (m_data[i].g() > 1.0)
             px += "1023";
         else
             px += dmcr::lexical_cast<std::string>((uint16_t)(m_data[i].g() *
                 1023));        
         px += " ";
-        if (m_data[i].b() > 1.0f)
+        if (m_data[i].b() > 1.0)
             px += "1023";
         else
             px += dmcr::lexical_cast<std::string>((uint16_t)(m_data[i].b() *
@@ -74,14 +74,14 @@ void dmcr::RenderResult::blendInto(dmcr::RenderResultPtr result,
     if (result->left() != 0 || result->top() != 0)
         throw RenderResultException("UNIMPLEMENTED copying into non-result");
 
-    float fc = (float)count;
+    double fc = (double)count;
     for (uint16_t y = top(); y <= bottom(); ++y) {
         for (uint16_t x = left(); x <= right(); ++x) {
             const auto& c = pixel(x-left(), y-top());
             const auto& r = result->pixel(x, y);
-            float _r = ((r.r() * fc) + c.r()) / (fc + 1.0);
-            float _g = ((r.g() * fc) + c.g()) / (fc + 1.0);
-            float _b = ((r.b() * fc) + c.b()) / (fc + 1.0);
+            double _r = ((r.r() * fc) + c.r()) / (fc + 1.0);
+            double _g = ((r.g() * fc) + c.g()) / (fc + 1.0);
+            double _b = ((r.b() * fc) + c.b()) / (fc + 1.0);
             result->setPixel(x, y, dmcr::Color{_r, _g, _b});
         }
     }
@@ -104,8 +104,8 @@ const
 
     for (uint16_t y = top; y <= bottom; ++y) {
         for (uint16_t x = left; x <= right; ++x) {
-            float fx = (float)x / (float)h_res;
-            float fy = (float)y / (float)v_res;
+            double fx = (double)x / (double)h_res;
+            double fy = (double)y / (double)v_res;
             fx += m_rng.random() / h_res;
             fy += m_rng.random() / v_res;
             dmcr::Color c = midfunc(m_scene->camera().ray(fx, fy));
@@ -132,7 +132,7 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
     SceneObjectPtr obj = rr.object();
 
     if (obj != nullptr) {
-        if (obj->emit() > 0.0f)
+        if (obj->emit() > 0.0)
             c = obj->color() * obj->emit();
         else {
             dmcr::Vector3f refl = ray.direction() - 
@@ -141,9 +141,9 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
             if (random.dot(rr.normal()) < 0.0)
                 random = -random;
 
-            float blur = rr.object()->blur();
+            double blur = obj->blur();
             dmcr::Vector3f dir = (blur * random + 
-                (1.0f - blur) * refl).normalized();
+                (1.0 - blur) * refl).normalized();
             
             dmcr::Ray new_ray(rr.intersectionPoint(), dir);
                                 

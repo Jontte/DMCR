@@ -227,19 +227,19 @@ private:
     T m_x, m_y, m_z;
 };
 
-typedef Vector3<float> Vector3f;
+typedef Vector3<double> Vector3f;
 
-/*! \brief Holds the color of one pixel in RGB as three floats */
+/*! \brief Holds the color of one pixel in RGB as three doubles */
 class Color : public Vector3f
 {
 public:
-    Color(float r, float g, float b) : Vector3f(r,g,b) {}
+    Color(double r, double g, double b) : Vector3f(r,g,b) {}
     Color() : Vector3f() {}
     Color(Vector3f v) : Vector3f(v) {}
     
-    float r() const { return x(); }
-    float g() const { return y(); }
-    float b() const { return z(); }
+    double r() const { return x(); }
+    double g() const { return y(); }
+    double b() const { return z(); }
 };
 
 }

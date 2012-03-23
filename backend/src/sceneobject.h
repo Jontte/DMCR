@@ -33,9 +33,9 @@ class Ray;
 class SceneObject
 {
 public:
-    SceneObject() : m_color(0.0f,0.0f,0.0f),
-                    m_emit(0.0f),
-                    m_blur(0.0f)
+    SceneObject() : m_color(0.0, 0.0, 0.0),
+                    m_emit(0.0),
+                    m_blur(0.0)
         { }
 
     /*!
@@ -59,11 +59,11 @@ public:
     */
     dmcr::Color color() const { return m_color; }
     
-    void setBlur(float blur) { m_blur = blur; }
-    float blur() const { return m_blur; }
+    void setBlur(double blur) { m_blur = blur; }
+    double blur() const { return m_blur; }
     
-    void setEmit(float emit) { m_emit = emit; }
-    float emit() const { return m_emit; }
+    void setEmit(double emit) { m_emit = emit; }
+    double emit() const { return m_emit; }
 
     /*!
      * \brief Get a string describing the object's typedef
@@ -91,8 +91,8 @@ public:
 private:
     dmcr::Vector3f m_position;
     dmcr::Color m_color;
-    float m_emit;
-    float m_blur;
+    double m_emit;
+    double m_blur;
 };
 
 typedef SceneObject* SceneObjectPtr;

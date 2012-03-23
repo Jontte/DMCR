@@ -17,9 +17,9 @@ class RNG
 {
     public:
     /*
-     * Return random float between [0, 1)
+     * Return random double between [0, 1)
      */
-    float random();
+    double random();
 
     /*
      * Return random unit vector

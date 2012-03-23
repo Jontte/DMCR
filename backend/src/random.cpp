@@ -29,10 +29,10 @@ RNG::RNG()
 }
 RNG::~RNG()
 {
-    delete m;
+    delete m;   
 }
 
-float RNG::random()
+double RNG::random()
 {
     std::uniform_real_distribution<> real(0,1);
     return real(m->engine);
@@ -40,7 +40,8 @@ float RNG::random()
 
 Vector3f RNG::random_vector()
 {
-    // Source: http://math.stackexchange.com/questions/44689/how-to-find-a-random-axis-or-unit-vector-in-3d
+    // Source: http://math.stackexchange.com/questions/44689/
+    // how-to-find-a-random-axis-or-unit- vectorin-3d
     float theta = random()*2*M_PI;
     float z = -1 + 2*random();
     float t = sqrt(1-z*z);

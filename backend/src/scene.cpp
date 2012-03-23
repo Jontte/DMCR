@@ -69,7 +69,7 @@ static std::unique_ptr<dmcr::SceneObject> buildObjectFromValue(
         if (!radius || !radius.isNumeric())
             throw dmcr::SceneException("No radius specified for sphere");
         
-        float radius_value = radius.asFloat();
+        double radius_value = radius.asDouble();
 
         sphere->setRadius(radius_value);
         return std::move(sphere);
@@ -81,9 +81,9 @@ static std::unique_ptr<dmcr::SceneObject> buildObjectFromValue(
         if (!extents || !extents.isArray() || extents.size() != 3)
             throw dmcr::SceneException("No extents specified for box");
 
-        box->setExtents(dmcr::Vector3f(extents[0u].asFloat(),
-                                       extents[1].asFloat(),
-                                       extents[2].asFloat()));
+        box->setExtents(dmcr::Vector3f(extents[0u].asDouble(),
+                                       extents[1].asDouble(),
+                                       extents[2].asDouble()));
         return std::move(box);
     } else {
         throw dmcr::SceneException(std::string("Unknown object type ") + type);
@@ -116,14 +116,14 @@ void dmcr::Scene::loadFromString(const std::string &string)
     if (!camera_aspect || !camera_aspect.isNumeric())
         throw SceneException("No aspect specified for camera");
     
-    m_camera.setPosition(dmcr::Vector3f(camera_pos[0u].asFloat(),
-                                        camera_pos[1].asFloat(),
-                                        camera_pos[2].asFloat()));
-    m_camera.setLookAt(dmcr::Vector3f(camera_look_at[0u].asFloat(),
-                                      camera_look_at[1].asFloat(),
-                                      camera_look_at[2].asFloat()));
-    m_camera.setFov(camera_fov.asFloat() / 180.0f * M_PI);
-    m_camera.setAspect(camera_aspect.asFloat());
+    m_camera.setPosition(dmcr::Vector3f(camera_pos[0u].asDouble(),
+                                        camera_pos[1].asDouble(),
+                                        camera_pos[2].asDouble()));
+    m_camera.setLookAt(dmcr::Vector3f(camera_look_at[0u].asDouble(),
+                                      camera_look_at[1].asDouble(),
+                                      camera_look_at[2].asDouble()));
+    m_camera.setFov(camera_fov.asDouble() / 180.0 * M_PI);
+    m_camera.setAspect(camera_aspect.asDouble());
 
     beginAddObjects();
         
@@ -134,25 +134,36 @@ void dmcr::Scene::loadFromString(const std::string &string)
         if (!position || !position.isArray() || position.size() != 3)
             throw SceneException("No position specified for object");
         
-        dmcr::Vector3f position_value(position[0].asFloat(),
-                                      position[1].asFloat(),
-                                      position[2].asFloat());
+        dmcr::Vector3f position_value(position[0].asDouble(),
+                                      position[1].asDouble(),
+                                      position[2].asDouble());
         
-        const Json::Value colors = value["color"];
+        const Json::Value color = value["color"];
 
-        if(!colors || !colors.isArray() || colors.size() != 3)
+        if(!color || !color.isArray() || color.size() != 3)
             throw SceneException("No color specified for object");
 
 
-        dmcr::Color color(colors[0].asFloat(), colors[1].asFloat(),
-                          colors[2].asFloat());
+        dmcr::Color color_value(color[0].asDouble(), color[1].asDouble(),
+                                color[2].asDouble());
         
-        float blur = value["blur"].asFloat();
-        float emit = value["emit"].asFloat();
-
+        double blur = 1.0;
+        double emit = 0.0;
+        double opacity = 1.0;
+        double ri = 1.0;
+        
+        if (!value["blur"].isNull())
+            blur = value["blur"].asDouble();
+        if (!value["emit"].isNull())
+            emit = value["emit"].asDouble();
+        if (!value["opacity"].isNull())
+            opacity = value["opacity"].asDouble();
+        if (!value["refractive_index"].isNull())
+            ri = value["refractive_index"].asDouble();
+       
         std::unique_ptr<dmcr::SceneObject> object = buildObjectFromValue(value);
         object->setPosition(position_value);
-        object->setColor(color);
+        object->setColor(color_value);
         object->setBlur(blur);
         object->setEmit(emit);
         

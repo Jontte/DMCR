@@ -22,11 +22,11 @@ struct KDTreeScene::impl
     {
         private:
 
-        typedef std::pair<float,float> Range;
-        static float range_overlap(Range r1, Range r2)
+        typedef std::pair<double,double> Range;
+        static double range_overlap(Range r1, Range r2)
         {
             // return how much of r2 is outside r1
-            float c = 0;
+            double c = 0;
             if(r2.first > r1.second)
                 c += r2.first - r1.second;
             if(r2.second < r1.first)
@@ -35,9 +35,10 @@ struct KDTreeScene::impl
         }
         static Range range_combine(Range r1, Range r2)
         {
-            return std::make_pair(std::min(r1.first,r2.first), std::max(r1.second, r2.second));
+            return std::make_pair(std::min(r1.first,r2.first),
+std::max(r1.second, r2.second));
         }
-        static float range_length(Range r1)
+        static double range_length(Range r1)
         {
             assert(r1.second >= r1.first);
             return r1.second - r1.first;
@@ -63,7 +64,9 @@ struct KDTreeScene::impl
             m_high.reset();
         }
 
-        void build(std::list<SceneObjectPtr>& in, uint8_t axis, uint8_t bail = 0)
+        void build(std::list<SceneObjectPtr>& in, 
+                   uint8_t axis, 
+                   uint8_t bail = 0)
         {
             if(in.size() <= KDTREE_LEAF_SIZE || bail > 3)
             {
@@ -73,15 +76,16 @@ struct KDTreeScene::impl
                 std::vector<AABB> aabbs;
                 aabbs.resize(in.size());
 
-                std::transform(m_children.begin(), m_children.end(), aabbs.begin(), 
+                std::transform(m_children.begin(), m_children.end(),
+aabbs.begin(), 
                     [](const SceneObjectPtr& p){return p->aabb();});
                 m_aabb = AABB::fromRange(aabbs.begin(), aabbs.end());
 
                 return;
             }
 
-            float min = std::numeric_limits<float>::max();
-            float max = std::numeric_limits<float>::lowest();
+            double min = std::numeric_limits<double>::max();
+            double max = std::numeric_limits<double>::lowest();
 
             for(auto ptr : in)
             {
@@ -102,10 +106,11 @@ struct KDTreeScene::impl
                 const AABB& bb = ptr->aabb();
                 auto ptr_range = std::make_pair(bb.min()[axis], bb.max()[axis]);
 
-                float overlap_left = range_overlap(low_range, ptr_range);
-                float overlap_right = range_overlap(high_range, ptr_range);
+                double overlap_left = range_overlap(low_range, ptr_range);
+                double overlap_right = range_overlap(high_range, ptr_range);
 
-                if(overlap_left+range_length(low_range) < overlap_right+range_length(high_range))
+                if(overlap_left+range_length(low_range) < 
+                    overlap_right+range_length(high_range))
                 {
                     low_range = range_combine(low_range, ptr_range);
                     low_list.push_back(ptr);
@@ -138,7 +143,8 @@ struct KDTreeScene::impl
             if(!m_aabb.intersectsBool(ray))
                 return std::list<SceneObjectPtr>();
             if(is_leaf())
-                return std::list<SceneObjectPtr>(m_children.begin(), m_children.end());
+                return std::list<SceneObjectPtr>(m_children.begin(),
+                                                 m_children.end());
 
             std::list<SceneObjectPtr> ret;
 

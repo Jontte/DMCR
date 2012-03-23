@@ -35,7 +35,7 @@ public:
      * the camera's viewing plane. The coordinates are in the range [0, 1], 
      * where the point (0, 0) corresponds to the top-left corner of the screen.
      */
-    dmcr::Ray ray(float x, float y) const;
+    dmcr::Ray ray(double x, double y) const;
     
     /*!
      * \brief Set camera position
@@ -70,12 +70,12 @@ public:
      * between the leftmost and rightmost visible pixels from the camera's
      * view.
      */
-    void setFov(float fov) { m_fov = fov; }
+    void setFov(double fov) { m_fov = fov; }
     /*!
      * \brief Get horizontal field of view of camera
      * \return Camera's horizontal field of view
      */
-    float fov() const { return m_fov; }
+    double fov() const { return m_fov; }
     
     /*!
      * \brief Set aspect ratio of camera
@@ -84,18 +84,18 @@ public:
      * The aspect ratio of the camera is the width of the camera's view divided 
      * by the height of the camera's view.
      */
-    void setAspect(float aspect) { m_aspect = aspect; }
+    void setAspect(double aspect) { m_aspect = aspect; }
     /*!
      * \brief Get aspect ratio of camera
      * \return Aspect ratio of camera
      */
-    float aspect() const { return m_aspect; }
+    double aspect() const { return m_aspect; }
     
 private:
     dmcr::Vector3f m_position;
     dmcr::Vector3f m_look_at;
-    float m_fov;
-    float m_aspect;
+    double m_fov;
+    double m_aspect;
 };
 
 }

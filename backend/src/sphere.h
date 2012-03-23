@@ -17,10 +17,10 @@ namespace dmcr {
 class Sphere : public dmcr::SceneObject
 {
 public:
-    Sphere() : m_radius(0.0f) { }
+    Sphere() : m_radius(0.0) { }
 
-    void setRadius(float radius) { m_radius = radius; }
-    float radius() const { return m_radius; }
+    void setRadius(double radius) { m_radius = radius; }
+    double radius() const { return m_radius; }
 
     virtual std::string type() const { return "sphere"; }
     virtual dmcr::AABB aabb() const;
@@ -28,7 +28,7 @@ public:
     dmcr::IntersectionResult intersects(const Ray &ray) const;
 
 protected:
-    float m_radius;
+    double m_radius;
 };
 
 } // namespace dmcr

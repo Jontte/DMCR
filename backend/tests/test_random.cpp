@@ -15,8 +15,8 @@ void test_random()
     {
         dmcr::RNG r1;
         dmcr::RNG r2;
-        float f1 = r1.random();
-        float f2 = r2.random();
+        double f1 = r1.random();
+        double f2 = r2.random();
 
         assert(f1 != f2);
     }

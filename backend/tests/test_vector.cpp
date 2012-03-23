@@ -25,21 +25,21 @@ void assert(bool cond, const char * msg) {
 void assert_fails(bool cond, const char * msg) { assert(!cond, msg);} 
 
 template <class T1, class T2>
-void assert_float_equal(T1 t1, T2 t2, const char * msg)
+void assert_double_equal(T1 t1, T2 t2, const char * msg)
 {
     assert(abs(t1-t2) < epsilon, msg);
 }
 template <class T>
 void assert_vector_equal(const dmcr::Vector3<T>& v1, const dmcr::Vector3<T>& v2, const char * msg)
 {
-    assert_float_equal(v1.x(), v2.x(), msg);
-    assert_float_equal(v1.y(), v2.y(), msg);
-    assert_float_equal(v1.z(), v2.z(), msg);
+    assert_double_equal(v1.x(), v2.x(), msg);
+    assert_double_equal(v1.y(), v2.y(), msg);
+    assert_double_equal(v1.z(), v2.z(), msg);
 }
 
 #define ASSERT(cond) assert(cond, LINEREF);
 #define ASSERT_FAILS(cond) assert_fails(cond, LINEREF);
-#define ASSERT_FLOAT_EQUAL(f1,f2) assert_float_equal((f1), (f2), LINEREF);
+#define ASSERT_FLOAT_EQUAL(f1,f2) assert_double_equal((f1), (f2), LINEREF);
 #define ASSERT_VECTOR_EQUAL(v1,v2) assert_vector_equal((v1), (v2), LINEREF);
 
 }

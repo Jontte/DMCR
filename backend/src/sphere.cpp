@@ -19,20 +19,20 @@ const
 {
     dmcr::Vector3f ray_origin = ray.origin() - position();
     
-    float a = ray.direction().dot(ray.direction());
-    float b = 2 * ray.direction().dot(ray_origin);
-    float c = ray_origin.dot(ray_origin) - m_radius * m_radius;
+    double a = ray.direction().dot(ray.direction());
+    double b = 2 * ray.direction().dot(ray_origin);
+    double c = ray_origin.dot(ray_origin) - m_radius * m_radius;
 
-    float dcrim = b * b - 4 * a * c;
-    if (dcrim < 0.0f) {
+    double dcrim = b * b - 4 * a * c;
+    if (dcrim < 0.0) {
         dmcr::IntersectionResult result;
         result.intersects = false;
         return result;
     }
 
-    float a2inv = 1.0 / (2.0 * a);
-    float t0 = (-b + dcrim) * a2inv;
-    float t1 = (-b - dcrim) * a2inv;
+    double a2inv = 1.0 / (2.0 * a);
+    double t0 = (-b + dcrim) * a2inv;
+    double t1 = (-b - dcrim) * a2inv;
 
     dmcr::IntersectionResult result;
     result.intersects = true;

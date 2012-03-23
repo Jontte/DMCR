@@ -96,7 +96,7 @@ public:
       \param width Width of image in pixels
       \param height Height of image in pixels
       \param iterations_done Number of iterations that have been calculated
-      \param data Array of floats of size width*height*3
+      \param data Array of doubles of size width*height*3
       */
     void sendRenderedImage(uint32_t task, uint32_t width, uint32_t height,
                            uint32_t iterations_done, 
