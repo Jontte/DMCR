@@ -142,13 +142,33 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
                 random = -random;
 
             double blur = obj->blur();
+            double opacity = obj->opacity();
             dmcr::Vector3f dir = (blur * random + 
                 (1.0 - blur) * refl).normalized();
             
             dmcr::Ray new_ray(rr.intersectionPoint(), dir);
+            
+            if (opacity < 1.0) {
+                double ndotl = rr.normal().dot(ray.direction());
+                
+                double nl, ne;
+                if (ndotl > 0.0) {
+                    nl = 1.0;
+                    ne = obj->refractiveIndex();
+                } else {
+                    ne = 1.0;
+                    nl = obj->refractiveIndex();
+                }
+                
+                dmcr::Vector3f refr = (ne/nl*ndotl-sqrt(1-ne*ne/(nl*nl)*
+                    (1-ndotl*ndotl)))*rr.normal()-ne/nl*ray.direction();
+                
+                dmcr::Ray refracted_ray(rr.intersectionPoint(), refr);
+                c += (1.0 - opacity) * iterator(refracted_ray, iterations + 1);
+            }
                                 
-            c += dmcr::Color(
-                    iterator(new_ray, iterations + 1) * rr.object()->color());
+            c += opacity * iterator(new_ray, iterations + 1) * 
+                rr.object()->color();
         }
     }
     

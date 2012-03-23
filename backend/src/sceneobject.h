@@ -64,6 +64,12 @@ public:
     
     void setEmit(double emit) { m_emit = emit; }
     double emit() const { return m_emit; }
+    
+    void setOpacity(double opacity) { m_opacity = opacity; }
+    double opacity() const { return m_opacity; }
+    
+    void setRefractiveIndex(double ri) { m_refractive_index = ri; }
+    double refractiveIndex() const { return m_refractive_index; }
 
     /*!
      * \brief Get a string describing the object's typedef
@@ -93,6 +99,8 @@ private:
     dmcr::Color m_color;
     double m_emit;
     double m_blur;
+    double m_opacity;
+    double m_refractive_index;
 };
 
 typedef SceneObject* SceneObjectPtr;

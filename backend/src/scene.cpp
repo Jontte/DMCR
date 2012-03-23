@@ -166,6 +166,8 @@ void dmcr::Scene::loadFromString(const std::string &string)
         object->setColor(color_value);
         object->setBlur(blur);
         object->setEmit(emit);
+        object->setOpacity(opacity);
+        object->setRefractiveIndex(ri);
         
         addObject(std::move(object));
     }
