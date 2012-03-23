@@ -24,11 +24,6 @@ import dmcr_protocol_pb2 as proto # import protobuf classes
 # enum ConnectionResult { ConnectionResult_Success, ConnectionResult_InvalidKey,
 #                       ConnectionResult_ConnectionFailed };
 
-class ThreadStopped(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
 class Socket(object):
     '''
@@ -48,7 +43,7 @@ class Socket(object):
     PNG_8BIT = 1
     PNG_16BIT_CLAMPED = 2
 
-    class SocketException:
+    class SocketException(Exception):
         def __init__(self, value = ""):
             self.value = value
             
@@ -57,16 +52,16 @@ class Socket(object):
         
 
 
-    def __init__(self,connection, addres):
+    def __init__(self,connection, address):
         '''
         Constructor
         '''
         
         self.conn = connection
-        self.addr = addres
-        self.conn.settimeout(5)
+        self.addr = address
+        self.conn.settimeout(10)
         self.stopped = False
-    
+        self.alive = True 
     
     def Close(self):
         '''
@@ -75,13 +70,15 @@ class Socket(object):
         @return: nothing
         
         '''
-        self.conn.close()
+        if self.alive:
+            self.conn.settimeout(1)
+            self.conn.close()
     
     def ReceiveData(self, length):
         '''
         Receives data from self.conn. 
         Returns when has received asked number of bytes.
-        Raises Connection.ThreadStopped if someone calls Connection.stop() 
+        Raises Socket.SocketException if someone calls Connection.stop() 
         while this is running.
         
         @param length: how many bytes are wanted (int)
@@ -90,11 +87,16 @@ class Socket(object):
         '''
         data = ''
         data_length = 0
+        recvd_data = ""
         while data_length < length:
             if self.stopped:
-                raise ThreadStopped("Stopped while receiveng data")
+                raise Socket.SocketException("Stopped while receiveng data")
             try: 
-                data += self.conn.recv(length-data_length)
+                recvd_data = self.conn.recv(length-data_length)
+                if not recvd_data:
+                    self.alive = False
+                    raise Socket.SocketException("Connection to client " + self.addr[0] + " closed")
+                data += recvd_data
             except socket.timeout:
                 pass
             data_length = len(data)
@@ -103,7 +105,7 @@ class Socket(object):
     def ReceiveHeader(self):
         '''
         Receives info about coming packet (id) and it's length.
-        
+       
         @return: a tuple containing (id, length)
         
         '''
@@ -111,10 +113,13 @@ class Socket(object):
         # receive first header length
         try:
             data = self.ReceiveData(4) # first comes 4 bytes indicating headers length
-        except ThreadStopped:
-            return False, False
-        
-        data_tuple = struct.unpack("!L", data) # unpack binary data to long int (! means network)
+#        except SocketException as se:   # we might fail, but it doesn't matter
+#            return False, False
+        finally:
+            pass
+             
+        data_tuple = struct.unpack("!L", data)
+        # unpack binary data to long int (! means network)
         header_length  = int(data_tuple[0]) # int conversion maybe not needed, but first element of tuple anyways
         
         # if header length is usable, receive whole header
@@ -123,9 +128,11 @@ class Socket(object):
         
         try:
             header_data = self.ReceiveData(header_length)
-        except ThreadStopped:
-            return False, False
-        
+#        except SocketExecption:
+#            return False, False
+        finally: #need something more than just try
+            pass
+
         header = proto.PacketHeader()
         header.ParseFromString(header_data)
         
@@ -184,9 +191,11 @@ class Socket(object):
         data_len = rendered_data.data_length
         try:
             data = self.ReceiveData(data_len)
-        except ThreadStopped:
-            print "Thread closed while receiveng picture."
-            return False
+#        except SocketException: # here we might want to capture this, but safer if we don't..
+#            print "Thread closed while receiving picture."
+#            return False
+        finally: # need something more than just try
+            pass 
 
         print rendered_data
         return (data, rendered_data.iterations_done, rendered_data.data_format)

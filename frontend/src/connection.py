@@ -102,6 +102,8 @@ class Connection(threading.Thread):
             
         except KeyboardInterrupt:
             pass
+        except Socket.SocketException as se:
+            print se
         finally:
             self.socket.Close() # socket must be closed no matter what happens
         
@@ -124,6 +126,7 @@ class Connection(threading.Thread):
         
         self._stop.set()
         self.socket.stopped = True
+        self.socket.Close()
         
     def stopped(self):
         '''
