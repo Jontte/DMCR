@@ -7,11 +7,15 @@
 #ifndef DMCR_BOX_H
 #define DMCR_BOX_H
 
+#include <string>
+
+#include "aabb.h"
 #include "sceneobject.h"
 #include "vector.h"
-#include "aabb.h"
 
 namespace dmcr {
+
+class Ray;
 
 class Box : public dmcr::SceneObject
 {

@@ -4,9 +4,16 @@
  * code package.
  */
 
-#include "backendapplication.h"
-#include "kdtreescene.h"
 #include <iostream>
+#include <stdexcept>
+
+#include "kdtreescene.h"
+#include "backendapplication.h"
+#include "socket.h"
+
+namespace dmcr {
+class ITaskProvider;
+}  // namespace dmcr
 
 using namespace dmcr;
 

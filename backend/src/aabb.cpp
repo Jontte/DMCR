@@ -4,9 +4,11 @@
  * code package.
  */
 
-#include "aabb.h"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+
+#include "aabb.h"
+#include "ray.h"
 
 #define EPSILON 0.000001
 

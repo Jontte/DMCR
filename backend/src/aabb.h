@@ -7,9 +7,9 @@
 #ifndef DMCR_AABB_H
 #define DMCR_AABB_H
 
-#include "vector.h"
 #include "ray.h"
 #include "sceneobject.h"
+#include "vector.h"
 
 namespace dmcr {
 
@@ -27,6 +27,8 @@ namespace dmcr {
  * corners, i.e. the corners for which the cartesian coordinates get their
  * minimum/maximum values.
  */
+class Ray;
+
 class AABB
 {
 public:

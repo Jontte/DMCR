@@ -7,12 +7,16 @@
 #ifndef DMCR_SPHERE_H
 #define DMCR_SPHERE_H
 
-#include "sceneobject.h"
-#include "vector.h"
+#include <string>
+
 #include "aabb.h"
 #include "raycastresult.h"
+#include "sceneobject.h"
+#include "vector.h"
 
 namespace dmcr {
+
+class Ray;
 
 class Sphere : public dmcr::SceneObject
 {

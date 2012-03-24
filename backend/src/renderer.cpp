@@ -4,11 +4,9 @@
  * code package.
  */
 
-#include "renderer.h"
 #include <fstream>
-#include <iostream>
-#include "random.h"
 #include "util.h"
+#include "renderer.h"
 
 dmcr::RenderResult::RenderResult(uint16_t left, uint16_t right,
                                  uint16_t top, uint16_t bottom) :

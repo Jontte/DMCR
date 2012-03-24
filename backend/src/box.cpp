@@ -6,6 +6,10 @@
 
 #include "box.h"
 
+namespace dmcr {
+class Ray;
+}  // namespace dmcr
+
 dmcr::AABB dmcr::Box::aabb() const
 {
     return dmcr::AABB::fromCenterAndExtents(dmcr::SceneObject::position(), m_extents);

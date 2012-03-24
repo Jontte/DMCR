@@ -1,8 +1,8 @@
-#include "settings.h"
 #include <fstream>
-#include "util.h"
-#include <iostream>
 #include <vector>
+
+#include "util.h"
+#include "settings.h"
 
 using namespace dmcr;
 

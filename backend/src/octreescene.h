@@ -7,12 +7,14 @@
 #ifndef OCTREESCENE_H
 #define OCTREESCENE_H
 
-#include "vector.h"
-#include "sceneobject.h"
-#include "scene.h"
-#include "octree.h"
 #include <list>
+
+#include "octree.h"
+#include "raycastresult.h"
+#include "scene.h"
+#include "sceneobject.h"
 #include "unique_ptr"
+#include "vector.h"
 
 namespace dmcr {
 
@@ -34,6 +36,7 @@ private:
     Octree m_octree;
     std::vector<std::unique_ptr<dmcr::SceneObject>> m_objects;
 };
+class Ray;
 
 }
 

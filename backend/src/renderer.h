@@ -10,11 +10,16 @@
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
-#include "scene.h"
+#include <string>
 #include <vector>
+
 #include "random.h"
+#include "scene.h"
+#include "vector.h"
 
 namespace dmcr {
+
+class Ray;
 
 class RenderResultException : public std::runtime_error
 {
@@ -24,6 +29,7 @@ public:
 };
 
 class RenderResult;
+
 typedef std::shared_ptr<dmcr::RenderResult> RenderResultPtr;
 
 /*!

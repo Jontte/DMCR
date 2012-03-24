@@ -7,9 +7,12 @@
 #ifndef DUMMYSCENE_H
 #define DUMMYSCENE_H
 
+#include <list>
+#include <vector>
+
+#include "raycastresult.h"
 #include "scene.h"
 #include "sceneobject.h"
-#include <vector>
 
 namespace dmcr {
 
@@ -31,6 +34,7 @@ public:
 private:
     std::vector<std::unique_ptr<dmcr::SceneObject>> m_objects;
 };
+class Ray;
 
 }
 

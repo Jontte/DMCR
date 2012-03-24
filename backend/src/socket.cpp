@@ -4,19 +4,28 @@
  * code package.
  */
 
-#include "socket.h"
-#include <sys/socket.h>
-#include <sys/types.h>
+#include <google/protobuf/message.h>
 #include <netdb.h>
-#include "dmcr_protocol.pb.h"
-#include <cstdio>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/utsname.h>
 #include <unistd.h>
 #include <cerrno>
-#include <vector>
-#include <sys/utsname.h>
-#include <png++/png.hpp>
+#include <cstdio>
 #include <sstream>
+#include <vector>
+
+#include "dmcr_protocol.pb.h"
+#include "png++/image.hpp"
+#include "png++/rgb_pixel.hpp"
 #include "settings.h"
+#include "socket.h"
+#include "vector.h"
+
+namespace dmcr {
+class ISocketListener;
+class ITaskListener;
+}  // namespace dmcr
 
 static int checkError(int r) {
     if (r == -1)
@@ -204,6 +213,7 @@ void dmcr::Socket::readPacket()
 }
 
 #include <iostream>
+
 void dmcr::Socket::handleConnectionResult(const dmcr::Packet::ConnectionResult
                                           &msg)
 {

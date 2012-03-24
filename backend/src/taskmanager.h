@@ -7,20 +7,24 @@
 #ifndef DMCR_TASKMANAGER_H
 #define DMCR_TASKMANAGER_H
 
-#include <string>
 #include <functional>
-#include "scene.h"
 #include <list>
-#include "task.h"
+#include <list>
 #include <mutex>
-#include "renderer.h"
-#include <list>
-#include "itasklistener.h"
 #include <stdexcept>
+#include <string>
+
+#include "itasklistener.h"
+#include "renderer.h"
+#include "scene.h"
+#include "task.h"
 #include "unique_ptr"
 
 namespace dmcr {
     
+class ITaskProvider;
+class Task;
+
 class TaskManagerException : public std::runtime_error {
 public:
     /*! \skip

@@ -4,10 +4,8 @@
  * code package.
  */
 
-#include "taskmanager.h"
-#include "scene.h"
-#include "task.h"
 #include "itaskprovider.h"
+#include "taskmanager.h"
 
 dmcr::TaskManager::TaskManager(SceneFactory factory)
 : dmcr::ITaskListener()
@@ -41,7 +39,6 @@ void dmcr::TaskManager::onNewTask(dmcr::ITaskProvider* provider, uint32_t id,
     task_ptr->run();
 }
 
-#include <iostream>
 void dmcr::TaskManager::onTaskCompleted(dmcr::Task *task)
 {
     TaskData data;

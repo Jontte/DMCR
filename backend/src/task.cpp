@@ -4,11 +4,9 @@
  * code package.
  */
 
-#include "task.h"
-#include "renderer.h"
-#include "taskmanager.h"
 #include <thread>
-
+#include "task.h"
+#include "taskmanager.h"
 #include "threadparallelrenderer.h"
 
 class TaskThread {

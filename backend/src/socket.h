@@ -7,23 +7,37 @@
 #ifndef DMCR_SOCKET_H
 #define DMCR_SOCKET_H
 
+#include <google/protobuf/message.h>
+#include <netinet/in.h>
 #include <cstdint>
-#include <string>
 #include <mutex>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
-#include <netinet/in.h>
-#include <google/protobuf/message.h>
 #include "dmcr_protocol.pb.h"
-
-#include "itaskprovider.h"
 #include "itasklistener.h"
+#include "itaskprovider.h"
 #include "renderer.h"
+
+namespace google {
+namespace protobuf {
+class Message;
+}  // namespace protobuf
+}  // namespace google
 
 namespace dmcr {
 
 /*! \brief Exception thrown when socket problems happen
   */
+class Color;
+class ISocketListener;
+class ITaskListener;
+namespace Packet {
+class ConnectionResult;
+class NewTask;
+}  // namespace Packet
+
 class SocketException : public std::runtime_error {
 public:
     /*! \skip

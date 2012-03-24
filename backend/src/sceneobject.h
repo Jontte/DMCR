@@ -9,8 +9,9 @@
 
 #include <memory>
 #include <string>
-#include "vector.h"
+
 #include "raycastresult.h"
+#include "vector.h"
 
 namespace dmcr {
 

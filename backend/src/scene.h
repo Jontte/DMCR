@@ -7,18 +7,21 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <list>
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <stdexcept>
-#include <memory>
-#include <list>
-#include "sceneobject.h"
-#include "ray.h"
+
 #include "camera.h"
-#include "unique_ptr"
+#include "ray.h"
 #include "raycastresult.h"
+#include "sceneobject.h"
+#include "unique_ptr"
 
 namespace dmcr {
+
+class Ray;
 
 class SceneException : public std::runtime_error
 {

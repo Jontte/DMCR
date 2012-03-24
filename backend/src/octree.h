@@ -7,13 +7,16 @@
 #ifndef DMCR_OCTREE_H
 #define DMCR_OCTREE_H
 
-#include "aabb.h"
-#include "sceneobject.h"
-#include "ray.h"
 #include <list>
+
+#include "aabb.h"
+#include "ray.h"
+#include "sceneobject.h"
 #include "unique_ptr"
 
 namespace dmcr {
+
+class Ray;
 
 #define MAX_OBJECTS 5
 #define MAX_DEPTH 10

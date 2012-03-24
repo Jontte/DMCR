@@ -7,8 +7,12 @@
 #ifndef DMCR_THREADPARALLELRENDERER_H
 #define DMCR_THREADPARALLELRENDERER_H
 
-#include "scene.h"
 #include "renderer.h"
+#include "scene.h"
+
+namespace dmcr {
+class Renderer;
+}  // namespace dmcr
 
 namespace dmcr
 {

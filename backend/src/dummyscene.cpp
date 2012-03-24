@@ -4,8 +4,8 @@
  * code package.
  */
 
-#include "dummyscene.h"
 #include <iostream>
+#include "dummyscene.h"
 
 dmcr::DummyScene::DummyScene()
 {

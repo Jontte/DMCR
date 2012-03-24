@@ -7,14 +7,14 @@
 #ifndef DMCR_TASK_H
 #define DMCR_TASK_H
 
-#include "scene.h"
 #include <memory>
+
 #include "renderer.h"
+#include "scene.h"
 
 namespace dmcr {
     
 class TaskManager;
-
 /*! \brief Represents a running task in the system */
 class Task
 {

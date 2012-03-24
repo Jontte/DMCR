@@ -7,10 +7,16 @@
 #ifndef DMCR_BACKENDAPPLICATION_H
 #define DMCR_BACKENDAPPLICATION_H
 
-#include "taskmanager.h"
-#include "unique_ptr"
+#include <string>
+
 #include "itasklistener.h"
 #include "socket.h"
+#include "taskmanager.h"
+#include "unique_ptr"
+
+namespace dmcr {
+class ITaskProvider;
+}  // namespace dmcr
 
 namespace dmcr
 {

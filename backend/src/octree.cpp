@@ -6,7 +6,13 @@
 
 #include <vector>
 #include <algorithm>
+
 #include "octree.h"
+#include "vector.h"
+
+namespace dmcr {
+class Ray;
+}  // namespace dmcr
 
 dmcr::Vector3f extentPermutations[8] =
 { dmcr::Vector3f(1, 1, 1), dmcr::Vector3f(1, 1, -1),

@@ -4,19 +4,14 @@
  * code package.
  */
 
-#include "threadparallelrenderer.h"
-#include "util.h"
-#include "settings.h"
-#include <thread>
-#include <atomic>
-#include <vector>
-#include <set>
-#include <functional>
-#include <algorithm>
 #include <unistd.h>
-#include <mutex>
-
 #include <iostream>
+#include <thread>
+
+#include "renderer.h"
+#include "threadparallelrenderer.h"
+#include "settings.h"
+#include "util.h"
 
 using namespace dmcr;
 

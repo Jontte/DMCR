@@ -4,19 +4,15 @@
  * code package.
  */
 
-#include "scene.h"
+#include <cmath>
+#include <fstream>
 #include <memory>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <json/json.h>
-#include <cmath>
-#include "vector.h"
-#include "sceneobject.h"
-#include "box.h"
+
 #include "sphere.h"
-#include "unique_ptr"
+#include "box.h"
+#include "scene.h"
 
 dmcr::Scene::Scene()
 {

@@ -4,8 +4,11 @@
  * code package.
  */
 
-#include "sphere.h"
 #include <algorithm>
+
+#include "ray.h"
+#include "sphere.h"
+#include "vector.h"
 
 dmcr::AABB dmcr::Sphere::aabb() const
 {

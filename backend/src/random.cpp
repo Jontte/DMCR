@@ -4,9 +4,10 @@
  * code package.
  */
 
-#include <random>
-#include <thread>
+#include <math.h>
 #include <fstream>
+#include <random>
+
 #include "random.h"
 
 // Utilities for generating random numbers
