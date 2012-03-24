@@ -48,7 +48,7 @@ class ProgressBar
 
     private:
         std::chrono::system_clock::time_point
-                      m_last_update;
+                      m_start_time;
         double        m_avg_speed;
         unsigned int  m_last_progress;
         unsigned int  m_max_progress;

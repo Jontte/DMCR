@@ -24,7 +24,7 @@ class ProgressBar
 };*/
 
 ProgressBar::ProgressBar(unsigned int max_progress)
-    : m_last_update(std::chrono::system_clock::now())
+    : m_start_time(std::chrono::monotonic_clock::now())
     , m_avg_speed(0)
     , m_last_progress(0)
     , m_max_progress(max_progress)
@@ -43,23 +43,18 @@ void ProgressBar::update(unsigned int progress)
         progress = m_last_progress;
 
     using namespace std::chrono;
-    typedef high_resolution_clock clock;
+    typedef monotonic_clock clock;
 
     clock::time_point now = clock::now();
 
-    // calculate time duration from last update
-    duration<double> dur = now - m_last_update;
-
-    // steps advanced?
-    unsigned steps = progress - m_last_progress;
+    duration<double> dur = now - m_start_time;
 
     // approximate speed:
-    double approx_speed = steps / dur.count();
+    double approx_speed = progress / dur.count();
 
-    double averager = 0.2;
+    double averager = 0.5;
     m_avg_speed = m_avg_speed*(1.0-averager) + approx_speed * averager;
     m_last_progress = progress;
-    m_last_update = now;
 }
 
 std::string ProgressBar::render() const
@@ -67,12 +62,12 @@ std::string ProgressBar::render() const
     std::stringstream ss;
     double spd = speed();
 
-    int pbar_width = 20;
+    int pbar_width = 40;
     int percentage = int(double(100*m_last_progress)/m_max_progress);
     int sym = int(double(pbar_width*m_last_progress)/m_max_progress);
 
     ss << "[";
-    for(int i = 0; i < 20; i++)
+    for(int i = 0; i < pbar_width; i++)
         ss << "=> "[ (i < sym)?0:(i==sym?1:2) ];
     ss << "] (";
     ss << percentage ;
@@ -82,11 +77,11 @@ std::string ProgressBar::render() const
         ss << "INF";
     else
     {
-        double timeleft = (m_max_progress - m_last_progress) / spd;
+        int64_t timeleft = int64_t((m_max_progress - m_last_progress) / spd);
 
-        int hours = int(timeleft / 3600.0);
-        int minutes = int((timeleft-hours*60) / 60.0);
-        int seconds = int((timeleft-hours*3600-minutes*60));
+        int64_t hours =   int64_t (timeleft / 3600.0);
+        int64_t minutes = int64_t ((timeleft-hours*3600) / 60.0);
+        int64_t seconds = int64_t ((timeleft-hours*3600-minutes*60));
 
         ss << hours << ":";
         ss.fill('0');

@@ -83,12 +83,14 @@ const
         }
     };
 
-    ProgressBar pbar(m_iterations);
-
     auto pbar_fun = [&]() {
+        // Start progress bars internal timer here
+        ProgressBar pbar(m_iterations);
         const int pixels = h_res * v_res;
         while(true)
         {
+            sleep(1);
+            std::lock_guard<std::mutex> g(lock);
             pbar.update(iters_claimed);
             std::cout
                 << "\r"
@@ -96,8 +98,6 @@ const
                 << " @ "
                 << int(pbar.speed() * pixels)
                 << " pps    " << std::flush;
-            sleep(1);
-            std::lock_guard<std::mutex> g(lock);
             if (iters_claimed >= m_iterations)
                 break;
         }
