@@ -5,6 +5,7 @@
  */
 
 #include <algorithm>
+#include <cmath>
 
 #include "ray.h"
 #include "sphere.h"
@@ -34,8 +35,8 @@ const
     }
 
     double a2inv = 1.0 / (2.0 * a);
-    double t0 = (-b + dcrim) * a2inv;
-    double t1 = (-b - dcrim) * a2inv;
+    double t0 = (-b + sqrt(dcrim)) * a2inv;
+    double t1 = (-b - sqrt(dcrim)) * a2inv;
 
     dmcr::IntersectionResult result;
     result.intersects = true;
