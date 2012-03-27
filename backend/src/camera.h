@@ -23,8 +23,8 @@ namespace dmcr {
 class Camera
 {
 public:
-    Camera() : m_fov(0), m_aspect(0) { }
-    
+    Camera() : m_fov(0), m_aspect(0), m_var_init(False) { }
+
     /*!
      * \brief Calculate a ray corresponding to the given pixel
      * \param x Pixel x-coordinate in range [0, 1]
@@ -32,11 +32,11 @@ public:
      * \return A ray from the camera's position to the given pixel
      *
      * This function calculates and returns a ray corresponding to a point in
-     * the camera's viewing plane. The coordinates are in the range [0, 1], 
+     * the camera's viewing plane. The coordinates are in the range [0, 1],
      * where the point (0, 0) corresponds to the top-left corner of the screen.
      */
     dmcr::Ray ray(double x, double y) const;
-    
+
     /*!
      * \brief Set camera position
      * \param position New position
@@ -47,7 +47,7 @@ public:
      * \return Camera's position
      */
     dmcr::Vector3f position() const { return m_position; }
-    
+
     /*!
      * \brief Set point what camera is looking at
      * \param look_at Point to look at
@@ -61,7 +61,7 @@ public:
      * \return Point what camera is looking at
      */
     dmcr::Vector3f lookAt() const { return m_look_at; }
-    
+
     /*!
      * \brief Set horizontal field of view of camera
      * \param fov Horizontal field of view of camera
@@ -76,12 +76,12 @@ public:
      * \return Camera's horizontal field of view
      */
     double fov() const { return m_fov; }
-    
+
     /*!
      * \brief Set aspect ratio of camera
      * \param aspect Aspect ratio of camera
      *
-     * The aspect ratio of the camera is the width of the camera's view divided 
+     * The aspect ratio of the camera is the width of the camera's view divided
      * by the height of the camera's view.
      */
     void setAspect(double aspect) { m_aspect = aspect; }
@@ -90,12 +90,15 @@ public:
      * \return Aspect ratio of camera
      */
     double aspect() const { return m_aspect; }
-    
+
 private:
     dmcr::Vector3f m_position;
     dmcr::Vector3f m_look_at;
     double m_fov;
     double m_aspect;
+    dmcr::Vector3f m_horizontal;
+    dmcr::Vector3f m_vertical;
+    bool m_var_init
 };
 
 }
