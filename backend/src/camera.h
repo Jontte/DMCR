@@ -23,7 +23,7 @@ namespace dmcr {
 class Camera
 {
 public:
-    Camera() : m_fov(0), m_aspect(0), { }
+    Camera() : m_fov(0), m_aspect(0) { }
 
     /*!
      * \brief Calculate a ray corresponding to the given pixel
