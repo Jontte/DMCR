@@ -20,6 +20,7 @@ dmcr::Ray dmcr::Camera::ray(double x, double y) const
         double H = tan(0.5 * m_fov);
         m_horizontal = m_horizontal * H;
         m_vertical = m_vertical * (1 / m_aspect) * H;
+        m_var_init = True
 
         return Ray(m_position, (at + m_horizontal * (2*x-1) + m_vertical * (2*y-1)).normalized());
     }
