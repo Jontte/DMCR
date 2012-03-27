@@ -23,7 +23,7 @@ namespace dmcr {
 class Camera
 {
 public:
-    Camera() : m_fov(0), m_aspect(0), m_var_init(False) { }
+    Camera() : m_fov(0), m_aspect(0), { }
 
     /*!
      * \brief Calculate a ray corresponding to the given pixel
@@ -41,7 +41,7 @@ public:
      * \brief Set camera position
      * \param position New position
      */
-    void setPosition(const dmcr::Vector3f& position) { m_position = position; }
+    void setPosition(const dmcr::Vector3f& position) { m_position = position; calculateCachedValues();  }
     /*!
      * \brief Get camera position
      * \return Camera's position
@@ -55,7 +55,7 @@ public:
      * This function sets the point what the camera is looking at. The point
      * is given in reference to the scene origin.
      */
-    void setLookAt(const dmcr::Vector3f& look_at) { m_look_at = look_at; }
+    void setLookAt(const dmcr::Vector3f& look_at) { m_look_at = look_at; calculateCachedValues(); }
     /*!
      * \brief Get point what camera is looking at
      * \return Point what camera is looking at
@@ -70,7 +70,7 @@ public:
      * between the leftmost and rightmost visible pixels from the camera's
      * view.
      */
-    void setFov(double fov) { m_fov = fov; }
+    void setFov(double fov) { m_fov = fov; calculateCachedValues(); }
     /*!
      * \brief Get horizontal field of view of camera
      * \return Camera's horizontal field of view
@@ -84,7 +84,7 @@ public:
      * The aspect ratio of the camera is the width of the camera's view divided
      * by the height of the camera's view.
      */
-    void setAspect(double aspect) { m_aspect = aspect; }
+    void setAspect(double aspect) { m_aspect = aspect; calculateCachedValues(); }
     /*!
      * \brief Get aspect ratio of camera
      * \return Aspect ratio of camera
@@ -96,9 +96,10 @@ private:
     dmcr::Vector3f m_look_at;
     double m_fov;
     double m_aspect;
+    dmcr::Vector3f m_at;
     dmcr::Vector3f m_horizontal;
     dmcr::Vector3f m_vertical;
-    bool m_var_init
+    void calculateCachedValues();
 };
 
 }
