@@ -4,6 +4,7 @@
  * code package.
  */
 
+#include <vector>
 #include "util.h"
 
 namespace dmcr
@@ -94,6 +95,22 @@ std::string ProgressBar::render() const
     return ss.str();
 }
 
+std::string SI_prefix(double in)
+{
+    size_t lev = 0;
+    while(in >= 1000)
+    {
+        in /= 1000;
+        lev++;
+    }
+
+    std::vector<std::string> prefixes = {"","k","M","G","T","P","E","Z","Y"};
+
+    std::stringstream ret;
+    ret.precision(3);
+    ret << in << " " << ((lev>=prefixes.size())?"X":prefixes[lev]);
+    return ret.str();
+}
 
 }
 

@@ -54,6 +54,12 @@ class ProgressBar
         unsigned int  m_max_progress;
 };
 
+/*
+ * Pretty print a huge number by finding an approximate representation 
+ * (accompanied with SI prefix)
+ */
+
+std::string SI_prefix(double in);
 
 }
 

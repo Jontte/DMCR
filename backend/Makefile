@@ -122,83 +122,84 @@ $(OBJDIR) $(OBJDIR)/src $(OBJDIR)/tests $(OBJDIR)/3rdparty/json:
 # DO NOT DELETE
 
 obj/src/dmcr_protocol.pb.o: src/dmcr_protocol.pb.h
-obj/src/socket.o: src/socket.h src/dmcr_protocol.pb.h src/itaskprovider.h
-obj/src/socket.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
-obj/src/socket.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/socket.o: src/random.h src/itasklistener.h src/settings.h
-obj/src/scene.o: src/scene.h src/sceneobject.h src/vector.h
-obj/src/scene.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/scene.o: src/box.h src/aabb.h src/sphere.h
-obj/src/sceneobject.o: src/sceneobject.h src/vector.h src/raycastresult.h
-obj/src/dummyscene.o: src/dummyscene.h src/scene.h src/sceneobject.h
-obj/src/dummyscene.o: src/vector.h src/raycastresult.h src/ray.h src/camera.h
+obj/src/socket.o: src/dmcr_protocol.pb.h src/settings.h src/socket.h
+obj/src/socket.o: src/itasklistener.h src/itaskprovider.h src/renderer.h
+obj/src/socket.o: src/random.h src/vector.h src/scene.h src/camera.h
+obj/src/socket.o: src/ray.h src/raycastresult.h src/sceneobject.h
+obj/src/socket.o: src/unique_ptr
+obj/src/scene.o: src/sphere.h src/aabb.h src/ray.h src/vector.h
+obj/src/scene.o: src/sceneobject.h src/raycastresult.h src/box.h src/scene.h
+obj/src/scene.o: src/camera.h src/unique_ptr
+obj/src/sceneobject.o: src/sceneobject.h src/raycastresult.h src/vector.h
+obj/src/dummyscene.o: src/dummyscene.h src/raycastresult.h src/vector.h
+obj/src/dummyscene.o: src/scene.h src/camera.h src/ray.h src/sceneobject.h
 obj/src/dummyscene.o: src/unique_ptr
-obj/src/task.o: src/task.h src/scene.h src/sceneobject.h src/vector.h
-obj/src/task.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/task.o: src/renderer.h src/random.h src/taskmanager.h
+obj/src/task.o: src/task.h src/renderer.h src/random.h src/vector.h
+obj/src/task.o: src/scene.h src/camera.h src/ray.h src/raycastresult.h
+obj/src/task.o: src/sceneobject.h src/unique_ptr src/taskmanager.h
 obj/src/task.o: src/itasklistener.h src/threadparallelrenderer.h
-obj/src/taskmanager.o: src/taskmanager.h src/scene.h src/sceneobject.h
-obj/src/taskmanager.o: src/vector.h src/raycastresult.h src/ray.h
-obj/src/taskmanager.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
-obj/src/taskmanager.o: src/random.h src/itasklistener.h src/itaskprovider.h
+obj/src/taskmanager.o: src/itaskprovider.h src/renderer.h src/random.h
+obj/src/taskmanager.o: src/vector.h src/scene.h src/camera.h src/ray.h
+obj/src/taskmanager.o: src/raycastresult.h src/sceneobject.h src/unique_ptr
+obj/src/taskmanager.o: src/taskmanager.h src/itasklistener.h src/task.h
 obj/src/ray.o: src/ray.h src/vector.h
-obj/src/renderer.o: src/renderer.h src/scene.h src/sceneobject.h src/vector.h
-obj/src/renderer.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/renderer.o: src/random.h src/util.h
+obj/src/renderer.o: src/util.h src/renderer.h src/random.h src/vector.h
+obj/src/renderer.o: src/scene.h src/camera.h src/ray.h src/raycastresult.h
+obj/src/renderer.o: src/sceneobject.h src/unique_ptr
 obj/src/camera.o: src/camera.h src/vector.h src/ray.h
-obj/src/backendapplication.o: src/backendapplication.h src/taskmanager.h
-obj/src/backendapplication.o: src/scene.h src/sceneobject.h src/vector.h
-obj/src/backendapplication.o: src/raycastresult.h src/ray.h src/camera.h
-obj/src/backendapplication.o: src/unique_ptr src/task.h src/renderer.h
-obj/src/backendapplication.o: src/random.h src/itasklistener.h src/socket.h
+obj/src/backendapplication.o: src/kdtreescene.h src/vector.h
+obj/src/backendapplication.o: src/sceneobject.h src/raycastresult.h
+obj/src/backendapplication.o: src/scene.h src/camera.h src/ray.h
+obj/src/backendapplication.o: src/unique_ptr src/backendapplication.h
+obj/src/backendapplication.o: src/itasklistener.h src/socket.h
 obj/src/backendapplication.o: src/dmcr_protocol.pb.h src/itaskprovider.h
-obj/src/backendapplication.o: src/kdtreescene.h
-obj/src/octreescene.o: src/octreescene.h src/vector.h src/sceneobject.h
-obj/src/octreescene.o: src/raycastresult.h src/scene.h src/ray.h src/camera.h
-obj/src/octreescene.o: src/unique_ptr src/octree.h src/aabb.h
-obj/src/aabb.o: src/aabb.h src/vector.h src/ray.h src/sceneobject.h
+obj/src/backendapplication.o: src/renderer.h src/random.h src/taskmanager.h
+obj/src/backendapplication.o: src/task.h
+obj/src/octreescene.o: src/octreescene.h src/octree.h src/aabb.h src/ray.h
+obj/src/octreescene.o: src/vector.h src/sceneobject.h src/raycastresult.h
+obj/src/octreescene.o: src/unique_ptr src/scene.h src/camera.h
+obj/src/aabb.o: src/aabb.h src/ray.h src/vector.h src/sceneobject.h
 obj/src/aabb.o: src/raycastresult.h
-obj/src/box.o: src/box.h src/sceneobject.h src/vector.h src/raycastresult.h
-obj/src/box.o: src/aabb.h src/ray.h
-obj/src/sphere.o: src/sphere.h src/sceneobject.h src/vector.h
-obj/src/sphere.o: src/raycastresult.h src/aabb.h src/ray.h
-obj/src/octree.o: src/octree.h src/aabb.h src/vector.h src/ray.h
+obj/src/box.o: src/box.h src/aabb.h src/ray.h src/vector.h src/sceneobject.h
+obj/src/box.o: src/raycastresult.h
+obj/src/sphere.o: src/ray.h src/vector.h src/sphere.h src/aabb.h
+obj/src/sphere.o: src/sceneobject.h src/raycastresult.h
+obj/src/octree.o: src/octree.h src/aabb.h src/ray.h src/vector.h
 obj/src/octree.o: src/sceneobject.h src/raycastresult.h src/unique_ptr
 obj/src/raycastresult.o: src/raycastresult.h src/vector.h
-obj/src/threadparallelrenderer.o: src/threadparallelrenderer.h src/scene.h
-obj/src/threadparallelrenderer.o: src/sceneobject.h src/vector.h
-obj/src/threadparallelrenderer.o: src/raycastresult.h src/ray.h src/camera.h
-obj/src/threadparallelrenderer.o: src/unique_ptr src/renderer.h src/random.h
-obj/src/threadparallelrenderer.o: src/util.h src/settings.h
+obj/src/threadparallelrenderer.o: src/renderer.h src/random.h src/vector.h
+obj/src/threadparallelrenderer.o: src/scene.h src/camera.h src/ray.h
+obj/src/threadparallelrenderer.o: src/raycastresult.h src/sceneobject.h
+obj/src/threadparallelrenderer.o: src/unique_ptr src/threadparallelrenderer.h
+obj/src/threadparallelrenderer.o: src/settings.h src/util.h
 obj/src/kdtreescene.o: src/kdtreescene.h src/vector.h src/sceneobject.h
-obj/src/kdtreescene.o: src/raycastresult.h src/scene.h src/ray.h src/camera.h
+obj/src/kdtreescene.o: src/raycastresult.h src/scene.h src/camera.h src/ray.h
 obj/src/kdtreescene.o: src/unique_ptr src/aabb.h
 obj/src/random.o: src/random.h src/vector.h
-obj/src/settings.o: src/settings.h src/util.h
+obj/src/settings.o: src/util.h src/settings.h
 obj/src/util.o: src/util.h
-obj/src/main.o: src/vector.h src/dummyscene.h src/scene.h src/sceneobject.h
-obj/src/main.o: src/raycastresult.h src/ray.h src/camera.h src/unique_ptr
-obj/src/main.o: src/sharedstream.h src/renderer.h src/random.h src/util.h
-obj/src/main.o: src/settings.h src/backendapplication.h src/taskmanager.h
-obj/src/main.o: src/task.h src/itasklistener.h src/socket.h
-obj/src/main.o: src/dmcr_protocol.pb.h src/itaskprovider.h
+obj/src/main.o: src/backendapplication.h src/itasklistener.h src/socket.h
+obj/src/main.o: src/dmcr_protocol.pb.h src/itaskprovider.h src/renderer.h
+obj/src/main.o: src/random.h src/vector.h src/scene.h src/camera.h src/ray.h
+obj/src/main.o: src/raycastresult.h src/sceneobject.h src/unique_ptr
+obj/src/main.o: src/taskmanager.h src/task.h src/settings.h
 obj/tests/test_sharedstream.o: src/sharedstream.h
-obj/tests/test_tasks.o: src/taskmanager.h src/scene.h src/sceneobject.h
-obj/tests/test_tasks.o: src/vector.h src/raycastresult.h src/ray.h
-obj/tests/test_tasks.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
-obj/tests/test_tasks.o: src/random.h src/itasklistener.h src/task.h
-obj/tests/test_tasks.o: src/scene.h src/dummyscene.h src/kdtreescene.h
+obj/tests/test_tasks.o: src/taskmanager.h src/itasklistener.h src/renderer.h
+obj/tests/test_tasks.o: src/random.h src/vector.h src/scene.h src/camera.h
+obj/tests/test_tasks.o: src/ray.h src/raycastresult.h src/sceneobject.h
+obj/tests/test_tasks.o: src/unique_ptr src/task.h src/task.h src/scene.h
+obj/tests/test_tasks.o: src/dummyscene.h src/kdtreescene.h
 obj/tests/test_tasks.o: src/itaskprovider.h
-obj/tests/test_intersections.o: src/aabb.h src/vector.h src/ray.h
+obj/tests/test_intersections.o: src/aabb.h src/ray.h src/vector.h
 obj/tests/test_intersections.o: src/sceneobject.h src/raycastresult.h
 obj/tests/test_intersections.o: src/box.h src/aabb.h src/sphere.h src/ray.h
 obj/tests/test_vector.o: src/vector.h
 obj/tests/test_random.o: src/random.h src/vector.h
 obj/tests/test_settings.o: src/settings.h
-obj/tests/benchmark.o: src/taskmanager.h src/scene.h src/sceneobject.h
-obj/tests/benchmark.o: src/vector.h src/raycastresult.h src/ray.h
-obj/tests/benchmark.o: src/camera.h src/unique_ptr src/task.h src/renderer.h
-obj/tests/benchmark.o: src/random.h src/itasklistener.h src/task.h
-obj/tests/benchmark.o: src/scene.h src/kdtreescene.h src/octreescene.h
-obj/tests/benchmark.o: src/octree.h src/aabb.h src/dummyscene.h
-obj/tests/benchmark.o: src/itaskprovider.h src/box.h src/sphere.h
+obj/tests/benchmark.o: src/taskmanager.h src/itasklistener.h src/renderer.h
+obj/tests/benchmark.o: src/random.h src/vector.h src/scene.h src/camera.h
+obj/tests/benchmark.o: src/ray.h src/raycastresult.h src/sceneobject.h
+obj/tests/benchmark.o: src/unique_ptr src/task.h src/task.h src/scene.h
+obj/tests/benchmark.o: src/kdtreescene.h src/octreescene.h src/octree.h
+obj/tests/benchmark.o: src/aabb.h src/dummyscene.h src/itaskprovider.h
+obj/tests/benchmark.o: src/box.h src/sphere.h

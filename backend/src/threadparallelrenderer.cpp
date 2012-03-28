@@ -86,18 +86,19 @@ const
     auto pbar_fun = [&]() {
         // Start progress bars internal timer here
         ProgressBar pbar(m_iterations);
-        const int pixels = h_res * v_res;
+        const int pixels_per_frame = h_res * v_res;
         while(true)
         {
             sleep(1);
             std::lock_guard<std::mutex> g(lock);
             pbar.update(iters_claimed);
+            double pixels = pixels_per_frame * pbar.speed();
             std::cout
                 << "\r"
                 << pbar.render()
                 << " @ "
-                << int(pbar.speed() * pixels)
-                << " pps    " << std::flush;
+                << SI_prefix(pixels) << "pps    "
+                << std::flush;
             if (iters_claimed >= m_iterations)
                 break;
         }
