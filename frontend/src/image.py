@@ -81,7 +81,7 @@ class Image(object):
         if new_img[WIDTH] != self.width or new_img[HEIGHT] != self.height:
             raise InvalidImage # raises exception if they don't
 
-        print "Image format", fmt
+        #print "Image format", fmt
 
         for h, row in enumerate(new_img[PIXELS]): # boxed-row flat-pixel list
             for i, value in enumerate(row):
