@@ -17,53 +17,80 @@ As the original data is told for wavelenghts, rgb data is taken from http://www.
     "fov": 43, /* fov is in DEGREES */
 	"aspect": 1 /* aspect ratio */
   },
+    "materials":
+    [
+        {
+            "name":"white",
+            "color":[0.76,0.75,0.5],
+            "diffuse":1.0,
+            "specular":0.0,
+            "transmit":0.0,
+            "emit":0.0
+        },
+        {
+            "name":"red",
+            "color":[0.63,0.06,0.04],
+            "diffuse":1.0,
+            "specular":0.0,
+            "transmit":0.0,
+            "emit":0.0
+        },
+        {
+            "name":"green",
+            "color":[0.15,0.48,0.09],
+            "diffuse":1.0,
+            "specular":0.0,
+            "transmit":0.0,
+            "emit":0.0
+        },
+        {
+            "name":"light",
+            "color":[0.76,0.75,0.5],
+            "diffuse":0.0,
+            "specular":0.0,
+            "transmit":0.0,
+            "emit":1.0
+        }
 
+    ],
 	"scene": 
 	[
 		{   // white floor
 			"type": "box", 
 			"position": [278,-0.01,280],
 			"extents": [560, 0.01, 560],
-            "color":[0.76,0.75,0.5],
-            "blur":1
-
+            "material": "white"
 		},
         {   // light
             "type":"box",
             "position" : [278,548.8,279.5],
             "extents":[130,0.01,105],
-            "color":[1,0.85,0.43],
-            "emit":100,
-            "blur":1
+            "material": "light"
         },
 		{   // white celiing
 			"type": "box", 
 			"position": [280,548.815,280],
 			"extents": [560, 0.01, 560],
-            "color":[0.76,0.75,0.5],
-            "blur":1
+            "material": "white"
 		},
 
 		{   // white back wall
 			"type": "box", 
 			"position": [278,278, 559.2],
 			"extents": [560, 560, 0.01],
-            "color":[0.76,0.75,0.5],
-            "blur":1
+            "material": "white"
 		},
 		{   // green right wall
 			"type": "box", 
 			"position": [0,278,278],
 			"extents": [0.01, 560, 560],
-            "color":[0.15,0.48,0.09],
-            "blur":1
+            "material": "green"
 		},
 		{   // red left wall
 			"type": "box", 
 			"position": [550, 278,280],
 			"extents": [0.01, 560, 560],
-            "color":[0.63,0.06,0.04],
-            "blur":1
+            "material": "red"
 		}
 	]
 }
