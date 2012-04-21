@@ -127,7 +127,7 @@ static std::string getMachineDescription() {
 void dmcr::Socket::sendHandshakePacket()
 {
     dmcr::Packet::BackendHandshake packet;
-    packet.set_protocol_version(1);
+    packet.set_protocol_version(2);
     packet.set_description(getMachineDescription());
     sendPacket(Packet_BackendHandshake, packet);
 }
@@ -206,6 +206,7 @@ void dmcr::Socket::readPacket()
     switch (pid) {
     PACKET_CASE(ConnectionResult);
     PACKET_CASE(NewTask);
+    PACKET_CASE(QuitTask);
     case Packet_BackendHandshake:
     default:
         throw SocketException("Received unexpected packet");
@@ -233,6 +234,12 @@ void dmcr::Socket::handleNewTask(const dmcr::Packet::NewTask &msg)
     if (m_task_listener)
         m_task_listener->onNewTask(this, msg.id(), msg.width(), msg.height(),
                                    msg.iterations(), msg.scene());
+}
+
+void dmcr::Socket::handleQuitTask(const dmcr::Packet::QuitTask &msg)
+{
+    if (m_task_listener)
+	m_task_listener->onTaskRemoved(this, msg.id());
 }
 
 static uint16_t clamp16(double x) {

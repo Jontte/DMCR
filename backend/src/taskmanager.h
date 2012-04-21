@@ -55,7 +55,7 @@ public:
      * \param id ID number of new task
      * \param width Width of render result
      * \param height Height of render result
-     * \param iterations Number of iterations to calculate
+     * \param iterations Number of iterations to calculate between task completions
      * \param scene_str Scene description string
      */
     virtual void onNewTask(ITaskProvider *provider, uint32_t id,
@@ -65,11 +65,15 @@ public:
     /*! \skip */
     virtual void onTaskCompleted(Task *task);
     
+    /*! \brief Called by a task provider when a running task has been deleted */
+    virtual void onTaskRemoved(ITaskProvider* provider, uint32_t task_id);
+    
 private:
     struct TaskData {
         std::unique_ptr<Task> task;
         ITaskProvider *provider;
         uint32_t id;
+        bool removed;
     };
     
     SceneFactory m_scene_factory;

@@ -30,6 +30,7 @@ void dmcr::TaskManager::onNewTask(dmcr::ITaskProvider* provider, uint32_t id,
         data.task = std::move(task);
         data.provider = provider;
         data.id = id;
+        data.removed = false;
         
         m_tasks.push_front(std::move(data));
     }
@@ -41,15 +42,16 @@ void dmcr::TaskManager::onNewTask(dmcr::ITaskProvider* provider, uint32_t id,
 
 void dmcr::TaskManager::onTaskCompleted(dmcr::Task *task)
 {
-    TaskData data;
+    TaskData* data = nullptr;
+    std::list<TaskData>::iterator iter;
     {
         std::lock_guard<std::mutex> G(m_mutex);
         bool found = false;
         
         for (const auto& i = m_tasks.begin(); i != m_tasks.end();) {
             if ((*i).task.get() == task) {
-                data = std::move(*i);
-                m_tasks.erase(i);
+                data = &(*i);
+                iter = i;
                 found = true;
                 break;
             }
@@ -58,5 +60,19 @@ void dmcr::TaskManager::onTaskCompleted(dmcr::Task *task)
             throw std::runtime_error("onTaskCompleted on unexisting task!");
     }
     
-    data.provider->onTaskCompleted(data.id, task->renderResult());
+    data->provider->onTaskCompleted(data->id, task->renderResult());
+    if (data->removed)
+        m_tasks.erase(iter);
+    else
+        data->task->run();
+}
+
+void dmcr::TaskManager::onTaskRemoved(dmcr::ITaskProvider* provider, uint32_t task_id)
+{
+    for (auto& data : m_tasks) {
+        if (data.id == task_id) {
+            data.removed = true;
+            break;
+        }
+    }   
 }

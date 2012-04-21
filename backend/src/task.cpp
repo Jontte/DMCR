@@ -40,6 +40,11 @@ dmcr::Task::Task(uint16_t width, uint16_t height, uint32_t iterations,
 {
 }
 
+dmcr::Task::~Task()
+{
+
+}
+
 void dmcr::Task::run()
 {
     std::thread thr(TaskThread(this, m_manager));
