@@ -8,49 +8,25 @@
 
 from server import Server
 import sys
-
-def help():
-    print """This is DMCR frontend version {}.
-For licensing see LICENSE.txt.
-
-Usage:
-    --width= / -w=: set width
-    --height= / -h=: set height
-    --file= / -f=: set file to render (json SDL)
-    --iterations= / -i=: set iterations
-    --help / -h: for this help
-"""
+import argparse
 
 def main():
-    filename = "../../scenes/scene.json"
-    width = 800
-    height = 600
-    iterations = 5
-    if len(sys.argv) > 1: #if we have a filename
-        for opt in sys.argv[1:]:
-            if len(opt.split("=")) > 1:
-                cmd, opt = opt.split("=")
-                if cmd == "--file" or cmd == '-f':
-                    filename = opt
-                elif cmd == '--width' or cmd == '-w':
-                    width = int(opt)
-                elif cmd == '--height' or cmd=='-h':
-                    height = int(opt)
-                elif cmd == '--iterations' or cmd=='-i':
-                    iterations = int(opt)
-                else:  
-                    print "Unknown option ({} = {}), use -f, -w, -h, -i.".format(cmd, opt)
-                    return
-            else:
-                help()
-                return
+	parser = argparse.ArgumentParser(
+		description='This is the DMCR Frontend. For licensing see LICENSE.txt.',
+		add_help=False)
+		
+	parser.add_argument('--file', '-f', 		default='../../scenes/scene.json')
+	parser.add_argument('--width', '-w', 		default=800)
+	parser.add_argument('--height', '-h', 		default=600)
+	parser.add_argument('--iterations', '-i', 	default=5)
+	parser.print_help()
+	params = vars(parser.parse_args())
+	
+	print "Starting FE server with:\n{file}: {width}x{height}, {iterations} iterations".format(**params)
 
-
-    print "Starting FE server with:\n{}: {}x{}, {} iterations".format(filename, width, height, iterations)
-
-    server = Server()
-    server.FileToTask(filename, width, height, iterations)
-    server.Listen()
+	server = Server()
+	server.FileToTask(params['file'], params['width'], params['height'], params['iterations'])
+	server.Listen()
 
 
 if __name__ == "__main__":
