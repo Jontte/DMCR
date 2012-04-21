@@ -53,12 +53,12 @@ public:
      */
     dmcr::Vector3f position() const { return m_position; }
    /*!
-    * \brief Set object's color'
+    * \brief Set object's color
     * \param color New color
     */
     void setColor(dmcr::Color color) { m_color = color; }
    /*!
-    * \brief Get object's color'
+    * \brief Get object's color
     * \return Object's color
     */
     dmcr::Color color() const { return m_color; }
@@ -74,6 +74,12 @@ public:
     
     void setRefractiveIndex(double ri) { m_refractive_index = ri; }
     double refractiveIndex() const { return m_refractive_index; }
+    
+    /*!
+     * \brief Get a random point on the object's surface in global coordinates
+     * \return Random point on object's surface in global coordinates
+     */
+    virtual dmcr::Vector3f randomPoint() const = 0;
 
     /*!
      * \brief Get a string describing the object's typedef
@@ -112,3 +118,4 @@ typedef SceneObject* SceneObjectPtr;
 }
 
 #endif // SCENEOBJECT_H
+

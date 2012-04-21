@@ -25,6 +25,8 @@ public:
 
     void setRadius(double radius) { m_radius = radius; }
     double radius() const { return m_radius; }
+    
+    dmcr::Vector3f randomPoint() const;
 
     virtual std::string type() const { return "sphere"; }
     virtual dmcr::AABB aabb() const;

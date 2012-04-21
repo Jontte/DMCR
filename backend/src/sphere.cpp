@@ -10,12 +10,15 @@
 #include "ray.h"
 #include "sphere.h"
 #include "vector.h"
+#include "random.h"
 
 dmcr::AABB dmcr::Sphere::aabb() const
 {
     return dmcr::AABB::
             fromCenterAndExtents(dmcr::SceneObject::position(),
-                                 dmcr::Vector3f(m_radius*2, m_radius*2, m_radius*2));
+                                 dmcr::Vector3f(m_radius * 2, 
+                                                m_radius * 2,
+                                                m_radius * 2));
 }
 
 dmcr::IntersectionResult dmcr::Sphere::intersects(const dmcr::Ray & ray)
@@ -41,8 +44,14 @@ const
     dmcr::IntersectionResult result;
     result.intersects = true;
     result.t = std::min(t0, t1);
-    result.normal = (ray.origin() + result.t * ray.direction() - position()) / m_radius;
+    result.normal = (ray.origin() + result.t * ray.direction() - position()) /
+                    m_radius;
     
     return result;
 }
 
+dmcr::Vector3f dmcr::Sphere::randomPoint() const
+{
+    static dmcr::RNG rng;
+    return m_position + rng.random_vector() * m_radius;
+}
