@@ -67,6 +67,7 @@ def main():
 	finally:
 		print "Stopping server"
 		server.stop()
+		server.taskmanager.stop() # wait for tasks to finish
 
 
 if __name__ == "__main__":

@@ -47,6 +47,7 @@ class Server(threading.Thread):
             self.stopped = True
             self.s.settimeout(1)
             self.s.close()
+            #self.taskmanager.stop() #not here, as this is daemon thread
             print "Server stopped"
         
         
