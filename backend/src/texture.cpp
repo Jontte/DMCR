@@ -8,7 +8,7 @@ dmcr::ImageTexture::ImageTexture(std::string path)
 {
 }
 
-dmcr::Color dmcr::ImageTexture::queryTexel(double u, double v)
+dmcr::Color dmcr::ImageTexture::queryTexel(double u, double v) const
 {
     auto w = m_image.get_width()-1;
     auto h = m_image.get_height()-1;
