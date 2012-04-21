@@ -29,9 +29,16 @@ class SceneTask(taskmanager.ITask):
         self.height = 600
         self.iterations = 2
         self.img_name = ""
+        self.filename = ""
         self.datestring = "%Y%m%d-%H%M%S"
         self.img_extension = "png"
         
+    def __str__(self):
+        string = super(SceneTask, self).__str__() 
+        string += "  :::  Rendering '{}' as '{}': {}x{}, {} iterations.".format(self.filename, self.img_extension, self.width, self.height, self.iterations)
+        string += "  :::  {}".format(str(self.image))
+        return string
+
     
     def SetSceneFromFile(self, filename):
         '''
@@ -41,6 +48,7 @@ class SceneTask(taskmanager.ITask):
         
         ''' 
         with open(filename,'r') as f:
+            self.filename = filename
             self.json = '\n'.join(f.readlines())
             self.img_name = filename.split("/")[-1].replace(".json", "")
             
@@ -58,7 +66,7 @@ class SceneTask(taskmanager.ITask):
             self.image = image.Image(self.width, self.height)
         self.image.AddFromString(data, iterations, fmt)
         
-    def OnTaskEnd(self, image):
-        print "SceneTask.OnTaskEnd(): Task finished, blending and writing."
-        self.BlendResult(*image)
+    def OnTaskEnd(self, rendered_data):
+        #print "SceneTask.OnTaskEnd(): Task finished, blending and writing."
+        self.BlendResult(rendered_data['data'], rendered_data['iterations_done'], rendered_data['data_format'])
         self.image.Write(self.img_name+str(datetime.datetime.now().strftime(self.datestring))+"."+self.img_extension)
