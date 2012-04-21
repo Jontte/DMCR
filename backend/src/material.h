@@ -5,16 +5,21 @@
 
 //sets up diffuse, reflection, emit, transmit and absorption for a certain surface
 //(absorption = 1 - reflection - transmit - emit)
+// additionally stores the color and index of refraction of a material
 
 namespace DMCR {
     
 class Material
 {
 public:
-    // Return color of material
-    dmcr::Color color() const;
-    
+    // Initializes the double-values to 0
+    Material() : m_diffuse(), m_specular(), m_transmit(), m_emit(), m_ior() { }
 
+    // Sets and returns color of material
+    void setColor(dmcr::Color color) { m_color = color; }
+    dmcr::Color getColor() const{ return m_color; }
+    
+    // Sets values for the reflection-parameters
     void setDiffuse(double diffuse){ m_diffuse = diffuse; }
     void setSpecular(double specular){ m_specular = specular; }
     void setTransmit(double transmit){ m_transmit = transmit; }
@@ -40,6 +45,7 @@ private:
     double m_transmit;
     double m_emit;
     double m_ior;
+    dmcr::Color m_color;
 };
 
 }
