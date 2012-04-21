@@ -134,7 +134,9 @@ public:
     
     dmcr::Color midfunc(dmcr::Ray ray) const;
     
-    dmcr::Color iterator(dmcr::Ray ray, int iterations = 0) const;
+    dmcr::Color iterator(dmcr::Ray ray, 
+                         int iterations = 0,
+                         dmcr::Color weight = dmcr::Color(0.0, 0.0, 0.0)) const;
 private:
     dmcr::ScenePtr m_scene;
     mutable dmcr::RNG m_rng;

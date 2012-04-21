@@ -116,61 +116,65 @@ const
 
 dmcr::Color dmcr::Renderer::midfunc(dmcr::Ray ray) const
 {
-    return iterator(ray);
+    return iterator(ray, 20, 1.0);
 }
 
 #include "texture.h"
 
 // getting pixel color
-dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
+dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, 
+                                     int iterations, 
+                                     dmcr::Color weight) const
 {
-    if (iterations == 20)
+    if (iterations == 20 || weight.length() < m_rng.random() * 0.3)
         return { 0.0, 0.0, 0.0 };
     RaycastResult rr = m_scene->shootRay(ray);
-    dmcr::Color c = { 0, 0, 0 };
     
     SceneObjectPtr obj = rr.object();
 
     if (obj != nullptr) {
-        if (obj->emit() > 0.0)
-            c = obj->color() * obj->emit();
-        else {
-            dmcr::Vector3f refl = ray.direction() - 
-                2 * rr.normal().dot(ray.direction()) * rr.normal();
-            dmcr::Vector3f random = m_rng.random_vector();
+        double random = m_rng.random();
+        double cumul = 0.0;
+        dmcr::Vector3f dir;
+        double weight_factor = 0.0;
+        dmcr::Vector3f color = obj->material().texture()->
+            queryTexel(rr.uv().x, rr.uv().y));
+        
+        if (random < cumul += obj->material().diffuse()) {
+            dir = m_rng.random_vector();
             if (random.dot(rr.normal()) < 0.0)
                 random = -random;
-
-            double blur = obj->blur();
-            double opacity = obj->opacity();
-            dmcr::Vector3f dir = (blur * random + 
-                (1.0 - blur) * refl).normalized();
-            
+            weight_factor = obj->material().diffuse();
+        } else if (random < cumul += obj->material().specular()) {
+            dir = ray.direction() - 
+                2 * rr.normal().dot(ray.direction()) * rr.normal();
             dmcr::Ray new_ray(rr.intersectionPoint(), dir);
-            
-            if (opacity < 1.0) {
-                double ndotl = rr.normal().dot(ray.direction());
-                
-                double nl, ne;
-                if (ndotl > 0.0) {
-                    nl = 1.0;
-                    ne = obj->refractiveIndex();
-                } else {
-                    ne = 1.0;
-                    nl = obj->refractiveIndex();
-                }
-                
-                dmcr::Vector3f refr = (ne/nl*ndotl-sqrt(1-ne*ne/(nl*nl)*
-                    (1-ndotl*ndotl)))*rr.normal()-ne/nl*ray.direction();
-                
-                dmcr::Ray refracted_ray(rr.intersectionPoint(), refr);
-                c += (1.0 - opacity) * iterator(refracted_ray, iterations + 1);
+            weight_factor = obj->material().specular();
+        } else if (random < cumul += obj->material().transmit()) {
+            double ndotl = rr.normal().dot(ray.direction());
+
+            double nl, ne;
+            if (ndotl > 0.0) {
+                nl = 1.0;
+                ne = obj->refractiveIndex();
+            } else {
+                ne = 1.0;
+                nl = obj->refractiveIndex();
             }
-                                
-            c += opacity * iterator(new_ray, iterations + 1) * 
-                 rr.object()->color();
+
+            dir = (ne/nl*ndotl-sqrt(1-ne*ne/(nl*nl)*
+                  (1-ndotl*ndotl)))*rr.normal()-ne/nl*ray.direction();
+            weight_factor = obj->material().transmit();
+        } else if (random < cumul += obj->material().emit()) {
+            return color;
+        } else {
+            return { 0.0, 0.0, 0.0 };
         }
+        
+        return iterator(dmcr::Ray(rr.intersectionPoint(), dir), 
+                        iterations + 1,
+                        weight * color * weight_factor);
     }
-    
-    return c;
+
+    return { 0.0, 0.0, 0.0 };
 }
