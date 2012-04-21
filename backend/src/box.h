@@ -43,6 +43,8 @@ public:
 
     dmcr::IntersectionResult intersects(const Ray &ray) const;
 
+    dmcr::Vector3f randomPoint() const;
+
 protected:
     dmcr::Vector3f m_extents;
 };
