@@ -9,6 +9,7 @@
 from server import Server
 import sys
 import argparse
+import readline # for up-arrow and such
 
 def main():
 	parser = argparse.ArgumentParser(
@@ -25,8 +26,47 @@ def main():
 	print "Starting FE server with:\n{file}: {width}x{height}, {iterations} iterations".format(**params)
 
 	server = Server()
-	server.FileToTask(params['file'], params['width'], params['height'], params['iterations'])
-	server.Listen()
+	server.FileToTask(params['file'], int(params['width']), int(params['height']), int(params['iterations']))
+
+	try:
+		server.start()
+		while True:
+			choice = raw_input("> ")
+			if choice == 'l':
+				for task in server.taskmanager.ListTasks(): 
+					print str(task) 
+			elif choice == 's':
+				task_id = raw_input("Task ID: ")
+				server.taskmanager.StopTask(int(task_id))
+			elif choice == 'a':
+				filename = raw_input("Filename: ")
+				width = 800
+				height = 600
+				iterations = 5
+				
+				width_i = raw_input("Width (800): ")
+				if width_i != '':
+					width = int(width_i)
+				height_i = raw_input("Height (600): ")
+				if height_i != '':
+					height = int(height_i)
+				
+				iterations_i = raw_input("Iterations (5): ")
+				if iterations_i != '':
+					iterations = int(iterations_i)
+				
+				server.FileToTask(filename, width, height, iterations)
+				
+			elif choice == 'q':
+				break
+				
+			else:
+				print "l: list tasks\na: add task\ns: stop task\nq: quit"
+	except KeyboardInterrupt as e:
+		print "DMCR.main(): Excepted, quitting", e
+	finally:
+		print "Stopping server"
+		server.stop()
 
 
 if __name__ == "__main__":

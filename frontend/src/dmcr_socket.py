@@ -200,7 +200,7 @@ class Socket(object):
             pass 
 
         #print rendered_data
-        return (data, rendered_data.iterations_done, rendered_data.data_format)
+        return {'task_id':rendered_data.id, 'data':data, 'iterations_done':rendered_data.iterations_done, 'data_format':rendered_data.data_format}
         
         #The old code for PPM
         '''

@@ -46,11 +46,31 @@ class Connection(threading.Thread):
     
     def FetchTask(self):
         if self.taskmanager:
-            self.task = self.taskmanager.GetTask()
+            return self.taskmanager.GetTask()
         else:
             print "Connection.FetchTask(): No taskmanager, can't fetch task"
+            return None
 
+
+    def Connect(self):
+        '''
+        Connects with BE.
         
+        '''
+        
+        result = False
+        while not self.stopped() and not result: # try to backend handshake until succeeded
+            result = self.socket.Recv_BackendHandshake() # [0] = version, [1]  = description
+            
+        if result[0] != VERSION: # if backend version doesn't match us 
+            self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_CONNECTIONFAILED) # tell BE connection failed
+            raise Socket.SocketException("Incompatible version")    # raise exception so this loop ends
+            
+        self.be_description = result[1] # store the description backend gives about itself
+            
+        self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_SUCCESS)
+                          
+    
     def run(self): # overriding threading.Thread.run()
         '''
         Receives packets until someone calls Connection.stop() or catches KeyboardInterrupt
@@ -61,35 +81,26 @@ class Connection(threading.Thread):
     
         '''
         
-        self.FetchTask()
-        
-        result = False
+        task = None
+
         try:
-            while not self.stopped() and not result: # try to backend handshake until succeeded
-                result = self.socket.Recv_BackendHandshake() # [0] = version, [1]  = description
-            
-            if result[0] != VERSION: # if backend version doesn't match us 
-                self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_CONNECTIONFAILED) # tell BE connection failed
-                raise Socket.SocketException("Incompatible version")    # raise exception so this loop ends
-            
-            self.be_description = result[1] # store the description backend gives about itself
-            
-            self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_SUCCESS)
-            self.socket.Send_NewTask(self.task.task_id, self.task.width, self.task.height, self.task.iterations, self.task.json)
-            counter = 0
+            self.Connect() # handles connection with BE
             
             while not self.stopped():
-                image = self.socket.Recv_RenderedData()
-                if image:
-                    self.taskmanager.OnTaskEnd(self.task.GetTaskID(), image) #image contains (data, iterations)
-                counter += 1
-                if counter == 2:
-                    print "Connection.run(): Got two images out of this backend, stopping it now."
-                    self.socket.Send_QuitTask(self.task.GetTaskID()) # tell backend this is last to render
-                elif counter == 3:
-                    print "Connection.run(): This backend has finished it's work."
-                    self.stop()
-            
+                if task and not task.IsAvailable():                
+                    self.socket.Send_QuitTask(task.GetTaskID()) # tell backend this is last to render
+                    
+                if not task or not task.IsAvailable():
+                    task = self.FetchTask()
+                    if task:
+                        self.socket.Send_NewTask(task.task_id, task.width, task.height, task.iterations, task.json)    
+                
+                if task and task.IsAvailable():
+                    rendered_data = self.socket.Recv_RenderedData()
+                    if rendered_data:
+                        #print rendered_data
+                        self.taskmanager.OnTaskEnd(rendered_data['task_id'], rendered_data) #image contains (data, iterations)
+                            
         except KeyboardInterrupt:
             pass
         except Socket.SocketException as se:
