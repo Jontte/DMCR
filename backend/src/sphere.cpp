@@ -53,5 +53,5 @@ const
 dmcr::Vector3f dmcr::Sphere::randomPoint() const
 {
     static dmcr::RNG rng;
-    return m_position + rng.random_vector() * m_radius;
+    return position() + rng.random_vector() * m_radius;
 }
