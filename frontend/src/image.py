@@ -48,7 +48,7 @@ class Image(object):
         self.height = height
         
         # initialize boxed-row flat-pixel -list for storing image in memory, see pypng for details
-        self.image = [[0 for i in range(width*3)] for j in range(height)]
+        self.image = [[0 for i in xrange(width*3)] for j in xrange(height)]
         
         # initialize png.Writer, see pypng for details 
         self.writer = png.Writer(width = self.width, height = self.height, bitdepth = 8)
