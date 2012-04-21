@@ -28,6 +28,15 @@ class ITask(object):
     def GetTaskID(self):
         return self.task_id
     
+    def SetAvailable(self, available = True):
+        self.available = available
+    
+    def IsAvailable(self):
+        return self.available
+    
+    def __str__(self):
+        return "Task ID: {}, task is {}AVAILABLE.".format(self.task_id, "NOT " if not self.IsAvailable() else "")
+    
 class ResultConsumer(threading.Thread):
     
     def __init__(self, taskmanager):
@@ -77,11 +86,21 @@ class TaskManager(object):
         @return: id assigned to task
          
         '''
+        
         task.SetTaskID(self.uniqueid)
+        task.SetAvailable()
         self.tasks[task.GetTaskID()] = task
         self.uniqueid += 1
         
         return task.GetTaskID()
+    
+    def StopTask(self, task_id):
+        '''
+        @param task_id: task to be made unavailable
+        '''
+         
+        self.tasks[task_id].SetAvailable(False)
+        
     
     def RemoveTask(self, task_id):
         '''
@@ -95,14 +114,25 @@ class TaskManager(object):
     def GetTask(self):
         '''
         '''
-        task = self.tasks[self.tasks.keys()[0]] #dirtydirty, return always first task
-        return task
+        available = [task for task in self.tasks.values() if task.IsAvailable()]
+        if len(available) > 0:
+            task = available[0] #dirtydirty, return always first task
+            return task
+        else:
+            return None
+        
+    
+    def ListTasks(self):
+        '''
+        Returns all tasks.
+        '''
+        return self.tasks.values()
     
     def OnTaskEnd(self, task_id, result):
         '''
         '''
-        print "TaskManager.OnTaskEnd(): Task ended:", task_id
+#        print "TaskManager.OnTaskEnd(): Task ended:", task_id
         if self.tasks.has_key(task_id):
             self.results.put((task_id,result))
-        else:
-            print "TaskManager.OnTaskEnd(): Task has been removed!"        
+#        else:
+#            print "TaskManager.OnTaskEnd(): Task has been removed!"        
