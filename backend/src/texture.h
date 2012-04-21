@@ -23,6 +23,20 @@ namespace dmcr {
     private:
         png::image<png::rgb_pixel> m_image;
     };
+
+    class ColorTexture : public Texture2D {
+    public:
+        ColorTexture(Color color)
+        : Texture2D(), m_color(color) { }
+
+        virtual Color queryTexel(double u, double v) {
+            (void)u; (void)v;
+            return m_color;
+        }
+
+    private:
+        Color m_color;
+    };
 }
 
 #endif
