@@ -32,6 +32,8 @@ public:
     Task(uint16_t width, uint16_t height, uint32_t iterations,
          dmcr::ScenePtr scene, TaskManager *mgr);
     
+    ~Task();
+    
     /*! \brief Start the task
      * 
      * This will spawn a new thread and run the task. Doesn't block.

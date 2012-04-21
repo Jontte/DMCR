@@ -27,6 +27,7 @@ public:
     virtual void onNewTask(ITaskProvider *provider, uint32_t task_id,
                            uint16_t width, uint16_t height, uint32_t iterations, 
                            const std::string& scene) = 0;
+    virtual void onTaskRemoved(ITaskProvider *provider, uint32_t task_id) = 0;
 
 };
 

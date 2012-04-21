@@ -37,3 +37,7 @@ message RenderedData {
   required uint32 data_length = 5;
   required uint32 data_format = 6;  
 }
+
+message QuitTask {
+  required uint32 id = 1;
+}

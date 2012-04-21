@@ -48,7 +48,8 @@ public:
 };
 
 enum PacketId { Packet_BackendHandshake = 1, Packet_ConnectionResult = 2,
-                Packet_NewTask = 3, Packet_RenderedData = 4 };
+                Packet_NewTask = 3, Packet_RenderedData = 4,
+                Packet_QuitTask = 5 };
 
 enum ResultFormat { ResultFormat_PNG8 = 1, ResultFormat_PNG16_Clamped = 2 };
 
@@ -141,6 +142,7 @@ private:
 
     void handleConnectionResult(const dmcr::Packet::ConnectionResult&);
     void handleNewTask(const dmcr::Packet::NewTask&);
+    void handleQuitTask(const dmcr::Packet::QuitTask&);
 };
 
 }
