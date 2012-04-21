@@ -119,6 +119,8 @@ dmcr::Color dmcr::Renderer::midfunc(dmcr::Ray ray) const
     return iterator(ray);
 }
 
+#include "texture.h"
+
 // getting pixel color
 dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
 {
@@ -166,7 +168,7 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray, int iterations) const
             }
                                 
             c += opacity * iterator(new_ray, iterations + 1) * 
-                rr.object()->color();
+                 rr.object()->color();
         }
     }
     

@@ -20,6 +20,7 @@ struct IntersectionResult
     bool intersects;
     double t;
     dmcr::Vector3f normal;
+    dmcr::Vector3f uv;
 };
 
 class AABB;

@@ -15,9 +15,10 @@
 #include <sstream>
 #include <vector>
 
-#include "dmcr_protocol.pb.h"
 #include "png++/image.hpp"
 #include "png++/rgb_pixel.hpp"
+
+#include "dmcr_protocol.pb.h"
 #include "settings.h"
 #include "socket.h"
 #include "vector.h"

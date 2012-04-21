@@ -176,13 +176,14 @@ dmcr::RaycastResult dmcr::Scene::shootRay(const dmcr::Ray& ray) const
     std::list<SceneObjectPtr> objects = intersectionCandidates(ray);
     double min = 1.0 / 0.0;
     SceneObjectPtr min_obj = nullptr;
-    dmcr::Vector3f min_normal;
+    dmcr::Vector3f min_normal, min_uv;
    
     for (auto obj : objects) {
         dmcr::IntersectionResult ir = obj->intersects(ray);
         if (ir.intersects && ir.t > 0.0 && ir.t < min) {
             min_obj = obj;
             min_normal = ir.normal;
+            min_uv = ir.uv;
             min = ir.t;
         }
     }
@@ -192,6 +193,7 @@ dmcr::RaycastResult dmcr::Scene::shootRay(const dmcr::Ray& ray) const
         result.setObject(min_obj);
         result.setIntersectionPoint(ray.origin() + ray.direction() * min);
         result.setNormal(min_normal);
+        result.setUV(min_uv);
     }
 
     return result;

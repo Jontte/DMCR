@@ -23,7 +23,7 @@ src/task.cpp src/taskmanager.cpp src/ray.cpp src/renderer.cpp src/camera.cpp \
 src/backendapplication.cpp src/octreescene.cpp src/aabb.cpp src/box.cpp \
 src/sphere.cpp src/octree.cpp src/raycastresult.cpp \
 src/threadparallelrenderer.cpp src/kdtreescene.cpp src/random.cpp \
-src/settings.cpp src/util.cpp
+src/settings.cpp src/util.cpp src/texture.cpp
 CC_SOURCES = 
 
 # Source files that belong explicitly to normal operation (disregard from testing)
@@ -145,7 +145,7 @@ obj/src/taskmanager.o: src/taskmanager.h src/itasklistener.h src/task.h
 obj/src/ray.o: src/ray.h src/vector.h
 obj/src/renderer.o: src/util.h src/renderer.h src/random.h src/vector.h
 obj/src/renderer.o: src/scene.h src/camera.h src/ray.h src/raycastresult.h
-obj/src/renderer.o: src/sceneobject.h src/unique_ptr
+obj/src/renderer.o: src/sceneobject.h src/unique_ptr src/texture.h
 obj/src/camera.o: src/camera.h src/vector.h src/ray.h
 obj/src/backendapplication.o: src/kdtreescene.h src/vector.h
 obj/src/backendapplication.o: src/sceneobject.h src/raycastresult.h
@@ -178,6 +178,9 @@ obj/src/kdtreescene.o: src/unique_ptr src/aabb.h
 obj/src/random.o: src/random.h src/vector.h
 obj/src/settings.o: src/util.h src/settings.h
 obj/src/util.o: src/util.h
+obj/src/texture.o: src/texture.h src/renderer.h src/random.h src/vector.h
+obj/src/texture.o: src/scene.h src/camera.h src/ray.h src/raycastresult.h
+obj/src/texture.o: src/sceneobject.h src/unique_ptr
 obj/src/main.o: src/backendapplication.h src/itasklistener.h src/socket.h
 obj/src/main.o: src/dmcr_protocol.pb.h src/itaskprovider.h src/renderer.h
 obj/src/main.o: src/random.h src/vector.h src/scene.h src/camera.h src/ray.h

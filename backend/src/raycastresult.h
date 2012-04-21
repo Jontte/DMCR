@@ -53,11 +53,15 @@ public:
     
     void setNormal(const dmcr::Vector3f& normal) { m_normal = normal; }
     dmcr::Vector3f normal() const { return m_normal; }
+    
+    dmcr::Vector3f uv() const { return m_uv; }
+    void setUV(const dmcr::Vector3f& uv) { m_uv = uv; }
 
 private:
     dmcr::SceneObjectPtr m_object;
     dmcr::Vector3f m_intersection_point;
     dmcr::Vector3f m_normal;
+    dmcr::Vector3f m_uv;
 };
 
 } // namespace dmcr

@@ -77,6 +77,9 @@ dmcr::IntersectionResult dmcr::AABB::intersects(const dmcr::Ray &ray) const
         normal = dmcr::Vector3f(0, 0, 1);
     
     result.normal = normal;
+    
+    result.uv = dmcr::Vector3f(c1.x() / (m_max-m_min).x(),
+                               c1.y() / (m_max-m_min).y(), 0.0);
 
     return result;
 }
