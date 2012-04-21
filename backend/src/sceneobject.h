@@ -12,6 +12,7 @@
 
 #include "raycastresult.h"
 #include "vector.h"
+#include "material.h"
 
 namespace dmcr {
 
@@ -35,12 +36,7 @@ class Ray;
 class SceneObject
 {
 public:
-    SceneObject() : m_color(0.0, 0.0, 0.0),
-                    m_emit(0.0),
-                    m_blur(0.0),
-                    m_opacity(0.0),
-                    m_refractive_index(0.0)
-        { }
+    SceneObject() { }
 
     /*!
      * \brief Set object's position
@@ -52,30 +48,11 @@ public:
      * \return Object's position
      */
     dmcr::Vector3f position() const { return m_position; }
-   /*!
-    * \brief Set object's color
-    * \param color New color
-    */
-    void setColor(dmcr::Color color) { m_color = color; }
-   /*!
-    * \brief Get object's color
-    * \return Object's color
-    */
-    dmcr::Color color() const { return m_color; }
+
+    void setMaterial(dmcr::Material material) { m_material = material; }
+    dmcr::Material material() const { return m_material; }
     
-    void setBlur(double blur) { m_blur = blur; }
-    double blur() const { return m_blur; }
-    
-    void setEmit(double emit) { m_emit = emit; }
-    double emit() const { return m_emit; }
-    
-    void setOpacity(double opacity) { m_opacity = opacity; }
-    double opacity() const { return m_opacity; }
-    
-    void setRefractiveIndex(double ri) { m_refractive_index = ri; }
-    double refractiveIndex() const { return m_refractive_index; }
-    
-    /*!
+    /*! 
      * \brief Get a random point on the object's surface in global coordinates
      * \return Random point on object's surface in global coordinates
      */
@@ -106,11 +83,7 @@ public:
 
 private:
     dmcr::Vector3f m_position;
-    dmcr::Color m_color;
-    double m_emit;
-    double m_blur;
-    double m_opacity;
-    double m_refractive_index;
+    dmcr::Material m_material;
 };
 
 typedef SceneObject* SceneObjectPtr;
