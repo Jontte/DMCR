@@ -1,5 +1,6 @@
 #include <fstream>
 #include <vector>
+#include <stdexcept>
 
 #include "util.h"
 #include "settings.h"
@@ -26,9 +27,9 @@ void Settings::load(const std::string& path)
         std::getline(fp, line);
         if (line[0] == '#' || line.length() == 0)
             continue;
-        unsigned int split_pt = line.find_first_of(" \t");
+        size_t split_pt = line.find_first_of(" \t");
         if (split_pt == std::string::npos)
-            throw "FOO!";
+            throw std::runtime_error("Malformed line in settings");
 
         m_keys.insert({line.substr(0, split_pt),
                        line.substr(split_pt+1)});
