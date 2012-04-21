@@ -4,7 +4,7 @@
 #include "png++/image.hpp"
 #include "png++/rgb_pixel.hpp"
 
-#include "renderer.h"
+#include "vector.h"
 
 #include <string>
 #include <memory>
