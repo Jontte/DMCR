@@ -29,7 +29,7 @@ def ListToPPM(pixels, width, height, filename):
     
         print "File {} was written".format(filename)
 
-VERSION = 1
+VERSION = 2
 
 class Connection(threading.Thread):
     '''
@@ -90,15 +90,21 @@ class Connection(threading.Thread):
             
             self.socket.Send_ConnectionResult(Socket.CONNECTIONRESULT_SUCCESS)
             self.socket.Send_NewTask(*self.task)
-        
+            counter = 0
+            
             while not self.stopped():
                 #image = self.socket.Recv_RenderedData()
                 image = self.socket.Recv_RenderedData()
                 if image:
                     #ListToPPM(image, self.width, self.height, self.img_name+str(datetime.now().strftime(self.datestring))+"."+self.img_extension)
                     self.taskmanager.OnTaskEnd(self.task[0], image) #image contains (data, iterations)
-                    
-                    
+                counter += 1
+                if counter == 2:
+                    print "Got two images out of this backend, stopping it now."
+                    self.socket.Send_QuitTask(self.task[0]) # tell backend this is last to render
+                elif counter == 3:
+                    print "This backend has finished it's work."
+                    self.stop()
             
         except KeyboardInterrupt:
             pass

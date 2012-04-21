@@ -34,6 +34,7 @@ class Socket(object):
     CONNECTIONRESULT = 2
     NEWTASK = 3
     RENDEREDDATA = 4
+    QUITTASK = 5
 
 
     CONNECTIONRESULT_SUCCESS = 0
@@ -73,6 +74,7 @@ class Socket(object):
         if self.alive:
             self.conn.settimeout(1)
             self.conn.close()
+            self.alive = False
     
     def ReceiveData(self, length):
         '''
@@ -197,7 +199,7 @@ class Socket(object):
         finally: # need something more than just try
             pass 
 
-        print rendered_data
+        #print rendered_data
         return (data, rendered_data.iterations_done, rendered_data.data_format)
         
         #The old code for PPM
@@ -317,7 +319,16 @@ class Socket(object):
         newtask.scene = scene
         
         self.SendPacket(Socket.NEWTASK, newtask)
+    
+    def Send_QuitTask(self, task_id):
+        '''
+        Tells backend to stop rendering this task.
         
+        '''
+        quittask = proto.QuitTask()
+        quittask.id = task_id
+        
+        self.SendPacket(Socket.QUITTASK, quittask)
 
 
 # these following packets are sent by frontend, no need to know how to receive them

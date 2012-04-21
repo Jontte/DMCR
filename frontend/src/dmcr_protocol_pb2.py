@@ -11,7 +11,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = descriptor.FileDescriptor(
   name='dmcr_protocol.proto',
   package='dmcr.Packet',
-  serialized_pb='\n\x13\x64mcr_protocol.proto\x12\x0b\x64mcr.Packet\"*\n\x0cPacketHeader\x12\x0e\n\x06length\x18\x01 \x02(\r\x12\n\n\x02id\x18\x02 \x02(\r\"N\n\x10\x42\x61\x63kendHandshake\x12\x18\n\x10protocol_version\x18\x01 \x02(\r\x12\x0b\n\x03key\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x02(\t\"\"\n\x10\x43onnectionResult\x12\x0e\n\x06result\x18\x01 \x02(\r\"W\n\x07NewTask\x12\n\n\x02id\x18\x01 \x02(\r\x12\r\n\x05width\x18\x02 \x02(\r\x12\x0e\n\x06height\x18\x03 \x02(\r\x12\x12\n\niterations\x18\x04 \x02(\r\x12\r\n\x05scene\x18\x05 \x02(\t\"|\n\x0cRenderedData\x12\n\n\x02id\x18\x01 \x02(\r\x12\r\n\x05width\x18\x02 \x02(\r\x12\x0e\n\x06height\x18\x03 \x02(\r\x12\x17\n\x0fiterations_done\x18\x04 \x02(\r\x12\x13\n\x0b\x64\x61ta_length\x18\x05 \x02(\r\x12\x13\n\x0b\x64\x61ta_format\x18\x06 \x02(\r')
+  serialized_pb='\n\x13\x64mcr_protocol.proto\x12\x0b\x64mcr.Packet\"*\n\x0cPacketHeader\x12\x0e\n\x06length\x18\x01 \x02(\r\x12\n\n\x02id\x18\x02 \x02(\r\"N\n\x10\x42\x61\x63kendHandshake\x12\x18\n\x10protocol_version\x18\x01 \x02(\r\x12\x0b\n\x03key\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x02(\t\"\"\n\x10\x43onnectionResult\x12\x0e\n\x06result\x18\x01 \x02(\r\"W\n\x07NewTask\x12\n\n\x02id\x18\x01 \x02(\r\x12\r\n\x05width\x18\x02 \x02(\r\x12\x0e\n\x06height\x18\x03 \x02(\r\x12\x12\n\niterations\x18\x04 \x02(\r\x12\r\n\x05scene\x18\x05 \x02(\t\"|\n\x0cRenderedData\x12\n\n\x02id\x18\x01 \x02(\r\x12\r\n\x05width\x18\x02 \x02(\r\x12\x0e\n\x06height\x18\x03 \x02(\r\x12\x17\n\x0fiterations_done\x18\x04 \x02(\r\x12\x13\n\x0b\x64\x61ta_length\x18\x05 \x02(\r\x12\x13\n\x0b\x64\x61ta_format\x18\x06 \x02(\r\"\x16\n\x08QuitTask\x12\n\n\x02id\x18\x01 \x02(\r')
 
 
 
@@ -239,11 +239,40 @@ _RENDEREDDATA = descriptor.Descriptor(
   serialized_end=409,
 )
 
+
+_QUITTASK = descriptor.Descriptor(
+  name='QuitTask',
+  full_name='dmcr.Packet.QuitTask',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    descriptor.FieldDescriptor(
+      name='id', full_name='dmcr.Packet.QuitTask.id', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=411,
+  serialized_end=433,
+)
+
 DESCRIPTOR.message_types_by_name['PacketHeader'] = _PACKETHEADER
 DESCRIPTOR.message_types_by_name['BackendHandshake'] = _BACKENDHANDSHAKE
 DESCRIPTOR.message_types_by_name['ConnectionResult'] = _CONNECTIONRESULT
 DESCRIPTOR.message_types_by_name['NewTask'] = _NEWTASK
 DESCRIPTOR.message_types_by_name['RenderedData'] = _RENDEREDDATA
+DESCRIPTOR.message_types_by_name['QuitTask'] = _QUITTASK
 
 class PacketHeader(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
@@ -274,5 +303,11 @@ class RenderedData(message.Message):
   DESCRIPTOR = _RENDEREDDATA
   
   # @@protoc_insertion_point(class_scope:dmcr.Packet.RenderedData)
+
+class QuitTask(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _QUITTASK
+  
+  # @@protoc_insertion_point(class_scope:dmcr.Packet.QuitTask)
 
 # @@protoc_insertion_point(module_scope)
