@@ -91,7 +91,7 @@ const
         {
             sleep(1);
             std::lock_guard<std::mutex> g(lock);
-            pbar.update(iters_claimed);
+            pbar.update(iters_done);
             double pixels = pixels_per_frame * pbar.speed();
             std::cout
                 << "\r"
@@ -99,7 +99,7 @@ const
                 << " @ "
                 << SI_prefix(pixels) << "pps    "
                 << std::flush;
-            if (iters_claimed >= m_iterations)
+            if (iters_done >= m_iterations)
                 break;
         }
     };
