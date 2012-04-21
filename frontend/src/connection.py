@@ -11,6 +11,7 @@ Created on Feb 8, 2012
 '''
 
 
+import time # needed for sleeping if no tasks available
 import threading # each connection is a thread
 
 from dmcr_socket import Socket
@@ -93,7 +94,9 @@ class Connection(threading.Thread):
                 if not task or not task.IsAvailable():
                     task = self.FetchTask()
                     if task:
-                        self.socket.Send_NewTask(task.task_id, task.width, task.height, task.iterations, task.json)    
+                        self.socket.Send_NewTask(task.task_id, task.width, task.height, task.iterations, task.json)
+                    else:
+                        time.sleep(1) # wait one sec before trying again 
                 
                 if task and task.IsAvailable():
                     rendered_data = self.socket.Recv_RenderedData()
