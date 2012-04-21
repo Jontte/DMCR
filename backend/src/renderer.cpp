@@ -164,7 +164,7 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray,
                   (1-ndotl*ndotl)))*rr.normal()-ne/nl*ray.direction();
             weight_factor = obj->material().transmit();
         } else if (random <= (cumul += obj->material().emit())) {
-            return color * 100;
+            return color;
         } else {
             return { 0.0, 0.0, 0.0 };
         }
