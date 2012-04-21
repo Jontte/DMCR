@@ -13,6 +13,7 @@
 #include "sphere.h"
 #include "box.h"
 #include "scene.h"
+#include "material.h"
 
 dmcr::Scene::Scene()
 {
@@ -33,7 +34,7 @@ void dmcr::Scene::loadFromFile(const std::string &file_name)
     input_file.close();
 
     loadFromString(data);
-}
+}  
 
 /* unique_ptr's are a way of maintaining strict pointer ownership.
  * They must always be constructed with a pointer and when they go out of scope
@@ -133,39 +134,50 @@ void dmcr::Scene::loadFromString(const std::string &string)
         dmcr::Vector3f position_value(position[0].asDouble(),
                                       position[1].asDouble(),
                                       position[2].asDouble());
-        
-        const Json::Value color = value["color"];
-
-        if(!color || !color.isArray() || color.size() != 3)
-            throw SceneException("No color specified for object");
-
-
-        dmcr::Color color_value(color[0].asDouble(), color[1].asDouble(),
-                                color[2].asDouble());
-        
-        double blur = 1.0;
-        double emit = 0.0;
-        double opacity = 1.0;
-        double ri = 1.0;
-        
-        if (!value["blur"].isNull())
-            blur = value["blur"].asDouble();
-        if (!value["emit"].isNull())
-            emit = value["emit"].asDouble();
-        if (!value["opacity"].isNull())
-            opacity = value["opacity"].asDouble();
-        if (!value["refractive_index"].isNull())
-            ri = value["refractive_index"].asDouble();
        
         std::unique_ptr<dmcr::SceneObject> object = buildObjectFromValue(value);
         object->setPosition(position_value);
-        object->setColor(color_value);
-        object->setBlur(blur);
-        object->setEmit(emit);
-        object->setOpacity(opacity);
-        object->setRefractiveIndex(ri);
         
         addObject(std::move(object));
+    }
+    
+    std::map<std::string, dmcr::Material> materials;
+    
+    const Json::Value materials_json = root["materials"];
+    for (const JSon::Value& value : materials_json) {
+        const JSon::Value name = value["name"];
+        if (!name.isString())
+            throw SceneException("No name specified for material");
+        
+        const JSon::Value color = value["color"];
+        if (!color || !color.isArray() || color.size() != 3)
+            throw SceneException("No color specified for material");
+       
+        double diffuse = 0.7;
+        double specular = 0.0;
+        double transmit = 0.0;
+        double emit = 0.0;
+        double ior = 1.0;
+        
+        if (!value["diffuse"].isNull())
+            diffuse = value["diffuse"].asDouble();
+        if (!value["specular"].isNull())
+            specular = value["specular"].asDouble();
+        if (!value["transmit"].isNull())
+            transmit = value["transmit"].asDouble();
+        if (!value["emit"].isNull())
+            emit = value["emit"].asDouble();
+        if (!value["ior"].isNull())
+            ior = value["ior"].asDouble();
+        
+        dmcr::Material mtl;
+        mtl.setDiffuse(diffuse);
+        mtl.setSpecular(specular);
+        mtl.setTransmit(transmit);
+        mtl.setEmit(emit);
+        mtl.setIor(ior);
+        
+        materials[name.asString()] = mtl;
     }
 
     endAddObjects();
