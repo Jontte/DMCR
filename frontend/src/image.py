@@ -53,6 +53,9 @@ class Image(object):
         # initialize png.Writer, see pypng for details 
         self.writer = png.Writer(width = self.width, height = self.height, bitdepth = 8)
     
+    def __str__(self):
+        return "Total {} iterations done.".format(self.iterations)
+    
     def AddFromString(self, data, iterations, fmt):
         '''
         Average new image and the instance image. 
@@ -102,10 +105,10 @@ class Image(object):
         @return: nothing
         
         ''' 
-        print "Writing image to file", filename
+        #print "Writing image to file", filename
         
         iterations = self.iterations if self.iterations > 0 else 1 #prevent division by zero
-        print "So far we have done", self.iterations, "iterations, jea!"
+        #print "So far we have done", self.iterations, "iterations, jea!"
         # values are weighted sums, so divide by iteration count
         scaled = [[self.Clamp16(value / iterations) for value in row] for row in self.image] 
  
@@ -113,6 +116,6 @@ class Image(object):
         #write to file (wb = write binary)
         with open(filename, 'wb') as fp:
             self.writer.write(fp, scaled)
-        print "Image writing completed!"
+        #print "Image writing completed!"
         
         
