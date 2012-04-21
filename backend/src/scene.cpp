@@ -124,6 +124,9 @@ void dmcr::Scene::loadFromString(const std::string &string)
 
     beginAddObjects();
         
+    std::vector<std::pair<std::unique_ptr<dmcr::SceneObject>, std::string> >
+        object_list;
+        
     const Json::Value objects = root["scene"];
     for (const Json::Value& value : objects) {
         const Json::Value position = value["position"];
@@ -138,18 +141,22 @@ void dmcr::Scene::loadFromString(const std::string &string)
         std::unique_ptr<dmcr::SceneObject> object = buildObjectFromValue(value);
         object->setPosition(position_value);
         
-        addObject(std::move(object));
+        const Json::Value material = value["material"];
+        if (!material || !material.isString())
+            throw SceneException("No material specified for object");
+        
+        object_list.emplace_back(std::move(object), material.asString());
     }
     
     std::map<std::string, dmcr::Material> materials;
     
     const Json::Value materials_json = root["materials"];
-    for (const JSon::Value& value : materials_json) {
-        const JSon::Value name = value["name"];
+    for (const Json::Value& value : materials_json) {
+        const Json::Value name = value["name"];
         if (!name.isString())
             throw SceneException("No name specified for material");
         
-        const JSon::Value color = value["color"];
+        const Json::Value color = value["color"];
         if (!color || !color.isArray() || color.size() != 3)
             throw SceneException("No color specified for material");
        
@@ -176,8 +183,18 @@ void dmcr::Scene::loadFromString(const std::string &string)
         mtl.setTransmit(transmit);
         mtl.setEmit(emit);
         mtl.setIor(ior);
+       
+        mtl.setTexture(std::make_shared<dmcr::ColorTexture>(
+            dmcr::Color(color[0].asDouble(),
+                        color[1].asDouble(),
+                        color[2].asDouble())));
         
         materials[name.asString()] = mtl;
+    }
+    
+    for (auto &obj : object_list) {
+        obj.first->setMaterial(materials[obj.second]);
+        addObject(std::move(obj.first));
     }
 
     endAddObjects();
