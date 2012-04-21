@@ -12,6 +12,7 @@ Created on Feb 8, 2012
 import socket
 import connection
 import taskmanager
+import scenetask
 
 class Server(object):
     '''
@@ -42,7 +43,10 @@ class Server(object):
         @param filename: the filename of the json-file describing the scene.
         
         '''
-        self.taskmanager.AddScene(filename, width, height, iterations)
+        task = scenetask.SceneTask()
+        task.SetSceneFromFile(filename)
+        task.SetSceneOpts(width, height, iterations)
+        self.taskmanager.AddTask(task)
          
 
     

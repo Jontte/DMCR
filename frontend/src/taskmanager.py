@@ -10,66 +10,24 @@ Created on Mar 20, 2012
 @author: blizzara
 '''
 
-import datetime
 import threading # taskmanager is a thread
 import Queue    # results are stored and read from queue
 
-import image
 
-
-class Scene(object):
+class ITask(object):
     '''
-     
+    Task interface
     '''
     
-    def __init__(self, id):
-        '''
-        Initializes scene with default width and height. Use SetSceneFromFile and SetSceneOpts
-        
-        @param id: a unique id for this scene 
-        '''
-        self.json = ""
-        self.id = id
-        self.image = None
-        self.width = 800
-        self.height = 600
-        self.iterations = 2
-        self.img_name = ""
-        self.datestring = "%Y%m%d-%H%M%S"
-        self.img_extension = "png"
-        
+    def OnTaskEnd(self, result):
+        pass
     
-    def SetSceneFromFile(self, filename):
-        '''
-        Reads a file and stores in self.scene, which is given to every connection.
-        
-        @param filename: the filename of the json-file describing the scene.
-        
-        ''' 
-        with open(filename,'r') as f:
-            self.json = '\n'.join(f.readlines())
-            self.img_name = filename.split("/")[-1].replace(".json", "")
-            
+    def SetTaskID(self, task_id):
+        self.task_id = task_id
     
-    def SetSceneOpts(self, width = None, height = None, iterations = None):
-        if width:
-            self.width = width
-        if height:
-            self.height = height
-        if iterations:
-            self.iterations = iterations
-        
-    def BlendResult(self, data, iterations, fmt):
-        if not self.image:
-            self.image = image.Image(self.width, self.height)
-        self.image.AddFromString(data, iterations, fmt)
-        
-    def OnTaskEnd(self, image):
-        print "Task finished, blending and writing."
-        self.BlendResult(*image)
-        self.image.Write(self.img_name+str(datetime.datetime.now().strftime(self.datestring))+"."+self.img_extension)
+    def GetTaskID(self):
+        return self.task_id
     
-
 class ResultConsumer(threading.Thread):
     
     def __init__(self, taskmanager):
@@ -83,7 +41,7 @@ class ResultConsumer(threading.Thread):
             #print self.taskmanager.results.get(block = True, timeout = None)
             #print "task_id:",task_id
             #print "Result: ",result
-            self.taskmanager.scenes[task_id].OnTaskEnd(result)
+            self.taskmanager.tasks[task_id].OnTaskEnd(result)
             self.taskmanager.results.task_done()
             
 
@@ -98,7 +56,7 @@ class TaskManager(object):
         '''
         Constructor
         '''        
-        self.scenes = dict()
+        self.tasks = dict()
         self.uniqueid = 0
         self.results = Queue.Queue()
         self.stopped = False
@@ -111,25 +69,40 @@ class TaskManager(object):
         self.results.join() # wait for all results to be processed
     
         
-    def AddScene(self, filename, width, height, iterations): 
-        '''        
+    def AddTask(self, task): 
         '''
-        newscene = Scene(self.uniqueid)
+        
+        @param task: task which implements ITask
+        
+        @return: id assigned to task
+         
+        '''
+        task.SetTaskID(self.uniqueid)
+        self.tasks[task.GetTaskID()] = task
         self.uniqueid += 1
         
-        newscene.SetSceneFromFile(filename)
-        newscene.SetSceneOpts(width, height, iterations)
-        
-        self.scenes[newscene.id] = newscene
+        return task.GetTaskID()
     
+    def RemoveTask(self, task_id):
+        '''
+        @param task_id: id assigned to task
+        
+        '''
+        
+        if self.tasks.has_key(task_id):
+            del self.tasks[task_id]
+            
     def GetTask(self):
         '''
         '''
-        scene =self.scenes[self.scenes.keys()[0]] #dirtydirty 
-        return (scene.id, scene.width, scene.height, scene.iterations, scene.json)
+        task = self.tasks[self.tasks.keys()[0]] #dirtydirty, return always first task
+        return task
     
     def OnTaskEnd(self, task_id, result):
         '''
         '''
-        print "Task ended:", task_id
-        self.results.put((task_id,result))        
+        print "TaskManager.OnTaskEnd(): Task ended:", task_id
+        if self.tasks.has_key(task_id):
+            self.results.put((task_id,result))
+        else:
+            print "TaskManager.OnTaskEnd(): Task has been removed!"        
