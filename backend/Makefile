@@ -41,7 +41,7 @@ BENCHMARK_SOURCES = tests/benchmark.cpp
 # 3rd party library flags
 PROTOBUF_CFLAGS = $(shell pkg-config --cflags protobuf)
 PROTOBUF_LDFLAGS = $(shell pkg-config --libs protobuf)
-PNGPP_LDFLAGS = -lpng
+PNGPP_LDFLAGS = $(shell pkg-config --libs libpng)
 
 # Compiler options
 CFLAGS += -Wall -Wextra $(PROTOBUF_CFLAGS) -I3rdparty
