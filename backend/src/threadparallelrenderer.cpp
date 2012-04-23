@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <thread>
+#include <mutex>
 
 #include "renderer.h"
 #include "threadparallelrenderer.h"
