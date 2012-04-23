@@ -7,6 +7,8 @@
 #include <vector>
 #include "util.h"
 
+#define GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
+
 namespace dmcr
 {
 /*
@@ -25,7 +27,11 @@ class ProgressBar
 };*/
 
 ProgressBar::ProgressBar(unsigned int max_progress)
+#if GCC_VERSION < 407
+    : m_start_time(std::chrono::monotonic_clock::now())
+#else
     : m_start_time(std::chrono::steady_clock::now())
+#endif
     , m_avg_speed(0)
     , m_last_progress(0)
     , m_max_progress(max_progress)
@@ -44,7 +50,11 @@ void ProgressBar::update(unsigned int progress)
         progress = m_last_progress;
 
     using namespace std::chrono;
+#if GCC_VERSION < 407
+    typedef monotonic_clock clock;
+#else
     typedef steady_clock clock;
+#endif
 
     clock::time_point now = clock::now();
 
