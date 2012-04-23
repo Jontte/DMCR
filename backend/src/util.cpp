@@ -25,7 +25,7 @@ class ProgressBar
 };*/
 
 ProgressBar::ProgressBar(unsigned int max_progress)
-    : m_start_time(std::chrono::monotonic_clock::now())
+    : m_start_time(std::chrono::steady_clock::now())
     , m_avg_speed(0)
     , m_last_progress(0)
     , m_max_progress(max_progress)
@@ -44,7 +44,7 @@ void ProgressBar::update(unsigned int progress)
         progress = m_last_progress;
 
     using namespace std::chrono;
-    typedef monotonic_clock clock;
+    typedef steady_clock clock;
 
     clock::time_point now = clock::now();
 
