@@ -146,7 +146,6 @@ dmcr::Color dmcr::Renderer::iterator(dmcr::Ray ray,
         } else if (random <= (cumul += obj->material().specular())) {
             dir = ray.direction() - 
                 2 * rr.normal().dot(ray.direction()) * rr.normal();
-            dmcr::Ray new_ray(rr.intersectionPoint(), dir);
             weight_factor = obj->material().specular();
         } else if (random <= (cumul += obj->material().transmit())) {
             double ndotl = rr.normal().dot(ray.direction());
