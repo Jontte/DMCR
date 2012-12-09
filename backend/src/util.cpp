@@ -29,8 +29,10 @@ class ProgressBar
 ProgressBar::ProgressBar(unsigned int max_progress)
 #if GCC_VERSION < 407
     : m_start_time(std::chrono::monotonic_clock::now())
+    , m_last_update_time(std::chrono::monotonic_clock::now())
 #else
     : m_start_time(std::chrono::steady_clock::now())
+    , m_last_update_time(std::chrono::steady_clock::now())
 #endif
     , m_avg_speed(0)
     , m_last_progress(0)
@@ -66,16 +68,30 @@ void ProgressBar::update(unsigned int progress)
     double averager = 0.5;
     m_avg_speed = m_avg_speed*(1.0-averager) + approx_speed * averager;
     m_last_progress = progress;
+    m_last_update_time = now;
 }
 
 std::string ProgressBar::render() const
 {
     std::stringstream ss;
     double spd = speed();
+    using namespace std::chrono;
+
+#if GCC_VERSION < 407
+    typedef monotonic_clock clock;
+#else
+    typedef steady_clock clock;
+#endif
+
+
+    clock::time_point now = clock::now();
+    duration<double> dur = now - m_last_update_time;
+
+    double progress = double(m_last_progress + spd * dur.count())/m_max_progress;
 
     int pbar_width = 40;
-    int percentage = int(double(100*m_last_progress)/m_max_progress);
-    int sym = int(double(pbar_width*m_last_progress)/m_max_progress);
+    int percentage = int(100*progress);
+    int sym = int(pbar_width*progress);
 
     ss << "[";
     for(int i = 0; i < pbar_width; i++)
@@ -88,8 +104,8 @@ std::string ProgressBar::render() const
         ss << "INF";
     else
     {
-        int64_t timeleft = int64_t((m_max_progress - m_last_progress) / spd);
-
+        int64_t timeleft = int64_t((m_max_progress - m_last_progress) / spd) - dur.count();
+        if(timeleft < 0) { timeleft = 0;}
         int64_t hours =   int64_t (timeleft / 3600.0);
         int64_t minutes = int64_t ((timeleft-hours*3600) / 60.0);
         int64_t seconds = int64_t ((timeleft-hours*3600-minutes*60));

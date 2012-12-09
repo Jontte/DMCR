@@ -88,11 +88,15 @@ const
         // Start progress bars internal timer here
         ProgressBar pbar(m_iterations);
         const int pixels_per_frame = h_res * v_res;
+        int previous_iters_done = -1;
         while(true)
         {
             sleep(1);
             std::lock_guard<std::mutex> g(lock);
-            pbar.update(iters_done);
+            if(iters_done != previous_iters_done) {
+                pbar.update(iters_done);
+                previous_iters_done = iters_done;
+            }
             double pixels = pixels_per_frame * pbar.speed();
             std::cout
                 << "\r"
