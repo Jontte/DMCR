@@ -15,6 +15,8 @@ import datetime
 import taskmanager
 import image
 
+import preview
+
 class SceneTask(taskmanager.ITask):
         
     def __init__(self):
@@ -32,6 +34,7 @@ class SceneTask(taskmanager.ITask):
         self.filename = ""
         self.datestring = "%Y%m%d-%H%M%S"
         self.img_extension = "png"
+        self.preview = preview.Preview()
         
     def __str__(self):
         string = super(SceneTask, self).__str__() 
@@ -69,4 +72,6 @@ class SceneTask(taskmanager.ITask):
     def OnTaskEnd(self, rendered_data):
         #print "SceneTask.OnTaskEnd(): Task finished, blending and writing."
         self.BlendResult(rendered_data['data'], rendered_data['iterations_done'], rendered_data['data_format'])
-        self.image.Write(self.img_name+str(datetime.datetime.now().strftime(self.datestring))+"."+self.img_extension)
+        self.last_filename = self.img_name+str(datetime.datetime.now().strftime(self.datestring))+"."+self.img_extension
+        self.image.Write(self.last_filename)
+        self.preview.update(self.last_filename)
